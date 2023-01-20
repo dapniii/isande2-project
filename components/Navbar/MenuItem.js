@@ -51,30 +51,39 @@ export const Reports = (
     <>{generateMenuItem(FaFileAlt, "Reports", "/reports")}</> 
 )
 
+//Takes in Menu item icon, name, and path to generate its coresponding NavBar button
 function generateMenuItem(icon, name, path) {
-    let menuItem;
+    //Format menu item look
+    let menuItem = (
+        <Icon as={icon} 
+            boxSize={6}  
+            color={"currentcolor"}
+        />
+    ) ;
 
-    if (name == "Users") {
-        menuItem = (
-            <Icon as={icon} 
-                boxSize={6}
-                borderRadius={"10%"}   
-                bg={"white"}
-                color={"#222222"}
-            />
-        ) 
-    }  
-    else {
-        menuItem = (
-            <Icon as={icon} 
-                boxSize={6}  
-                color={"currentcolor"}
-            />
-        ) 
-    }
+    // Centralized design, no need for special User effect - Spencer
+    // if (name == "Users") {
+    //     menuItem = (
+    //         <Icon as={icon} 
+    //             boxSize={6}
+    //             borderRadius={"10%"}   
+    //             bg={"white"}
+    //             color={"#222222"}
+    //         />
+    //     ) 
+    // }  
+    // else {
+    //     menuItem = (
+    //         <Icon as={icon} 
+    //             boxSize={6}  
+    //             color={"currentcolor"}
+    //         />
+    //     ) 
+    // }
 
     return (
         <>
+        {/* Parent Container which contains Menu item path when clicked */}
             <Link href={path} passHref legacyBehavior>
                 <Flex 
                     w="100%" 
@@ -87,12 +96,14 @@ function generateMenuItem(icon, name, path) {
                     color="white"
                     _hover={{
                         bg: "white",
-                        color: "black",
+                        color: "#222222",
+                        transitionDuration: "480ms",
                     }}
                 
                 >
-                
+                {/* Menu Item Icon */}
                     {menuItem}
+                {/* Menu Item Name */}
                     <Text 
                         fontWeight="semibold" 
                         color={"currentcolor"}

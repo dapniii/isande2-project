@@ -12,12 +12,13 @@ function Navbar({user}) {
             top={0} 
             position="sticky" 
             flexDirection={"column"} 
-            alignItems={"center"}
+            alignItems={"left"}
             pt={5}
             pb={3}
             color={"white"}
             bg={"#222222"}
         >
+            {/* Contains App Logo */}
             <Flex gap={5} px={5} mb={7}> 
                 <svg width="60" height="60" viewBox="0 0 315 321" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clipPath="url(#clip0_1039_2)">
@@ -29,18 +30,19 @@ function Navbar({user}) {
                     </clipPath>
                     </defs>
                 </svg>
-                
+            {/* Contains Greeting and current User's name */}
                 <Flex flexDirection={"column"}>
                     <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"8"}>Hello</Text>
                     <Text fontSize={"sm"}>{user}</Text>
                 </Flex>
             </Flex>
-            
+            {/* Displays apporpriate NavBar items depending on user role */}
             <Flex w={"100%"} h={"100%"} flexDirection={"column"} justifyContent={"space-between"} alignItems={"center"}>                
                 <VStack w={"100%"}>
                     {selectMenu(user)}
                 </VStack>
 
+                {/* Logout Button */}
                 <Button
                     w={"90%"}
                     bg={"red.500"}
