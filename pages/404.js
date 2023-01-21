@@ -1,5 +1,3 @@
-import { Flex } from "@chakra-ui/react";
-
 export default function PageNotFound() {
   return (
     <div>
