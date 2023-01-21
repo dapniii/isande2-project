@@ -36,11 +36,11 @@ export const Fuel = (
 )
 
 export const JobOrders = (
-    <>{generateMenuItem(FaWrench, "Job Orders", "/job-orders")}</> 
+    <>{generateMenuItem(FaWrench, "Job Orders", "/joborders")}</> 
 )
 
 export const PurchaseOrders = (
-    <>{generateMenuItem(MdStorefront, "Purchase Orders", "/purchase-orders")}</> 
+    <>{generateMenuItem(MdStorefront, "Purchase Orders", "/purchaseorders")}</> 
 )
 
 export const Reminders = (

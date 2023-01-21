@@ -2,10 +2,11 @@ import * as React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react'
 import Navbar from "../components/Navbar/Navbar";
 
-//TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
-export default function HomePage() {
+// Dashboard
+export default function DashboardPage() {
 
   const userRole = "Admin"
+
 
   // MAIN
   return (
