@@ -2,10 +2,19 @@ import * as React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react'
 import Navbar from "../components/Navbar/Navbar";
 
+import { AddButton, CancelButton, EditButton, SaveButton } from '@/components/Buttons';
+
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {
 
-  const userRole = "Admin"
+  const user = {
+    firstName: "FirstName",
+    role: "Admin"
+  };
+  
+  function temp() {
+    console.log("test function")
+  }
 
   // MAIN
   return (
@@ -17,7 +26,7 @@ export default function HomePage() {
         overflowY={"auto"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={userRole} />
+          <Navbar user={user} />
         </GridItem>
         
         <GridItem colStart={2}>

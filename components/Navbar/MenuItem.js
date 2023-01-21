@@ -15,72 +15,44 @@ import {
 import { Flex, Text, Icon, Box } from "@chakra-ui/react";
 import Link from "next/link";
 
-export const Users = (
-    <>{generateMenuItem(MdPerson, "Users", "/users")}</> 
-)
+export function Users() {
+    return <>{generateMenuItem(MdPerson, "Users", "/users")}</>
+}
+    
+export function Dashboard() {
+    return <>{generateMenuItem(MdDashboard, "Dashboard", "/")}</>
+}
 
-export const Dashboard = (
-    <>{generateMenuItem(MdDashboard, "Dashboard", "/")}</> 
-)
+export function Vehicles() {
+    return <>{generateMenuItem(FaTruck, "Vehicles", "/vehicles") }</>
+}
 
-export const Vehicles = (
-    <>{generateMenuItem(FaTruck, "Vehicles", "/vehicles")}</> 
-)
+export function SpareParts() {
+    return <>{generateMenuItem(FaToolbox, "Spare Parts", "/parts")}</>
+}
 
-export const SpareParts = (
-    <>{generateMenuItem(FaToolbox, "Spare Parts", "/parts")}</> 
-)
+export function Fuel() {
+    return <>{generateMenuItem(FaGasPump, "Fuel", "/fuel")}</>
+}
 
-export const Fuel = (
-    <>{generateMenuItem(FaGasPump, "Fuel", "/fuel")}</> 
-)
+export function JobOrders() {
+    return <>{generateMenuItem(FaWrench, "Job Orders", "/joborders")}</>
+}
 
-export const JobOrders = (
-    <>{generateMenuItem(FaWrench, "Job Orders", "/joborders")}</> 
-)
+export function PurchaseOrders() {
+    return <>{generateMenuItem(MdStorefront, "Purchase Orders", "/purchaseorders")}</>
+}
 
-export const PurchaseOrders = (
-    <>{generateMenuItem(MdStorefront, "Purchase Orders", "/purchaseorders")}</> 
-)
+export function Reminders() {
+    return <>{generateMenuItem(MdNotifications, "Reminders", "/reminders")}</>
+}
 
-export const Reminders = (
-    <>{generateMenuItem(MdNotifications, "Reminders", "/reminders")}</> 
-)
-
-export const Reports = (
-    <>{generateMenuItem(FaFileAlt, "Reports", "/reports")}</> 
-)
+export function Reports() {
+    return <>{generateMenuItem(FaFileAlt, "Reports", "/reports")}</>
+}
 
 //Takes in Menu item icon, name, and path to generate its coresponding NavBar button
 function generateMenuItem(icon, name, path) {
-    //Format menu item look
-    let menuItem = (
-        <Icon as={icon} 
-            boxSize={6}  
-            color={"currentcolor"}
-        />
-    ) ;
-
-    // Centralized design, no need for special User effect - Spencer
-    // if (name == "Users") {
-    //     menuItem = (
-    //         <Icon as={icon} 
-    //             boxSize={6}
-    //             borderRadius={"10%"}   
-    //             bg={"white"}
-    //             color={"#222222"}
-    //         />
-    //     ) 
-    // }  
-    // else {
-    //     menuItem = (
-    //         <Icon as={icon} 
-    //             boxSize={6}  
-    //             color={"currentcolor"}
-    //         />
-    //     ) 
-    // }
-
     return (
         <>
         {/* Parent Container which contains Menu item path when clicked */}
@@ -103,7 +75,10 @@ function generateMenuItem(icon, name, path) {
                 
                 >
                 {/* Menu Item Icon */}
-                    {menuItem}
+                    <Icon as={icon} 
+                        boxSize={6}  
+                        color={"currentcolor"}
+                    />
                 {/* Menu Item Name */}
                     <Text 
                         fontWeight="semibold" 
@@ -113,9 +88,7 @@ function generateMenuItem(icon, name, path) {
                     </Text>
                 </Flex>
             </Link>
-
         </>
     );
-
 }
   
