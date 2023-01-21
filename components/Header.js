@@ -45,19 +45,18 @@ function Header({
                         <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
                     </BreadcrumbItem>
                 </Breadcrumb>
-                {/* Temp back button */}
+                {/* TODO: Create custom button for this */}
                 <Text>{"< Back"}</Text> 
             </GridItem>
 
             <GridItem py={3}>
                 {/* SAMPLE BASIC CONTENT */}
-                <Flex justifyContent={"space-between"} alignItems={"center"}>
+                {/* <Flex justifyContent={"space-between"} alignItems={"center"}>
                     <Text fontSize={"3xl"} fontWeight={"bold"}>Page Title</Text>
                     <SaveButton title={"Save Changes"} clickFunction={() => console.log("test")} />
-                </Flex>
+                </Flex> */}
 
                 {/* SAMPLE COMPLEX CONTENT */}
-                {/* 
                 <Flex gap={4}>
                     <Image 
                     borderRadius={"1em"}
@@ -68,17 +67,19 @@ function Header({
                     />
                     
                     <Flex flexDirection={"column"} gap={1}>
-                        <Text fontSize={"2xl"} fontWeight={"bold"}>Item Name</Text>
+                        <Text fontSize={"2xl"} fontWeight={"bold"} lineHeight={6}>Item Name</Text>
                         <Text>Hello | Hello | Hello</Text>
+                        {/* TODO: Create custom component for this */}
                         <Button 
                             border={"solid"}
                             borderRadius={"1em"}
-                            size={"sm"}
+                            w={"50%"}
+                            size={"xs"}
                         >
                             Sample
                         </Button>
                     </Flex>
-                </Flex> */}
+                </Flex>
             </GridItem>
 
             {/* NOTE: Tabs should be part of main content not header */}
