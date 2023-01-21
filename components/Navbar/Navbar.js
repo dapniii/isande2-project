@@ -33,6 +33,8 @@ function Navbar({user}) {
             {/* Contains Greeting and current User's name */}
                 <Flex flexDirection={"column"}>
                     <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"8"}>Hello</Text>
+                    
+                    {/* TODO: Change to user's first name */}
                     <Text fontSize={"sm"}>{user}</Text>
                 </Flex>
             </Flex>

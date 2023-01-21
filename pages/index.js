@@ -5,6 +5,9 @@ import Navbar from "../components/Navbar/Navbar";
 // Dashboard
 export default function Home() {
 
+  const userRole = "Admin"
+
+
   // MAIN
   return (
     <>
@@ -15,7 +18,7 @@ export default function Home() {
         overflowY={"auto"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user="Admin" />
+          <Navbar user={userRole} />
         </GridItem>
         
         <GridItem colStart={2}>

@@ -94,6 +94,7 @@ function generateMenuItem(icon, name, path) {
                     cursor={"pointer"} 
                     bg="#222222"
                     color="white"
+                    transitionDuration="180ms"
                     _hover={{
                         bg: "white",
                         color: "#222222",
