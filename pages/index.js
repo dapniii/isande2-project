@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react'
-import Navbar from "../components/Navbar/Navbar";
-
-import { AddButton, CancelButton, EditButton, SaveButton } from '@/components/Buttons';
+import Navbar from "../components/Navbar";
+import Header from '@/components/Header';
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {
@@ -30,7 +29,7 @@ export default function HomePage() {
         </GridItem>
         
         <GridItem colStart={2}>
-          {/* Header */}
+          <Header withShadow={true} />
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"}>

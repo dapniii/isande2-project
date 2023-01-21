@@ -9,7 +9,7 @@ export function AddButton({title, clickFunction}) {
             color={"white"}
             px={"1em"}
             size={"sm"}
-            borderRadius={"0.3em"}
+            borderRadius={"0.4em"}
             leftIcon={<Icon as={MdAddCircle} boxSize={"1.3em"} />}
             conClick={() => clickFunction()}
         >
@@ -23,9 +23,9 @@ export function SaveButton({title, clickFunction}) {
         <Button
             bg={"green.400"}
             color={"white"}
-            px={"1em"}
+            px={"0.7em"}
             size={"sm"}
-            borderRadius={"0.3em"}
+            borderRadius={"0.4em"}
             leftIcon={<Icon as={MdCheckCircle} boxSize={"1.3em"} />}
             conClick={() => clickFunction()}
         >
@@ -41,7 +41,7 @@ export function CancelButton({title, clickFunction}) {
             color={"white"}
             px={"1em"}
             size={"sm"}
-            borderRadius={"0.3em"}
+            borderRadius={"0.4em"}
             leftIcon={<Icon as={MdCancel} boxSize={"1.3em"} />}
             conClick={() => clickFunction()}
         >
@@ -57,7 +57,7 @@ export function EditButton({title, clickFunction}) {
             color={"white"}
             px={"1em"}
             size={"sm"}
-            borderRadius={"0.3em"}
+            borderRadius={"0.4em"}
             leftIcon={<Icon as={MdEdit} boxSize={"1.3em"} />}
             conClick={() => clickFunction()}
         >
