@@ -7,7 +7,7 @@ export function AddButton({title, clickFunction}) {
         <Button
             bg={"green.400"}
             color={"white"}
-            px={"1em"}
+            px={"0.7em"}
             size={"sm"}
             borderRadius={"0.4em"}
             leftIcon={<Icon as={MdAddCircle} boxSize={"1.3em"} />}
@@ -39,7 +39,7 @@ export function CancelButton({title, clickFunction}) {
         <Button
             bg={"blackAlpha.500"}
             color={"white"}
-            px={"1em"}
+            px={"0.7em"}
             size={"sm"}
             borderRadius={"0.4em"}
             leftIcon={<Icon as={MdCancel} boxSize={"1.3em"} />}
@@ -55,7 +55,7 @@ export function EditButton({title, clickFunction}) {
         <Button
             bg={"blue.600"}
             color={"white"}
-            px={"1em"}
+            px={"0.7em"}
             size={"sm"}
             borderRadius={"0.4em"}
             leftIcon={<Icon as={MdEdit} boxSize={"1.3em"} />}
