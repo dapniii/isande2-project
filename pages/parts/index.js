@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
 import { AddButton } from "@/components/Buttons";
 import { Router, useRouter } from "next/router";
+import PartsHomeTab from "@/page-features/parts/HomeTab";
 
 export default function PartsPage() {
   const router = useRouter();
@@ -63,7 +64,9 @@ export default function PartsPage() {
                 <Tab >Bulk Manage Parts</Tab>
             </TabList>
             <TabPanels>
-              <TabPanel>Home</TabPanel>
+              <TabPanel>
+                <PartsHomeTab />
+              </TabPanel>
               <TabPanel>Bulk Manage Parts</TabPanel>
             </TabPanels>
           </Tabs>
