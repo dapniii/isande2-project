@@ -24,10 +24,10 @@ function Header({ breadcrumb, main, withShadow, }) {
             boxShadow={ withShadow == true ? ("lg") : ("none")}
             flexDirection={"column"}
         >
-            <GridItem>
+            <GridItem pt={2}>
                 {breadcrumb}
             </GridItem>
-            <GridItem py={3}> 
+            <GridItem py={2}> 
                 {main}
             </GridItem>
             {/* NOTE: Tabs should be part of main content not header */}
