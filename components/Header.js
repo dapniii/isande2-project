@@ -31,11 +31,9 @@ function Header({
             <GridItem>
                 {breadcrumb}
             </GridItem>
-            
             <GridItem py={3}> 
                 {main}
             </GridItem>
-
             {/* NOTE: Tabs should be part of main content not header */}
         </Grid>
     )
@@ -43,21 +41,20 @@ function Header({
 
 export default Header;
 
-
 {/* SAMPLE BREADCRUMB FROM CHAKRA */}
 {/* 
 <Flex justifyContent={"space-between"}>
     <Breadcrumb>
         <BreadcrumbItem>
-            <BreadcrumbLink href='#'>Home</BreadcrumbLink>
+            <BreadcrumbLink href='/'>Home</BreadcrumbLink>
         </BreadcrumbItem>
 
         <BreadcrumbItem>
-            <BreadcrumbLink href='#'>Docs</BreadcrumbLink>
+            <BreadcrumbLink href='/'>Docs</BreadcrumbLink>
         </BreadcrumbItem>
 
         <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
+            <BreadcrumbLink href='/'>Breadcrumb</BreadcrumbLink>
         </BreadcrumbItem>
     </Breadcrumb>
 <Flex /> 
@@ -68,7 +65,7 @@ export default Header;
 {/* <Flex justifyContent={"space-between"} alignItems={"center"}>
     <Text fontSize={"3xl"} fontWeight={"bold"}>Page Title</Text>
     <SaveButton title={"Save Changes"} clickFunction={() => console.log("test")} />
-</Flex> */}
+</Flex>  */}
 
 {/* SAMPLE COMPLEX MAIN CONTENT */}
 {/* <Flex gap={4}>

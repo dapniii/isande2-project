@@ -6,7 +6,7 @@ import { selectMenu } from "./NavbarBuilder/Menu";
 function Navbar({user}) {
     
     function Logout() {
-        console.log(user)
+        console.log("logout")
     }
 
     // OPTIONAL TODO: Convert to Drawer

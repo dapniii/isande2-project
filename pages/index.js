@@ -55,8 +55,6 @@ export default function HomePage() {
     )
   }
 
-
-  
   // MAIN
   return (
     <>
