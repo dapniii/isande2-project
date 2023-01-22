@@ -1,7 +1,14 @@
 import * as React from 'react';
-import { Grid, GridItem } from '@chakra-ui/react'
+import { Grid, GridItem,     
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Text,
+  Button,
+  Flex, } from '@chakra-ui/react'
 import Navbar from "../components/Navbar";
 import Header from '@/components/Header';
+import { SaveButton } from '@/components/Buttons'; // Temp
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {
@@ -10,11 +17,46 @@ export default function HomePage() {
     firstName: "FirstName",
     role: "Admin"
   };
+
+  function test() {
+    console.log("test")
+  }
   
-  function temp() {
-    console.log("test function")
+  // Sample how to pass header components as props
+  // QUESTION: Should it be in a separate file nalang?
+  function headerBreadcrumbs() {
+    return (
+      <Breadcrumb>
+        <BreadcrumbItem>
+            <BreadcrumbLink href='#'>Home</BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem>
+            <BreadcrumbLink href='#'>Docs</BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem isCurrentPage>
+            <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
+    )
   }
 
+  function headerMain() {
+    return (
+      <>
+        {/* SAMPLE BASIC CONTENT */}
+        <Flex justifyContent={"space-between"} alignItems={"center"}>
+            <Text fontSize={"3xl"} fontWeight={"bold"}>Page Title</Text>
+            <SaveButton title={"Save Changes"} clickFunction={test} />
+        </Flex>
+      </>
+
+    )
+  }
+
+
+  
   // MAIN
   return (
     <>
@@ -29,7 +71,7 @@ export default function HomePage() {
         </GridItem>
         
         <GridItem colStart={2}>
-          <Header withShadow={true} />
+          <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={true} />
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"}>

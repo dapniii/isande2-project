@@ -16,7 +16,7 @@ import { SaveButton } from "./Buttons";
 function Header({
     breadcrumb,
     main, 
-    withShadow 
+    withShadow, 
 }) {
     return (
         <Grid
@@ -26,60 +26,14 @@ function Header({
             px={"0.7em"}
             // NOTE: No box shadow if page has tabs
             boxShadow={ withShadow == true ? ("lg") : ("none")}
+            flexDirection={"column"}
         >
-            <GridItem
-                display={"flex"}
-                justifyContent={"space-between"}
-            >
-                {/* SAMPLE FROM CHAKRA */}
-                <Breadcrumb>
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href='#'>Home</BreadcrumbLink>
-                    </BreadcrumbItem>
-
-                    <BreadcrumbItem>
-                        <BreadcrumbLink href='#'>Docs</BreadcrumbLink>
-                    </BreadcrumbItem>
-
-                    <BreadcrumbItem isCurrentPage>
-                        <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
-                    </BreadcrumbItem>
-                </Breadcrumb>
-                {/* TODO: Create custom button for this */}
-                <Text>{"< Back"}</Text> 
+            <GridItem>
+                {breadcrumb}
             </GridItem>
-
-            <GridItem py={3}>
-                {/* SAMPLE BASIC CONTENT */}
-                {/* <Flex justifyContent={"space-between"} alignItems={"center"}>
-                    <Text fontSize={"3xl"} fontWeight={"bold"}>Page Title</Text>
-                    <SaveButton title={"Save Changes"} clickFunction={() => console.log("test")} />
-                </Flex> */}
-
-                {/* SAMPLE COMPLEX CONTENT */}
-                <Flex gap={4}>
-                    <Image 
-                    borderRadius={"1em"}
-                    border={"solid"}
-                    boxSize='9em'
-                    src='sample.jpg'
-                    alt='Sample'
-                    />
-                    
-                    <Flex flexDirection={"column"} gap={1}>
-                        <Text fontSize={"2xl"} fontWeight={"bold"} lineHeight={6}>Item Name</Text>
-                        <Text>Hello | Hello | Hello</Text>
-                        {/* TODO: Create custom component for this */}
-                        <Button 
-                            border={"solid"}
-                            borderRadius={"1em"}
-                            w={"50%"}
-                            size={"xs"}
-                        >
-                            Sample
-                        </Button>
-                    </Flex>
-                </Flex>
+            
+            <GridItem py={3}> 
+                {main}
             </GridItem>
 
             {/* NOTE: Tabs should be part of main content not header */}
@@ -88,3 +42,55 @@ function Header({
 }
 
 export default Header;
+
+
+{/* SAMPLE BREADCRUMB FROM CHAKRA */}
+{/* 
+<Flex justifyContent={"space-between"}>
+    <Breadcrumb>
+        <BreadcrumbItem>
+            <BreadcrumbLink href='#'>Home</BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem>
+            <BreadcrumbLink href='#'>Docs</BreadcrumbLink>
+        </BreadcrumbItem>
+
+        <BreadcrumbItem isCurrentPage>
+            <BreadcrumbLink href='#'>Breadcrumb</BreadcrumbLink>
+        </BreadcrumbItem>
+    </Breadcrumb>
+<Flex /> 
+<Text>{"< Back"}</Text> */}
+// TODO: Create custom button for back button
+
+{/* SAMPLE BASIC MAIN CONTENT */}
+{/* <Flex justifyContent={"space-between"} alignItems={"center"}>
+    <Text fontSize={"3xl"} fontWeight={"bold"}>Page Title</Text>
+    <SaveButton title={"Save Changes"} clickFunction={() => console.log("test")} />
+</Flex> */}
+
+{/* SAMPLE COMPLEX MAIN CONTENT */}
+{/* <Flex gap={4}>
+    <Image 
+    borderRadius={"1em"}
+    border={"solid"}
+    boxSize='9em'
+    src='sample.jpg'
+    alt='Sample'
+    />
+    
+    <Flex flexDirection={"column"} gap={1}>
+        <Text fontSize={"2xl"} fontWeight={"bold"} lineHeight={6}>Item Name</Text>
+        <Text>Hello | Hello | Hello</Text>*/}
+        {/* TODO: Create custom component for this */}
+        {/* <Button 
+            border={"solid"}
+            borderRadius={"1em"}
+            w={"50%"}
+            size={"xs"}
+        >
+            Sample
+        </Button>
+    </Flex>
+</Flex>  */}
