@@ -13,17 +13,13 @@ import {
 import { SaveButton } from "./Buttons";
 
 // TODO: breadcrumb and main will replace the samples in the GridItems
-function Header({
-    breadcrumb,
-    main, 
-    withShadow, 
-}) {
+function Header({ breadcrumb, main, withShadow, }) {
     return (
         <Grid
             w={"100%"}
             autoFlow={"row"}
             py={"0.2em"}
-            px={"0.7em"}
+            px={"1em"}
             // NOTE: No box shadow if page has tabs
             boxShadow={ withShadow == true ? ("lg") : ("none")}
             flexDirection={"column"}

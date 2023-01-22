@@ -31,7 +31,7 @@ export default function authForm() {
         <Flex alignItems="center" p="6" gap="4">
           {/* Stockly Logo */}
           <svg
-            width="50"
+            width="65"
             viewBox="0 0 315 321"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -42,7 +42,7 @@ export default function authForm() {
             />
           </svg>
           {/* Stockly Text */}
-          <Heading color="white">STOCKLY</Heading>
+          <Heading color="white" size="2xl">STOCKLY</Heading>
         </Flex>
         {/* Card Container */}
         <Card maxW="md" variant="outline">
