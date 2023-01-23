@@ -1,4 +1,4 @@
-import AuthForm from "@/components/auth/AuthForm";
+import AuthForm from "@/components/auth/authForm";
 import { Container, Flex, Heading } from "@chakra-ui/react";
 
 export default function loginPage() {
