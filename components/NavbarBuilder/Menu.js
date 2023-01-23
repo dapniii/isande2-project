@@ -9,7 +9,7 @@ import {
     PurchaseOrders, 
     Reminders, 
     Reports
-} from "./MenuItem";
+} from "./menuItem";
 
 
 

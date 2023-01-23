@@ -7,6 +7,7 @@ import {
     StatArrow,
     StatGroup,
   } from '@chakra-ui/react'
+  
 export default function PartsHomeTab() {
     return (
         <Flex flexDirection={"column"}>

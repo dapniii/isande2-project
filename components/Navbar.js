@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Icon, Flex, Text, VStack, Button } from "@chakra-ui/react";
 import { MdLogout } from "react-icons/md";
-import { selectMenu } from "./NavbarBuilder/Menu";
+import { selectMenu } from "./navbarBuilder/menu";
 
 function Navbar({user}) {
     

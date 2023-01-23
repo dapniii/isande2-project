@@ -5,9 +5,9 @@ import {
     Text,
     ButtonGroup,
   } from "@chakra-ui/react";
-  import Navbar from "@/components/Navbar";
-  import Header from "@/components/Header";
-  import { SaveButton, CancelButton } from "@/components/Buttons";
+  import Navbar from "@/components/navbar";
+  import Header from "@/components/header";
+  import { SaveButton, CancelButton } from "@/components/buttons";
   import { Router, useRouter } from "next/router";
   
   export default function CreatePartsPage() {

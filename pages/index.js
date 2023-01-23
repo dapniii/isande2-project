@@ -6,9 +6,9 @@ import { Grid, GridItem,
   Text,
   Button,
   Flex, } from '@chakra-ui/react'
-import Navbar from "../components/Navbar";
-import Header from '@/components/Header';
-import { SaveButton } from '@/components/Buttons'; // Temp
+import Navbar from "../components/navbar";
+import Header from '@/components/header';
+import { SaveButton } from '@/components/buttons'; // Temp
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {

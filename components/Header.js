@@ -10,7 +10,7 @@ import {
     Flex,
     Image
 } from "@chakra-ui/react";
-import { SaveButton } from "./Buttons";
+import { SaveButton } from "./buttons";
 
 // TODO: breadcrumb and main will replace the samples in the GridItems
 function Header({ breadcrumb, main, withShadow, }) {

@@ -9,9 +9,9 @@ import {
   TabPanel,
   Tab,
 } from "@chakra-ui/react";
-import Navbar from "@/components/Navbar";
-import Header from "@/components/Header";
-import { AddButton } from "@/components/Buttons";
+import Navbar from "@/components/navbar";
+import Header from "@/components/header";
+import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 
 export default function UsersPage() {
