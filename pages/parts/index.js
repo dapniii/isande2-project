@@ -13,9 +13,16 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-import PartsHomeTab from "@/components/parts/homeTab";
+import PartsHomeTab from "@/components/partsModule/homeTab";
 
-export default function PartsPage() {
+export async function getServerSideProps() {
+  const res = await fetch(`https://my.api.mockaroo.com/spare_parts.json?key=abdcd8e0`)
+  const data = await res.json()
+
+  return { props: { data } }
+}
+
+export default function PartsPage({data}) {
   const router = useRouter();
 
   // Temp
@@ -44,7 +51,7 @@ export default function PartsPage() {
   return (
     <>
       <Grid
-        minH="100vh"
+        h={"100vh"}
         templateColumns={"1fr 7fr"}
         templateRows={"0fr 1fr"}
         overflowY={"auto"}
@@ -53,19 +60,19 @@ export default function PartsPage() {
           <Navbar user={user} />
         </GridItem>
         
-        <GridItem colStart={2}>
+        <GridItem colStart={2} top={"0"} position={"sticky"} bg={"white"} zIndex={2}>
           <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={false} />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.100"}>
+        <GridItem colStart={2} bg={"blackAlpha.300"}>
           <Tabs>
-            <TabList bg={"white"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}> 
+            <TabList bg={"white"} top={"4.23em"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}> 
                 <Tab>Home</Tab>
                 <Tab >Bulk Manage Parts</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
-                <PartsHomeTab />
+                <PartsHomeTab data={data} />
               </TabPanel>
               <TabPanel>Bulk Manage Parts</TabPanel>
             </TabPanels>

@@ -13,6 +13,7 @@ function Navbar({user}) {
     return (
         <Flex 
             h={"100%"}
+            maxH={"100vh"} 
             top={0} 
             position="sticky" 
             flexDirection={"column"} 
