@@ -49,6 +49,7 @@ export default function authForm(props) {
   const [show, setShow] = useState(false);
   const showHandler = () => setShow(!show);
 
+  //Handles data submission when Submit button is clicked
   async function submitHandler(event) {
     event.preventDefault();
 
@@ -59,7 +60,10 @@ export default function authForm(props) {
       const result = await createUser(enteredEmployeeID, enteredPassword);
       console.log("Emp ID: " + enteredEmployeeID);
       console.log("Pass: " + enteredPassword);
-      console.log("createUser Result: " + result)
+      console.log(result)
+      //Once user successfully created, clear all inputs
+      employeeIDInputRef.current.value = "";
+      passwordInputRef.current.value = "";
     } catch (error) {
       console.log(error);
     }
@@ -120,6 +124,7 @@ export default function authForm(props) {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
+                <FormHelperText>At least 8 characters long</FormHelperText>
               </FormControl>
               <Spacer />
               <Divider />
