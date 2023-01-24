@@ -40,7 +40,7 @@ async function createUser(employeeID, password) {
   return data;
 }
 
-export default function authForm(props) {
+export default function UserCreateForm(props) {
   const employeeIDInputRef = useRef();
   const passwordInputRef = useRef();
 

@@ -1,4 +1,4 @@
-import AuthForm from "@/components/auth/authForm";
+import LoginForm from "@/components/auth/loginForm";
 import { Container, Flex, Heading } from "@chakra-ui/react";
 
 export default function loginPage() {
@@ -26,7 +26,7 @@ export default function loginPage() {
             STOCKLY
           </Heading>
         </Flex>
-        <AuthForm formName={"Login"} buttonName={"Login"}/>
+        <LoginForm formName={"Login"} buttonName={"Login"}/>
       </Container>
     </Flex>
   );
