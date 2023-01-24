@@ -74,7 +74,7 @@ export default function PartsHomeTab({data}) {
               DATA={data} 
               FILTERS={filters}
               HIDDEN={["code", "model", "name", "status"]}
-            ></BasicTable> 
+            />
         </Flex>
     )
 }

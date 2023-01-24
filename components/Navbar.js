@@ -2,11 +2,14 @@ import * as React from 'react';
 import { Icon, Flex, Text, VStack, Button } from "@chakra-ui/react";
 import { MdLogout } from "react-icons/md";
 import { selectMenu } from "./navbarBuilder/menu";
+import { Router, useRouter } from "next/router"
 
 function Navbar({user}) {
+    const router = useRouter();
     
     function Logout() {
-        console.log("logout")
+        // TODO: Logout backend
+        router.replace("/login");
     }
 
     // OPTIONAL TODO: Convert to Drawer
