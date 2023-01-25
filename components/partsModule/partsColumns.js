@@ -78,7 +78,6 @@ export const COLUMNS = [
             filterValue.includes(row.values[id])
         );
       },
-      
     },
     {
       Header: (props) => {
@@ -183,17 +182,17 @@ export const COLUMNS = [
           </>
         )
       },
-        accessor: "eoq",
-        Cell: (props) => {
-          return (
-          <>
-            <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-            <Text fontSize={"sm"} color={"gray"}>{props.row.original.unit}</Text>
-          </>
-          )
-        },
-        disableGlobalFilter: true,
-        width: 100,
+      accessor: "eoq",
+      Cell: (props) => {
+        return (
+        <>
+          <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
+          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unit}</Text>
+        </>
+        )
+      },
+      disableGlobalFilter: true,
+      width: 100,
     },
     {
       // HIDDEN

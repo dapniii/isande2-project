@@ -103,12 +103,12 @@ export default function UsersPage({data}) {
           <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={true} />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.300"}>
+        <GridItem colStart={2} bg={"blackAlpha.300"} p={2}>
           <BasicTable 
             COLUMNS={COLUMNS}
             DATA={data}
             FILTERS={filters}
-            HIDDEN={["User Type, specialty"]}
+            HIDDEN={["name", "role", "department", "userType"]}
           />        
         </GridItem>
       </Grid>
