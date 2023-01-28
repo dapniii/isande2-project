@@ -60,7 +60,7 @@ function CreateUserForm() {
     }, [photo])
 
     return (
-        <Grid templateColumns={"1fr 1.2fr"} p={2} gap={2}>
+        <Grid templateColumns={"1fr 1.2fr"} px={2} py={5} gap={2}>
             <GridItem>
                 <Card variant={"outline"}>
                     <CardHeader><Text fontSize={"xl"} fontWeight={"bold"}>Profile Picture</Text></CardHeader>
@@ -69,7 +69,6 @@ function CreateUserForm() {
                         {/*PHOTO INPUT*/}
                         <Flex
                             mt={"0.5em"}
-                            
                             gap={3}
                         >   
                             { photo != null ? (
@@ -87,7 +86,7 @@ function CreateUserForm() {
                             ) : (<></>)}
                             <Button
                                 // @ts-ignore
-                                mt={"1.5em"}
+                                mt={photo != null ? ("1.5em") : (0)}
                                 bg={"blue"}
                                 color={"white"}
                                 leftIcon={<AddIcon />}
