@@ -14,7 +14,8 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-import UserCreateForm from "@/components/auth/userCreateForm";
+// import UserCreateForm from "@/components/auth/userCreateForm";
+import CreateUserForm from "@/components/usersModule/createUserForm";
 
 export default function CreateUsersPage() {
   const router = useRouter();
@@ -89,7 +90,8 @@ export default function CreateUsersPage() {
 
         {/* Main Content */}
         <GridItem colStart={2} bg={"blackAlpha.100"}>
-          <UserCreateForm formName={"Build a Guy"} buttonName={"Create User"} />
+          {/* <UserCreateForm formName={"Build a Guy"} buttonName={"Create User"} /> */}
+          <CreateUserForm />
         </GridItem>
       </Grid>
     </>
