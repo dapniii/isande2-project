@@ -7,9 +7,8 @@ import { Router, useRouter } from "next/router"
 function Navbar({user}) {
     const router = useRouter();
     
-    function Logout() {
-        // TODO: Logout backend
-        router.replace("/login");
+    function logoutHandler() {
+        console.log("logout clicked")
     }
 
     // OPTIONAL TODO: Convert to Drawer
@@ -56,7 +55,7 @@ function Navbar({user}) {
                     w={"90%"}
                     bg={"red.500"}
                     leftIcon={<Icon as={MdLogout} boxSize={5} />}
-                    onClick={() => Logout()}
+                    onClick={() => logoutHandler()}
                 >
                     Log Out
                 </Button>
