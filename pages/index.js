@@ -12,8 +12,7 @@ import { SaveButton } from '@/components/buttons'; // Temp
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {
-
-  const user = {
+  const tempUser = {
     firstName: "FirstName",
     role: "Admin"
   };
@@ -65,7 +64,7 @@ export default function HomePage() {
         overflowY={"auto"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={tempUser} />
         </GridItem>
         
         <GridItem colStart={2}>

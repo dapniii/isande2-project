@@ -1,5 +1,5 @@
 import { hashPassword } from "@/lib/auth";
-import { connectToDatabase } from "@/lib/db";
+import { connectToDatabase } from "@/lib/dbConnect";
 
 export default async function signupHandler(req, res) {
     //This function should only be excecuted for POSTING new data

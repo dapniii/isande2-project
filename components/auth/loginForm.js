@@ -17,31 +17,76 @@ import {
 import { useRef, useState } from "react";
 import { MdLogin, MdPassword, MdPerson } from "react-icons/md";
 
-import { signIn } from "next-auth/react";
+import { Router, useRouter } from "next/router";
+import { withIronSessionSsr } from "iron-session/next";
+import dbConnect from "@/lib/dbConnect";
+import { ironOptions } from "@/lib/config";
+
+export const getServerSideProps = withIronSessionSsr(
+  async function getServerSideProps({ req }) {
+    if (req.session.user) {
+      return {
+        redirect: { destination: "/", permanent: true },
+        props: {},
+      };
+    } else {
+      await dbConnect();
+
+      return {
+        props: {},
+      };
+    }
+  },
+  ironOptions
+);
 
 export default function LoginForm(props) {
-  const employeeIDInputRef = useRef();
-  const passwordInputRef = useRef();
+  const router = useRouter();
+
+  const [employeeID, setEmployeeID] = useState("");
+  const [password, setPassword] = useState("");
+  const disabledRef = useRef(false);
 
   const { formName, buttonName } = props;
 
   const [show, setShow] = useState(false);
   const showHandler = () => setShow(!show);
 
+  const [error, setError] = useState(false);
+
   //Handles data submission when Submit button is clicked
-  async function submitHandler(event) {
+  function submitHandler(event) {
     event.preventDefault();
+    let userData = {
+      employeeID: employeeID,
+      password: password,
+      disabled: disabledRef,
+    };
 
-    const enteredEmployeeID = employeeIDInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
+    fetch("../../pages/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data === "Logged in") {
+          console.log("SUCCESS");
+          console.log("SESSION IS", data);
+          router.replace("/");
+        } else {
+          console.log("ERROR IS:", data);
+          setError(true);
+        }
+      });
+  }
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      employeeID: enteredEmployeeID,
-      password: enteredPassword,
-    });
-    console.log("*** loginForm.js ***")
-    console.log(result)
+  function showError() {
+    if (error) {
+      return <span>AM AN ERROR MESSAGE</span>;
+    }
   }
 
   return (
@@ -71,7 +116,7 @@ export default function LoginForm(props) {
                   <Input
                     placeholder="Enter Employee ID"
                     autoComplete="off"
-                    ref={employeeIDInputRef}
+                    onChange={(e) => setEmployeeID(e.target.value)}
                   />
                 </InputGroup>
               </FormControl>
@@ -90,7 +135,7 @@ export default function LoginForm(props) {
                   <Input
                     type={show ? "text" : "password"}
                     placeholder="Enter Password"
-                    ref={passwordInputRef}
+                    onChange={(e) => setPassword(e.target.value)}
                   />
                   {/* Show/ Hide Password Button */}
                   <InputRightElement width="4.5rem">
