@@ -152,7 +152,15 @@ function BasicTable({
             {page.map((row, i) => {
               prepareRow(row);
               return (
-                <Tr {...row.getRowProps()}>
+                <Tr {...row.getRowProps()}
+                    onClick={() => console.log("tee")}
+                    transitionDuration="180ms"
+                    _hover={{
+                      bg: "blackAlpha.300",
+                      color: "#222222",
+                      transitionDuration: "480ms",
+                      cursor: "pointer",
+                  }}>
                   {row.cells.map((cell) => {
                     if (Number.isInteger(cell.value)) {
                       return (
