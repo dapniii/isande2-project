@@ -129,7 +129,6 @@ function BasicTable({
                     {...column.getHeaderProps(
                       [column.getSortByToggleProps(),
                       { style: { minWidth: column.minWidth, width: column.width },}
-                      
                     ])}
                   >
                     {column.render("Header")}
