@@ -32,7 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
-function CreateUserForm() {
+function ViewUserForm() {
     const firstName = useRef();
     const lastName = useRef();
     const emailAddress = useRef();
@@ -41,7 +41,6 @@ function CreateUserForm() {
     const role = useRef();
     const userType = useRef();
     const specialty = useRef();
-    const password = useRef();
     const confirmPassword = useRef();
 
     const [photo, setPhoto] = useState();
@@ -91,6 +90,7 @@ function CreateUserForm() {
                                 color={"white"}
                                 leftIcon={<AddIcon />}
                                 onClick={() => inputPhoto.current.click()}
+                                isDisabled
                             >
                                 Select Image
                             </Button>
@@ -113,13 +113,13 @@ function CreateUserForm() {
                     <CardBody>
                         <Stack>
                             <Flex gap={2}>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>First Name</FormLabel>
                                     <Input 
                                         ref={firstName}
                                     />
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>Last Name</FormLabel>
                                     <Input 
                                         ref={lastName}
@@ -127,13 +127,13 @@ function CreateUserForm() {
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>Email</FormLabel>
                                     <Input 
                                         ref={emailAddress}
                                     />
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>Phone Number</FormLabel>
                                     <Input 
                                         ref={phoneNumber}
@@ -141,7 +141,7 @@ function CreateUserForm() {
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>Department</FormLabel>
                                     <Select
                                         placeholder="Select Department"
@@ -162,7 +162,7 @@ function CreateUserForm() {
                                         })} */}
                                     </Select>
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>Role</FormLabel>
                                     <Select
                                         placeholder="Select Role"
@@ -184,7 +184,7 @@ function CreateUserForm() {
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>User Type</FormLabel>
                                     <Select
                                         placeholder="Select User Type"
@@ -204,7 +204,7 @@ function CreateUserForm() {
                                         })} */}
                                     </Select>
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl isDisabled>
                                     <FormLabel>{"Specialty (if Mechanic)"}</FormLabel>
                                     <Select
                                         placeholder="Select Specialty"
@@ -227,27 +227,10 @@ function CreateUserForm() {
                             </Flex>
                         </Stack>
                     </CardBody>
-                    <Divider />
-                    <CardFooter gap={2}>
-                        <FormControl isRequired>
-                            <FormLabel>Password</FormLabel>
-                            <Input 
-                                type={"password"}
-                                ref={password}
-                            />
-                        </FormControl>
-                        <FormControl isRequired>
-                            <FormLabel>Confirm Password</FormLabel>
-                            <Input 
-                                type={"password"}
-                                ref={confirmPassword}
-                            />
-                        </FormControl>
-                    </CardFooter>
                 </Card>
             </GridItem>
         </Grid>
     )
 }
 
-export default CreateUserForm;
+export default ViewUserForm;

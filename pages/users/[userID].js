@@ -14,8 +14,8 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { BackButton, EditButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-// import UserCreateForm from "@/components/auth/userCreateForm";
-import CreateUserForm from "@/components/usersModule/createUserForm";
+
+import ViewUserForm from "@/components/usersModule/viewUserForm";
 
 export default function UserDetails() {
   const router = useRouter();
@@ -24,6 +24,12 @@ export default function UserDetails() {
   const user = {
     firstName: "FirstName",
     role: "Admin",
+  };
+
+  const tempUserData = {
+    firstName: "FirstName",
+    lastName: "LastName",
+    role: "Role",
   };
 
   // Header Functions
@@ -48,7 +54,7 @@ export default function UserDetails() {
           </BreadcrumbItem>
 
           <BreadcrumbItem>
-            <BreadcrumbLink>New User</BreadcrumbLink>
+            <BreadcrumbLink>User Details</BreadcrumbLink>
           </BreadcrumbItem>
         </Breadcrumb>
         <Flex>
@@ -62,7 +68,7 @@ export default function UserDetails() {
     return (
       <Flex alignItems={"center"} justifyContent={"space-between"}>
         <Text fontSize={"3xl"} fontWeight={"bold"}>
-          New User
+          User Details
         </Text>
         <EditButton title={"Edit User"} clickFunction={submitForm} />
       </Flex>
@@ -91,7 +97,9 @@ export default function UserDetails() {
         </GridItem>
 
         {/* Main Content */}
-        <GridItem colStart={2} bg={"blackAlpha.100"}></GridItem>
+        <GridItem colStart={2} bg={"blackAlpha.100"}>
+          <ViewUserForm />
+        </GridItem>
       </Grid>
     </>
   );
