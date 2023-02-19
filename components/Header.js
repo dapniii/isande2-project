@@ -22,7 +22,7 @@ function Header({ breadcrumb, main, withShadow, }) {
             px={"1em"}
             // NOTE: No box shadow if page has tabs
             boxShadow={ withShadow == true ? ("lg") : ("none")}
-            
+            bg={"white"}
         >
             <GridItem pt={2}>
                 {breadcrumb}

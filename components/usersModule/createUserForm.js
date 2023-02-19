@@ -28,11 +28,14 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
-    Divider
+    Link,
+    Divider,
+    useDisclosure
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
+import CategoryListModal from "../basicCategoryModal";
 
-function CreateUserForm() {
+function CreateUserForm({data}) {
     const firstName = useRef();
     const lastName = useRef();
     const emailAddress = useRef();
@@ -47,6 +50,11 @@ function CreateUserForm() {
     const [photo, setPhoto] = useState();
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
+
+    const deptModalOpen = useDisclosure();
+    const roleModalOpen = useDisclosure();
+    const userModalOpen = useDisclosure();
+    const specialModalOpen = useDisclosure();
 
     // Generate photo preview
     useEffect(() => {
@@ -142,86 +150,90 @@ function CreateUserForm() {
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
-                                    <FormLabel>Department</FormLabel>
+                                    <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
+                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} /> 
                                     <Select
                                         placeholder="Select Department"
   
                                         ref={department}
                                     >
-                                        {/* {units.map((unit) => {
-                                            if (unit.disabled == false) {
+                                        {data.department.map((dept) => {
+                                            if (dept.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={unit.id}
-                                                        value={unit.name}
+                                                        key={dept.name}
+                                                        value={dept.name}
                                                     >
-                                                        {unit.name}
+                                                        {dept.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
-                                    <FormLabel>Role</FormLabel>
+                                    <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
+                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} />
                                     <Select
                                         placeholder="Select Role"
                                         ref={role}
                                     >
-                                        {/* {units.map((unit) => {
-                                            if (unit.disabled == false) {
+                                        {data.roles.map((roleOption) => {
+                                            if (roleOption.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={unit.id}
-                                                        value={unit.name}
+                                                        key={roleOption.name}
+                                                        value={roleOption.name}
                                                     >
-                                                        {unit.name}
+                                                        {roleOption.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
-                                    <FormLabel>User Type</FormLabel>
+                                    <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
+                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} />
                                     <Select
                                         placeholder="Select User Type"
                                         ref={userType}
                                     >
-                                        {/* {units.map((unit) => {
-                                            if (unit.disabled == false) {
+                                        {data.userTypes.map((type) => {
+                                            if (type.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={unit.id}
-                                                        value={unit.name}
+                                                        key={type.name}
+                                                        value={type.name}
                                                     >
-                                                        {unit.name}
+                                                        {type.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
-                                    <FormLabel>{"Specialty (if Mechanic)"}</FormLabel>
+                                    <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
+                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} />
                                     <Select
                                         placeholder="Select Specialty"
                                         ref={specialty}
                                     >
-                                        {/* {units.map((unit) => {
-                                            if (unit.disabled == false) {
+                                        {data.specialties.map((specialtyOption) => {
+                                            if (specialtyOption.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={unit.id}
-                                                        value={unit.name}
+                                                        key={specialtyOption.id}
+                                                        value={specialtyOption.name}
                                                     >
-                                                        {unit.name}
+                                                        {specialtyOption.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Flex>

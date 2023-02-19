@@ -17,7 +17,23 @@ import { Router, useRouter } from "next/router";
 // import UserCreateForm from "@/components/auth/userCreateForm";
 import CreateUserForm from "@/components/usersModule/createUserForm";
 
-export default function CreateUsersPage() {
+export async function getServerSideProps() {
+  const data = {
+    department: "",
+    roles: "",
+    userTypes: "",
+    specialties: "",
+  }
+
+  data.department = await (await fetch("https://my.api.mockaroo.com/department.json?key=abdcd8e0")).json()
+  data.roles = await (await fetch("https://my.api.mockaroo.com/role.json?key=abdcd8e0")).json()
+  data.userTypes = await (await fetch("https://my.api.mockaroo.com/user_type.json?key=abdcd8e0")).json()
+  data.specialties = await (await fetch("https://my.api.mockaroo.com/specialty.json?key=abdcd8e0")).json()
+  
+  return { props: { data }}
+}
+
+export default function CreateUsersPage({data}) {
   const router = useRouter();
 
   // Temp
@@ -74,13 +90,13 @@ export default function CreateUsersPage() {
         minH="100vh"
         templateColumns={"1fr 7fr"}
         templateRows={"0fr 1fr"}
-        overflowY={"auto"}
+
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
           <Navbar user={user} />
         </GridItem>
 
-        <GridItem colStart={2}>
+        <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
           <Header
             breadcrumb={headerBreadcrumbs()}
             main={headerMain()}
@@ -89,9 +105,9 @@ export default function CreateUsersPage() {
         </GridItem>
 
         {/* Main Content */}
-        <GridItem colStart={2} bg={"blackAlpha.100"}>
+        <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
           {/* <UserCreateForm formName={"Build a Guy"} buttonName={"Create User"} /> */}
-          <CreateUserForm />
+          <CreateUserForm data={data} />
         </GridItem>
       </Grid>
     </>
