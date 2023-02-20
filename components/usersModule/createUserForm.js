@@ -34,8 +34,10 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "../basicCategoryModal";
+import uploadImage from "@/lib/uploadImage";
 
-function CreateUserForm({data}) {
+function CreateUserForm({data, submitFunc}) {
+    const [userID, setUserID] = useState("DAPHNE")
     const firstName = useRef();
     const lastName = useRef();
     const emailAddress = useRef();
@@ -56,18 +58,58 @@ function CreateUserForm({data}) {
     const userModalOpen = useDisclosure();
     const specialModalOpen = useDisclosure();
 
+
+    // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
+    useEffect(() => {
+        submitFunc(passSubmitFunc)
+        console.log("re-render")
+    }, [userID, firstName, lastName, emailAddress, phoneNumber, department, role, userType, specialty, password, confirmPassword, photo])
+
+    function passSubmitFunc() {
+        return submitForm
+    }
+
+    function submitForm() {
+        // console.log("i run")
+        let userData = {
+            userID: userID,
+            firstName: firstName.current.value,
+            lastName: lastName.current.value,
+            email: emailAddress.current.value,
+            phone: phoneNumber.current.value,
+            department: department.current.value,
+            role: role.current.value,
+            userType: userType.current.value,
+            specialty: specialty.current.value,
+            password: password.current.value,
+        }
+        let uploadConfig = {
+            file: photo,
+            params: {
+                public_id: userID,
+                upload_preset: "parts_photos",
+            }
+        }
+
+        let imageRes = uploadImage(uploadConfig)
+        console.log(imageRes)
+    }
+
+
     // Generate photo preview
     useEffect(() => {
-        if (!photo) {
+        if (!inputPhoto.current.files[0]) {
             return
         }
-        const objectUrl = URL.createObjectURL(photo)
+        const objectUrl = URL.createObjectURL(inputPhoto.current.files[0])
         setPreview(objectUrl)
         // free memory when ever this component is unmounted
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
     return (
+        <>
+        
         <Grid templateColumns={"1fr 1.2fr"} px={2} py={5} gap={2}>
             <GridItem>
                 <Card variant={"outline"}>
@@ -123,41 +165,29 @@ function CreateUserForm({data}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel>First Name</FormLabel>
-                                    <Input 
-                                        ref={firstName}
-                                    />
+                                    <Input ref={firstName} />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>Last Name</FormLabel>
-                                    <Input 
-                                        ref={lastName}
-                                    />
+                                    <Input ref={lastName} />
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel>Email</FormLabel>
-                                    <Input 
-                                        ref={emailAddress}
-                                    />
+                                    <Input ref={emailAddress} />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>Phone Number</FormLabel>
-                                    <Input 
-                                        ref={phoneNumber}
-                                    />
+                                    <Input ref={phoneNumber} />
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
                                     <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} /> 
-                                    <Select
-                                        placeholder="Select Department"
-  
-                                        ref={department}
-                                    >
-                                        {data.department.map((dept) => {
+                                    <Select placeholder="Select Department" ref={department}>
+                                        {/* {data.department.map((dept) => {
                                             if (dept.disabled == false) {
                                                 return (
                                                     <option
@@ -168,17 +198,14 @@ function CreateUserForm({data}) {
                                                     </option>
                                                 );
                                             }
-                                        })}
+                                        })} */}
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
                                     <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} />
-                                    <Select
-                                        placeholder="Select Role"
-                                        ref={role}
-                                    >
-                                        {data.roles.map((roleOption) => {
+                                    <Select placeholder="Select Role" ref={role}>
+                                        {/* {data.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
                                                 return (
                                                     <option
@@ -189,7 +216,7 @@ function CreateUserForm({data}) {
                                                     </option>
                                                 );
                                             }
-                                        })}
+                                        })} */}
                                     </Select>
                                 </FormControl>
                             </Flex>
@@ -197,11 +224,8 @@ function CreateUserForm({data}) {
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
                                     <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} />
-                                    <Select
-                                        placeholder="Select User Type"
-                                        ref={userType}
-                                    >
-                                        {data.userTypes.map((type) => {
+                                    <Select placeholder="Select User Type" ref={userType}>
+                                        {/* {data.userTypes.map((type) => {
                                             if (type.disabled == false) {
                                                 return (
                                                     <option
@@ -212,17 +236,14 @@ function CreateUserForm({data}) {
                                                     </option>
                                                 );
                                             }
-                                        })}
+                                        })} */}
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
                                     <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} />
-                                    <Select
-                                        placeholder="Select Specialty"
-                                        ref={specialty}
-                                    >
-                                        {data.specialties.map((specialtyOption) => {
+                                    <Select placeholder="Select Specialty" ref={specialty}>
+                                        {/* {data.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {
                                                 return (
                                                     <option
@@ -233,7 +254,7 @@ function CreateUserForm({data}) {
                                                     </option>
                                                 );
                                             }
-                                        })}
+                                        })} */}
                                     </Select>
                                 </FormControl>
                             </Flex>
@@ -243,22 +264,17 @@ function CreateUserForm({data}) {
                     <CardFooter gap={2}>
                         <FormControl isRequired>
                             <FormLabel>Password</FormLabel>
-                            <Input 
-                                type={"password"}
-                                ref={password}
-                            />
+                            <Input type={"password"} ref={password} />
                         </FormControl>
                         <FormControl isRequired>
                             <FormLabel>Confirm Password</FormLabel>
-                            <Input 
-                                type={"password"}
-                                ref={confirmPassword}
-                            />
+                            <Input type={"password"} ref={confirmPassword} />
                         </FormControl>
                     </CardFooter>
                 </Card>
             </GridItem>
         </Grid>
+        </>
     )
 }
 

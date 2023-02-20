@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Grid,
   GridItem,
@@ -35,7 +36,8 @@ export async function getServerSideProps() {
 
 export default function CreateUsersPage({data}) {
   const router = useRouter();
-
+  const [submitForm, setSubmitForm] = useState();
+  
   // Temp
   const user = {
     firstName: "FirstName",
@@ -43,9 +45,6 @@ export default function CreateUsersPage({data}) {
   };
 
   // Header Functions
-  function submitForm() {
-    console.log("Save User");
-  }
 
   function cancel() {
     router.back();
@@ -83,6 +82,11 @@ export default function CreateUsersPage({data}) {
     );
   }
 
+  // Get submit form function from create user form component
+  function getSubmit(func) {
+    setSubmitForm(func)
+  }
+
   // MAIN
   return (
     <>
@@ -107,7 +111,7 @@ export default function CreateUsersPage({data}) {
         {/* Main Content */}
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
           {/* <UserCreateForm formName={"Build a Guy"} buttonName={"Create User"} /> */}
-          <CreateUserForm data={data} />
+          <CreateUserForm data={data} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>
