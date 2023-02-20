@@ -1,6 +1,13 @@
 import mongoose from "mongoose";
+import { nanoid } from "nanoid";
 
 const DepartmentSchema = new mongoose.Schema({
+    pubId: {
+        type: String,
+        unique: true,
+        required: true,
+        default: nanoid(15),
+    },
     name: {
         type: String,
         unique: true,
