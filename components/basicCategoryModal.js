@@ -25,53 +25,106 @@ import {
     Link,
   } from '@chakra-ui/react';
 import { CloseIcon, CheckIcon } from '@chakra-ui/icons';
+import { nanoid } from 'nanoid';
 
-
-function CategoryListModal({modalOpen, title, options}) {
+function CategoryListModal({modalOpen, title, options, apiPath}) {
     const { isOpen, onClose } = modalOpen;
-    const [isAdd, setIsAdd] = useState(false);
-    const [addName, setAddName] = useState("");
-    const [addStatus, setAddStatus] = useState(false);
+    const [addClicked, setAddClicked] = useState(false);
+    const [saveActivated, setSaveActivated] = useState(false);
+    const [newCategory, setNewCategory] = useState({
+        id: "",
+        name: "",
+        disabled: false,
+    })
+    const [newOptions, setNewOptions] = useState(options || []); 
 
-    const [isEdit, setIsEdit] = useState("")
-    const [editName, setEditName] = useState("");
-    const [editStatus, setEditStatus] = useState(false);
-    const [numChanges, setNumChanges] = useState(0);
-
-    function closeAdd() {
-        setAddName("");
-        setAddStatus(false)
-        setIsAdd(false);
-    }
-
-    // TO-DO
-    function saveAdd() {
-        setAddName("");
-        setAddStatus(false)
-        setIsAdd(false);
-        setNumChanges(numChanges+1);
+    function openAdd() {
+        setAddClicked(true)
+        setNewCategory((prevState) => ({
+            ...prevState,
+            id: nanoid(15),
+            name: "",
+            disabled: false,
+        }))
     }
 
     function enableEdit(option) {
-        setIsEdit(option.name);
-        setEditStatus(option.disabled)
+        setNewCategory(option)
+        setAddClicked(false)
     }
     
-    function closeEdit() {
-        setIsEdit("");
-        setEditName("");
+    function closeAdd() {
+        clearNewCategory();
+        setAddClicked(false);
     }
 
-    // TO-DO
+    function clearNewCategory() {
+		setNewCategory((prevState) => ({
+			...prevState,
+            id: "",
+            name: "",
+			disabled: false,
+		}));
+	}
+
+    function saveAdd() {
+        if (JSON.stringify(newOptions[0]) == "{}") {
+			newOptions.shift();
+		}
+        setNewOptions((newOptions) => [...newOptions, newCategory]);
+        clearNewCategory();
+        setAddClicked(false);
+
+        if (!saveActivated) {
+            setSaveActivated(true)
+        }
+    }
+    
     function saveEdit() {
-        setIsEdit("");
-        setEditName("");
-        setNumChanges(numChanges+1);
+        setNewOptions(
+            newOptions.map(option => 
+                option.id == newCategory.id
+                ? {...option, name: newCategory.name, disabled: newCategory.disabled}
+                : option
+            )
+        )
+        clearNewCategory()
+        setSaveActivated(activateSave())
+    }
+
+    function InOriginal(newOption) {
+        return options.some(option => option.name == newOption.name && option.disabled == newOption.disabled)
+    }
+
+    function activateSave() {
+        return newOptions.every((newOption) => InOriginal(newOption))
     }
 
     // TO-DO
     function saveChanges() {
-        console.log("Save changes to backend")
+        let newArr = []
+        let editArr = []
+        newOptions.forEach((newOption) => {
+            if (!InOriginal(newOption)) {
+                if (options.find((option) => option.id == newOption.id)) 
+                    editArr.push(newOption)
+                else newArr.push(newOption)
+            }
+            
+        })
+
+        let categoryData = {
+            additions: newArr,
+            edits: editArr,
+        }
+        fetch(apiPath, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"            
+            },
+            body: JSON.stringify(categoryData)
+        })
+    
     }
 
     return (
@@ -90,19 +143,19 @@ function CategoryListModal({modalOpen, title, options}) {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {options.map((option) => {
-                        if (option.name == isEdit) {
+                    {newOptions.map((option) => {
+                        if (option.id == newCategory.id) {
                             return (
                                 <Tr>
-                                    <Td><Switch isChecked={!editStatus} onChange={() => setEditStatus(!editStatus)} alignSelf={"center"} /></Td>
+                                    <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} alignSelf={"center"} /></Td>
                                     <Td display={"flex"} alignItems={"center"} gap={3}>
-                                        <Input placeholder={option.name} value={editName} onChange={(e) => setEditName(e.target.value)} />
-                                        {editName != "" ? (
+                                        <Input placeholder={option.name} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />
+                                        {newCategory.name != "" && newCategory.name != option.name || newCategory.disabled != option.disabled ? (
                                             <>
-                                                <IconButton aria-label={"Cancel Edit"} icon={<CloseIcon />} onClick={() => closeEdit()}></IconButton>
+                                                <IconButton aria-label={"Cancel Edit"} icon={<CloseIcon />} onClick={() => clearNewCategory()}></IconButton>
                                                 <IconButton aria-label={"Save Changes"} icon={<CheckIcon />} onClick={() => saveEdit()}></IconButton>
                                             </>
-                                            ) : (<IconButton aria-label={"Cancel Edit"} icon={<CloseIcon />} onClick={() => closeEdit()}></IconButton>)
+                                            ) : (<IconButton aria-label={"Cancel Edit"} icon={<CloseIcon />} onClick={() => clearNewCategory()}></IconButton>)
                                         }
                                     </Td>
                                 </Tr> 
@@ -116,13 +169,13 @@ function CategoryListModal({modalOpen, title, options}) {
                                     </Tr>
                             )
                     })}
-                    { isAdd ? (
+                    { addClicked ? (
                         <>                        
                             <Tr>
-                                <Td><Switch isChecked={!addStatus} onChange={() => setAddStatus(!addStatus)} /></Td>
+                                <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} /></Td>
                                 <Td display={"flex"} alignItems={"center"} gap={3}>
-                                    <Input placeholder={`Enter New Option`} value={addName} onChange={(e) => setAddName(e.target.value)} />
-                                    {addName != "" ? (
+                                    <Input placeholder={`Enter New Option`} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />
+                                    {newCategory.name != "" ? (
                                         <>
                                             <IconButton aria-label={"Cancel Edit"} icon={<CloseIcon />} onClick={() => closeAdd()}></IconButton>
                                             <IconButton aria-label={"Save Changes"} icon={<CheckIcon />} onClick={() => saveAdd()}></IconButton>
@@ -144,8 +197,8 @@ function CategoryListModal({modalOpen, title, options}) {
               <Button colorScheme='blue' mr={3} onClick={onClose}>
                 Close
               </Button>
-              <Button variant='ghost' onClick={() => setIsAdd(true)}>Add Option</Button>
-              {numChanges > 0 ? (<Button variant='ghost' onClick={() => saveChanges()}>Save Changes</Button>) : (<></>)}
+              <Button variant='ghost' onClick={() => openAdd()}>Add Option</Button>
+              {saveActivated ? (<Button variant='ghost' onClick={() => saveChanges()}>Save Changes</Button>) : (<></>)}
 
             </ModalFooter>
           </ModalContent>

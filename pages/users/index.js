@@ -13,7 +13,7 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-import { COLUMNS } from "@/components/usersModule/usersColumns";
+import { COLUMNS } from "@/components/layouts/users/usersColumns";
 import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";

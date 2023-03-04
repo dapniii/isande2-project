@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
-import Specialty from "@/models/users/Specialty";
+import Specialty from "@/models/users/SpecialtySchema";
 
 export default async (req, res) => {
     await connectToDatabase();

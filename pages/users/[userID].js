@@ -15,7 +15,7 @@ import Header from "@/components/header";
 import { BackButton, EditButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 
-import ViewUserForm from "@/components/usersModule/viewUserForm";
+import ViewUserForm from "@/components/layouts/users/viewUserForm";
 
 export default function UserDetails() {
   const router = useRouter();

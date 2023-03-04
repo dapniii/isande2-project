@@ -15,26 +15,30 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-// import UserCreateForm from "@/components/auth/userCreateForm";
-import CreateUserForm from "@/components/usersModule/createUserForm";
+import CreateUserForm from "@/components/layouts/users/createUserForm";
+import { userApi } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const data = {
-    department: "",
-    roles: "",
-    userTypes: "",
-    specialties: "",
+
+  const categoryList = {
+    department: [],
+    roles: [],
+    userTypes: [],
+    specialties: [],
   }
 
-  data.department = await (await fetch("https://my.api.mockaroo.com/department.json?key=abdcd8e0")).json()
-  data.roles = await (await fetch("https://my.api.mockaroo.com/role.json?key=abdcd8e0")).json()
-  data.userTypes = await (await fetch("https://my.api.mockaroo.com/user_type.json?key=abdcd8e0")).json()
-  data.specialties = await (await fetch("https://my.api.mockaroo.com/specialty.json?key=abdcd8e0")).json()
+  const res = await fetch(userApi.get_categories)
+  const data = await res.json()
   
-  return { props: { data }}
+  categoryList.department = data.props.departments
+  categoryList.roles = data.props.roles
+  categoryList.userTypes = data.props.userTypes
+  categoryList.specialties = data.props.specialties
+  
+  return { props: { categoryList }}
 }
 
-export default function CreateUsersPage({data}) {
+export default function CreateUsersPage({categoryList}) {
   const router = useRouter();
   const [submitForm, setSubmitForm] = useState();
   
@@ -111,7 +115,7 @@ export default function CreateUsersPage({data}) {
         {/* Main Content */}
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
           {/* <UserCreateForm formName={"Build a Guy"} buttonName={"Create User"} /> */}
-          <CreateUserForm data={data} submitFunc={getSubmit} />
+          <CreateUserForm data={categoryList} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>

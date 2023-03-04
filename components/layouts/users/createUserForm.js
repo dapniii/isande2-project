@@ -33,8 +33,9 @@ import {
     useDisclosure
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import CategoryListModal from "../basicCategoryModal";
+import CategoryListModal from "@/components/basicCategoryModal";
 import uploadImage from "@/lib/uploadImage";
+import { userApi } from "@/lib/routes";
 
 function CreateUserForm({data, submitFunc}) {
     const [userID, setUserID] = useState("DAPHNE")
@@ -93,6 +94,7 @@ function CreateUserForm({data, submitFunc}) {
 
         let imageRes = uploadImage(uploadConfig)
         console.log(imageRes)
+
     }
 
 
@@ -185,7 +187,7 @@ function CreateUserForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
-                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} /> 
+                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userApi.create_department} /> 
                                     <Select placeholder="Select Department" ref={department}>
                                         {/* {data.department.map((dept) => {
                                             if (dept.disabled == false) {
@@ -203,7 +205,7 @@ function CreateUserForm({data, submitFunc}) {
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
-                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} />
+                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userApi.create_role} />
                                     <Select placeholder="Select Role" ref={role}>
                                         {/* {data.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
@@ -223,7 +225,7 @@ function CreateUserForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
-                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} />
+                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userApi.create_user_type} />
                                     <Select placeholder="Select User Type" ref={userType}>
                                         {/* {data.userTypes.map((type) => {
                                             if (type.disabled == false) {
@@ -241,7 +243,7 @@ function CreateUserForm({data, submitFunc}) {
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
-                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} />
+                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userApi.create_specialties} />
                                     <Select placeholder="Select Specialty" ref={specialty}>
                                         {/* {data.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {

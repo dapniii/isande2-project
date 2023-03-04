@@ -21,6 +21,6 @@ const SpecialtySchema = new mongoose.Schema({
     }
 })
 
-const Specialty = mongoose.models.SpecialtySchema || mongoose.model("Specialty", Specialty)
+const Specialty = mongoose.models.Specialty || mongoose.model("Specialty", SpecialtySchema)
 
 export default Specialty;

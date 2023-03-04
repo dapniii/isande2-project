@@ -6,7 +6,6 @@ const DepartmentSchema = new mongoose.Schema({
         type: String,
         unique: true,
         required: true,
-        default: nanoid(15),
     },
     name: {
         type: String,
@@ -21,6 +20,6 @@ const DepartmentSchema = new mongoose.Schema({
     }
 })
 
-const Department = mongoose.models.Department || mongoose.model("Department", Department)
+const Department = mongoose.models.Department || mongoose.model("Department", DepartmentSchema)
 
 export default Department;
