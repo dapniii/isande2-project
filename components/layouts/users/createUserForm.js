@@ -34,11 +34,12 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import uploadImage from "@/lib/uploadImage";
+import uploadImage from "@/lib/imageHandler";
 import { userApi } from "@/lib/routes";
+import { nanoid } from "nanoid";
 
 function CreateUserForm({data, submitFunc}) {
-    const [userID, setUserID] = useState("DAPHNE")
+    const [userID, setUserID] = useState(nanoid(20))
     const firstName = useRef();
     const lastName = useRef();
     const emailAddress = useRef();
@@ -63,17 +64,26 @@ function CreateUserForm({data, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-        console.log("re-render")
     }, [userID, firstName, lastName, emailAddress, phoneNumber, department, role, userType, specialty, password, confirmPassword, photo])
 
     function passSubmitFunc() {
         return submitForm
     }
 
-    function submitForm() {
-        // console.log("i run")
+    async function submitForm() {
+        let uploadConfig = {
+            file: photo,
+            params: {
+                public_id: userID,
+                folder: "parts",
+                type: "authenticated",
+            }
+        }
+        let imageRes = await uploadImage(uploadConfig)
+        console.log(imageRes)
         let userData = {
             userID: userID,
+            photo: uploadConfig.params,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
             email: emailAddress.current.value,
@@ -84,16 +94,8 @@ function CreateUserForm({data, submitFunc}) {
             specialty: specialty.current.value,
             password: password.current.value,
         }
-        let uploadConfig = {
-            file: photo,
-            params: {
-                public_id: userID,
-                upload_preset: "parts_photos",
-            }
-        }
 
-        let imageRes = uploadImage(uploadConfig)
-        console.log(imageRes)
+
 
     }
 

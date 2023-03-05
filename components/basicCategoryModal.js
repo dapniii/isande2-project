@@ -100,7 +100,6 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
         return newOptions.every((newOption) => InOriginal(newOption))
     }
 
-    // TO-DO
     function saveChanges() {
         let newArr = []
         let editArr = []
