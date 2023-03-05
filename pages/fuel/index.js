@@ -15,7 +15,7 @@ export default function FuelPage() {
   };
 
   function addFuelEntry() {
-    router.push("/fuel/addFuel");
+    router.push("/fuel/add-fuel");
   }
 
   function headerBreadcrumbs() {
