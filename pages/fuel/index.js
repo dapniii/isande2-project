@@ -1,7 +1,7 @@
-export default function FuelPage() {
-  return (
-    <div>
-      <h1>This is the Fuel page</h1>
-    </div>
-  );
-}
+import Navbar from "@/components/navbar";
+import Header from "@/components/header";
+import { AddButton } from "@/components/buttons";
+import { useRouter } from "next/router";
+import { Grid, GridItem, Flex, Text } from "@chakra-ui/react";
+
+
