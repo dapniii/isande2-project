@@ -17,9 +17,10 @@ import { COLUMNS } from "@/components/layouts/users/usersColumns";
 import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
+import { userApi } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const res = await fetch("https://my.api.mockaroo.com/users.json?key=abdcd8e0")
+  const res = await fetch(userApi.get_all_users)
   const data = await res.json()
 
   return { props: { data }}
@@ -107,7 +108,7 @@ export default function UsersPage({data}) {
             COLUMNS={COLUMNS}
             DATA={data}
             FILTERS={filters}
-            HIDDEN={["name", "role", "department", "userType"]}
+            HIDDEN={["firstName", "lastName", "role", "department"]}
           />        
         </GridItem>
       </Grid>

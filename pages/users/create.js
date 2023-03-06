@@ -19,14 +19,13 @@ import CreateUserForm from "@/components/layouts/users/createUserForm";
 import { userApi } from "@/lib/routes";
 
 export async function getServerSideProps() {
-
   const categoryList = {
     department: [],
     roles: [],
     userTypes: [],
     specialties: [],
   }
-
+  
   const res = await fetch(userApi.get_categories)
   const data = await res.json()
   

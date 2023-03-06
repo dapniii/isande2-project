@@ -30,13 +30,16 @@ import {
     NumberDecrementStepper,
     Link,
     Divider,
-    useDisclosure
+    useDisclosure,
+    Box,
+    Img,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import uploadImage from "@/lib/imageHandler";
+import { fetchImage, uploadImage } from "@/lib/imageHandler";
 import { userApi } from "@/lib/routes";
 import { nanoid } from "nanoid";
+import { AdvancedImage } from "@cloudinary/react";
 
 function CreateUserForm({data, submitFunc}) {
     const [userID, setUserID] = useState(nanoid(20))
@@ -45,7 +48,7 @@ function CreateUserForm({data, submitFunc}) {
     const emailAddress = useRef();
     const phoneNumber = useRef();
     const department = useRef();
-    const role = useRef();
+    const [role, setRole] = useState("");
     const userType = useRef();
     const specialty = useRef();
     const password = useRef();
@@ -60,6 +63,7 @@ function CreateUserForm({data, submitFunc}) {
     const userModalOpen = useDisclosure();
     const specialModalOpen = useDisclosure();
 
+    
 
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
@@ -75,28 +79,35 @@ function CreateUserForm({data, submitFunc}) {
             file: photo,
             params: {
                 public_id: userID,
-                folder: "parts",
-                type: "authenticated",
+                folder: "users",
+                // type: "private",
             }
         }
         let imageRes = await uploadImage(uploadConfig)
         console.log(imageRes)
         let userData = {
-            userID: userID,
-            photo: uploadConfig.params,
+            employeeID: userID,
+            photo: imageRes.secure_url,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
             email: emailAddress.current.value,
-            phone: phoneNumber.current.value,
+            phoneNumber: phoneNumber.current.value,
             department: department.current.value,
-            role: role.current.value,
+            role: role,
             userType: userType.current.value,
             specialty: specialty.current.value,
             password: password.current.value,
         }
 
+        let result = await fetch(userApi.create_user, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(userData),
+        })
 
-
+        console.log(result)
     }
 
 
@@ -108,6 +119,7 @@ function CreateUserForm({data, submitFunc}) {
         const objectUrl = URL.createObjectURL(inputPhoto.current.files[0])
         setPreview(objectUrl)
         // free memory when ever this component is unmounted
+        
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
@@ -116,6 +128,7 @@ function CreateUserForm({data, submitFunc}) {
         
         <Grid templateColumns={"1fr 1.2fr"} px={2} py={5} gap={2}>
             <GridItem>
+                
                 <Card variant={"outline"}>
                     <CardHeader><Text fontSize={"xl"} fontWeight={"bold"}>Profile Picture</Text></CardHeader>
                     <Divider />
@@ -190,26 +203,28 @@ function CreateUserForm({data, submitFunc}) {
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
                                     <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userApi.create_department} /> 
-                                    <Select placeholder="Select Department" ref={department}>
-                                        {/* {data.department.map((dept) => {
+                                    <Select ref={department}>
+                                        <option selected hidden disabled value="" default>Select Department</option>
+                                        {data.department.map((dept) => {
                                             if (dept.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={dept.name}
+                                                        key={dept.pubId}
                                                         value={dept.name}
                                                     >
                                                         {dept.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
                                     <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userApi.create_role} />
-                                    <Select placeholder="Select Role" ref={role}>
-                                        {/* {data.roles.map((roleOption) => {
+                                    <Select value={role} onChange={(e) => setRole(e.target.value)}>
+                                        <option selected hidden disabled value="" default>Select Department</option>
+                                        {data.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
                                                 return (
                                                     <option
@@ -220,7 +235,7 @@ function CreateUserForm({data, submitFunc}) {
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Flex>
@@ -228,37 +243,39 @@ function CreateUserForm({data, submitFunc}) {
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
                                     <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userApi.create_user_type} />
-                                    <Select placeholder="Select User Type" ref={userType}>
-                                        {/* {data.userTypes.map((type) => {
+                                    <Select ref={userType}>
+                                        <option selected hidden disabled value="" default>Select User Type</option>
+                                        {data.userTypes.map((type) => {
                                             if (type.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={type.name}
+                                                        key={type.pubId}
                                                         value={type.name}
                                                     >
                                                         {type.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
-                                <FormControl isRequired>
+                                <FormControl>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
                                     <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userApi.create_specialties} />
-                                    <Select placeholder="Select Specialty" ref={specialty}>
-                                        {/* {data.specialties.map((specialtyOption) => {
+                                    <Select ref={specialty} disabled={role != "Mechanic"}>
+                                        <option selected hidden disabled value="" default>Select Specialty</option>
+                                        {data.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={specialtyOption.id}
+                                                        key={specialtyOption.pubId}
                                                         value={specialtyOption.name}
                                                     >
                                                         {specialtyOption.name}
                                                     </option>
                                                 );
                                             }
-                                        })} */}
+                                        })}
                                     </Select>
                                 </FormControl>
                             </Flex>

@@ -7,7 +7,6 @@ import UserType from "@/models/users/UserTypeSchema";
 export default async (req, res) => {
     await connectToDatabase();
 
-
     let departments = await Department.find(
         {},
         {
@@ -19,8 +18,6 @@ export default async (req, res) => {
     let roles = await Role.find({})
     let specialties = await Specialty.find({})
     let userTypes = await UserType.find({})
-
-    console.log(departments)
 
     res.json({
         props: {
