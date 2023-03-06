@@ -8,13 +8,15 @@ import { COLUMNS } from "@/components/layouts/fuel/fuelColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 
+
+/* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
 export async function getServerSideProps() {
   const res = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
   const fuelData = await res.json()
 
   const category = {
-    refuelType: ["Refuel Tank"]
+    refuelType: [{name:'Refuel Tank'}]
   }
 
   let data = {
