@@ -8,13 +8,13 @@ import { COLUMNS } from "@/components/layouts/fuel/fuelColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 
-//add param {data}
+//To be Revised
 export async function getServerSideProps() {
   const res = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
   const fuelData = await res.json()
 
   const category = {
-    refuelType: ['Refuel Truck', 'Refuel Tank']
+    refuelType: ["Refuel Tank"]
   }
 
   let data = {
@@ -25,6 +25,7 @@ export async function getServerSideProps() {
   return { props: { data } }
   
 }
+//***************************************************************************************/
 
 export default function FuelPage({ data }) {
   const router = useRouter();
@@ -60,8 +61,8 @@ export default function FuelPage({ data }) {
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <Dropdown
-          title="Refuel Type"
-          options={[data.categories.refuelType[0], data.categories.refuelType[1]]}
+          title="Refuel Tank"
+          options={data.categories.refuelType}
           id="refuelType"
           name="name"
           filter={filter}
