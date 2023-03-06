@@ -17,11 +17,30 @@ import { COLUMNS } from "@/components/layouts/users/usersColumns";
 import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
-import { userApi } from "@/lib/routes";
+import { userAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const res = await fetch(userApi.get_all_users)
-  const data = await res.json()
+  const resUsers = await fetch(userAPI.get_all_users)
+  const userData = await resUsers.json()
+
+  const categoryList = {
+    department: [],
+    roles: [],
+    userTypes: [],
+    specialties: [],
+  }
+  const resCat = await fetch(userAPI.get_categories)
+  const catData = await resCat.json()
+
+  categoryList.departments = catData.props.departments
+  categoryList.roles = catData.props.roles
+  categoryList.userTypes = catData.props.userTypes
+  categoryList.specialties = catData.props.specialties
+
+  let data = {
+    users: userData,
+    categories: categoryList,
+  }
 
   return { props: { data }}
 }
@@ -62,23 +81,26 @@ export default function UsersPage({data}) {
           setFilter={setGlobalFilter} 
         />
         <Dropdown 
-          title="Role"
+          title="Roles"
+          options={data.categories.roles}
           id="role"
-          name="role"
+          name="name"
           filter={filter}
           setFilter={setFilter}
         />
         <Dropdown 
-          title="Department"
+          title="Departments"
+          options={data.categories.departments}
           id="department"
-          name="department"
+          name="name"
           filter={filter}
           setFilter={setFilter}
         />
         <Dropdown 
-          title="User Type"
+          title="User Types"
+          options={data.categories.userTypes}
           id="userType"
-          name="userType"
+          name="name"
           filter={filter}
           setFilter={setFilter}
         />
@@ -106,9 +128,9 @@ export default function UsersPage({data}) {
         <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
           <BasicTable 
             COLUMNS={COLUMNS}
-            DATA={data}
+            DATA={data.users}
             FILTERS={filters}
-            HIDDEN={["firstName", "lastName", "role", "department"]}
+            HIDDEN={["firstName", "lastName", "department", "specialty"]}
           />        
         </GridItem>
       </Grid>

@@ -142,10 +142,10 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {newOptions.map((option) => {
+                    {newOptions.map((option, index) => {
                         if (option.id == newCategory.id) {
                             return (
-                                <Tr>
+                                <Tr key={index}>
                                     <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} alignSelf={"center"} /></Td>
                                     <Td display={"flex"} alignItems={"center"} gap={3}>
                                         <Input placeholder={option.name} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />
@@ -162,7 +162,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                         }
                         else 
                             return (
-                                    <Tr onClick={() => enableEdit(option)} cursor={"pointer"}>
+                                    <Tr key={index} onClick={() => enableEdit(option)} cursor={"pointer"}>
                                         { option.disabled == false ? (<Td color={"green.300"}>⬤</Td>) : (<Td color={"red.300"}>⬤</Td>)}
                                         <Td>{option.name}</Td>
                                     </Tr>
@@ -170,7 +170,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                     })}
                     { addClicked ? (
                         <>                        
-                            <Tr>
+                            <Tr key={index}>
                                 <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} /></Td>
                                 <Td display={"flex"} alignItems={"center"} gap={3}>
                                     <Input placeholder={`Enter New Option`} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />

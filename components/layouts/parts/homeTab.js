@@ -8,9 +8,9 @@ import {
     StatGroup,
 } from '@chakra-ui/react'
 import { COLUMNS } from './partsColumns'
-import BasicTable from '../table/basicTable'
-import GlobalFilter from '../table/globalFilter'
-import Dropdown from '../table/dropdown'
+import BasicTable from '@/components/table/basicTable'
+import GlobalFilter from '@/components/table/globalFilter'
+import Dropdown from '@/components/table/dropdown'
 
 export default function PartsHomeTab({data}) {
 
@@ -69,12 +69,12 @@ export default function PartsHomeTab({data}) {
                     </StatHelpText>
                 </Stat>
             </StatGroup>
-            <BasicTable 
+            {/* <BasicTable 
               COLUMNS={COLUMNS} 
               DATA={data} 
               FILTERS={filters}
               HIDDEN={["code", "model", "name", "status"]}
-            />
+            /> */}
         </Flex>
     )
 }
