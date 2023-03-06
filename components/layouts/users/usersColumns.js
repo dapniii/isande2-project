@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Flex, Grid, GridItem, Image, Button } from "@chakra-ui/react";
+import { Text, Flex, Grid, GridItem, Image, Button, propNames } from "@chakra-ui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 import GlobalFilter from "@/components/table/globalFilter";
@@ -61,8 +61,7 @@ export const COLUMNS = [
             />
             <Flex flexDirection={"column"} ml={"2em"}>
               <Text fontWeight={"semibold"}>{props.row.original.firstName + " " + props.row.original.lastName}</Text>
-              <Text fontSize={"sm"}>{props.row.original.department}</Text> 
-              <Text fontSize={"xs"}>{props.row.original.role}</Text>         
+              <Text fontSize={"sm"}>{props.row.original.department}</Text>          
             </Flex>
           </Flex>
         )
@@ -117,6 +116,14 @@ export const COLUMNS = [
             filterValue.includes(row.values[id])
         );
       },
+      Cell: (props) => {
+        return (
+          <Flex flexDirection={"column"}>
+            <Text>{props.row.original.role}</Text>
+            <Text fontSize={"sm"} color={"gray"}>{props.row.original.specialty}</Text>
+          </Flex>
+        )
+      }
     },
     {
         Header: "User Type",

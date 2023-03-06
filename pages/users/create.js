@@ -59,7 +59,7 @@ export default function CreateUsersPage({categoryList}) {
         <BreadcrumbItem>
           <BreadcrumbLink href="/users">
             <Text as="u" color="#005DF2">
-              Home
+              Users
             </Text>
           </BreadcrumbLink>
         </BreadcrumbItem>
