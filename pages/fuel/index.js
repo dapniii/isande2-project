@@ -79,7 +79,7 @@ export default function FuelPage({ data }) {
         {/* ADD GRAPH */}
 
         {/* Fuel Data Table */}
-        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflow={"auto"}>
+        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
           <BasicTable
             COLUMNS={COLUMNS}
             DATA={data}
