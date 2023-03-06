@@ -54,16 +54,15 @@ export const COLUMNS = [
           <Flex alignItems={"center"}>
             <Text fontWeight={"semibold"} mr={"1em"}>{props.row.index + 1}</Text>
             <Image src={props.row.original.photo} 
-              alt={props.row.original.name}
+              alt={props.row.original.firstName + " " + props.row.original.lastName}
               boxSize={"3.5em"} 
               borderRadius={"full"}
               border={"2px solid #9F9F9F"}
             />
             <Flex flexDirection={"column"} ml={"2em"}>
-              {/* <Button onClick={() => console.log(props.row)}></Button> */}
-              <Text fontWeight={"semibold"}>{props.row.original.name}</Text>
+              <Text fontWeight={"semibold"}>{props.row.original.firstName + " " + props.row.original.lastName}</Text>
               <Text fontSize={"sm"}>{props.row.original.department}</Text> 
-              <Text fontSize={"xs"}>{props.row.original.role} {props.row.original.userType}</Text>         
+              <Text fontSize={"xs"}>{props.row.original.role}</Text>         
             </Flex>
           </Flex>
         )
@@ -71,9 +70,15 @@ export const COLUMNS = [
       width: 200,
     },
     {
-      Header: "Name",
-      id: "name",
-      accessor: "name",
+      Header: "",
+      id: "firstName",
+      accessor: "firstName",
+      filter: GlobalFilter,
+    },
+    {
+      Header: "",
+      id: "lastName",
+      accessor: "lastName",
       filter: GlobalFilter,
     },
     {
@@ -84,8 +89,8 @@ export const COLUMNS = [
     },
     {
       Header: "Phone Number",
-      id: "phoneNumber",
-      accessor: "phoneNumber",
+      id: "phone",
+      accessor: "phone",
     },
     {
       Header: "Department",

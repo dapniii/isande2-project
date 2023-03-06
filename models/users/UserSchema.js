@@ -8,6 +8,9 @@ const UserSchema = new mongoose.Schema({
         required: true,
         default: nanoid(15),
     },
+    photo: {
+        type: String,
+    },
     firstName: {
         type: String,
         required: true,
@@ -23,8 +26,8 @@ const UserSchema = new mongoose.Schema({
         required: true,
         maxLenght: 50,
     },
-    phoneNumber: {
-        type: Number,
+    phone: {
+        type: String,
         required: true,
     },
     department: {
@@ -42,9 +45,12 @@ const UserSchema = new mongoose.Schema({
     specialty: {
         type: String,
     },
+    password: {
+        type: String,
+        required: true,
+    },
     disabled: {
         type: Boolean,
-        required: true,
         default: false,
     }
 })
