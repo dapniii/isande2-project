@@ -16,7 +16,7 @@ export async function getServerSideProps() {
   const fuelData = await res.json()
 
   const category = {
-    refuelType: [{name:'Refuel Tank'}]
+    refuelType: [{name:'Refuel Truck'}]
   }
 
   let data = {
