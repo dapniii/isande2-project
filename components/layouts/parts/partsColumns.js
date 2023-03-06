@@ -2,7 +2,7 @@ import React from "react";
 import { Text, Flex, Grid, GridItem, Image } from "@chakra-ui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
-import GlobalFilter from "../table/globalFilter";
+import GlobalFilter from "@/components/table/globalFilter";
 
 export const COLUMNS = [
     {

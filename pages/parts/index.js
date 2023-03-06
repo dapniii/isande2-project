@@ -13,7 +13,7 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
-import PartsHomeTab from "@/components/partsModule/homeTab";
+import PartsHomeTab from "@/components/layouts/parts/homeTab";
 
 export async function getServerSideProps() {
   const res = await fetch(`https://my.api.mockaroo.com/spare_parts.json?key=abdcd8e0`)

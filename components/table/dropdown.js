@@ -21,25 +21,12 @@ export const Dropdown = ({
                 onChange={(e) => setFilter(e.target.name, e.target.value || "")}
                 border={"1px solid #9F9F9F"}
             >
-                {/* TEMPORARY HARDCODE */}
-                <option value="" key="00000" defaultValue>
-                    All {title}
-                </option>
-
-                <option key="Low Stock" value="Low Stock">
-                    Low Stock
-                </option>
-                <option key="Under Chassis" value="Under Chassis">
-                    Under Chassis
-                </option>
-                <option key="Electrical" value="Electrical">
-                    Electrical
-                </option>
-                {/* {options.map((option) => (
-                    <option key={option[id]} value={option[name]}>
+                <option key="00000" value="" defaultValue>All {title}</option>
+                {options.map((option) => (
+                    <option key={option[name]} value={option[name]}>
                         {option[name]}
                     </option>
-                ))} */}
+                ))}
             </Select>
         </>
     )

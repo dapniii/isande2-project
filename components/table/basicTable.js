@@ -132,16 +132,6 @@ function BasicTable({
                     ])}
                   >
                     {column.render("Header")}
-                    {/* Add a sort direction indicator */}
-                    {/* {column.isSorted ? (
-                      column.isSortedDesc ? (
-                        <ChevronDownIcon ml={1} w={4} h={4} />
-                      ) : (
-                        <ChevronUpIcon ml={1} w={4} h={4} />
-                      )
-                    ) : (
-                      ""
-                    )} */}
                   </Th>
                 ))}
               </Tr>
@@ -180,10 +170,6 @@ function BasicTable({
                         )}>{cell.render("Cell")}</Td>
                       )
                     }  
-                    // return (
-                    //   <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                    // )
-                    
                   })}
                 </Tr>
               );
