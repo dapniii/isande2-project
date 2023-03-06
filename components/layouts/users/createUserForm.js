@@ -36,8 +36,8 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import { fetchImage, uploadImage } from "@/lib/imageHandler";
-import { userApi } from "@/lib/routes";
+import { uploadImage } from "@/lib/imageHandler";
+import { userAPI } from "@/lib/routes";
 import { nanoid } from "nanoid";
 import { AdvancedImage } from "@cloudinary/react";
 
@@ -99,7 +99,7 @@ function CreateUserForm({data, submitFunc}) {
             password: password.current.value,
         }
 
-        let result = await fetch(userApi.create_user, {
+        let result = await fetch(userAPI.create_user, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -202,7 +202,7 @@ function CreateUserForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
-                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userApi.create_department} /> 
+                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userAPI.modify_department} /> 
                                     <Select ref={department}>
                                         <option defaultValue value="" hidden disabled>Select Department</option>
                                         {data.department.map((dept) => {
@@ -221,7 +221,7 @@ function CreateUserForm({data, submitFunc}) {
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
-                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userApi.create_role} />
+                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userAPI.modify_role} />
                                     <Select value={role} onChange={(e) => setRole(e.target.value)}>
                                         <option defaultValue value="" hidden disabled>Select Role</option>
                                         {data.roles.map((roleOption) => {
@@ -242,7 +242,7 @@ function CreateUserForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
-                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userApi.create_user_type} />
+                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} />
                                     <Select ref={userType}>
                                         <option defaultValue value="" hidden disabled>Select User Type</option>
                                         {data.userTypes.map((type) => {
@@ -261,7 +261,7 @@ function CreateUserForm({data, submitFunc}) {
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
-                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userApi.create_specialties} />
+                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userAPI.modify_specialties} />
                                     <Select ref={specialty} disabled={role != "Mechanic"}>
                                         <option defaultValue value="" hidden disabled >Select Specialty</option>
                                         {data.specialties.map((specialtyOption) => {

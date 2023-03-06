@@ -17,10 +17,10 @@ import { COLUMNS } from "@/components/layouts/users/usersColumns";
 import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
-import { userApi } from "@/lib/routes";
+import { userAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const resUsers = await fetch(userApi.get_all_users)
+  const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
 
   const categoryList = {
@@ -29,7 +29,7 @@ export async function getServerSideProps() {
     userTypes: [],
     specialties: [],
   }
-  const resCat = await fetch(userApi.get_categories)
+  const resCat = await fetch(userAPI.get_categories)
   const catData = await resCat.json()
 
   categoryList.departments = catData.props.departments

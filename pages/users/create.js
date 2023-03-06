@@ -16,7 +16,7 @@ import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import CreateUserForm from "@/components/layouts/users/createUserForm";
-import { userApi } from "@/lib/routes";
+import { userAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
   const categoryList = {
@@ -26,7 +26,7 @@ export async function getServerSideProps() {
     specialties: [],
   }
   
-  const res = await fetch(userApi.get_categories)
+  const res = await fetch(userAPI.get_categories)
   const data = await res.json()
   
   categoryList.department = data.props.departments
@@ -97,7 +97,6 @@ export default function CreateUsersPage({categoryList}) {
         minH="100vh"
         templateColumns={"1fr 7fr"}
         templateRows={"0fr 1fr"}
-
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
           <Navbar user={user} />
