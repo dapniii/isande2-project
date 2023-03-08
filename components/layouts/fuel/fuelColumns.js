@@ -4,6 +4,12 @@ import GlobalFilter from "@/components/table/globalFilter";
 
 export const COLUMNS = [
   {
+    Header: "Refuel Type",
+    id: "refuelType",
+    accessor: "refuelType",
+    filter: GlobalFilter,
+  },
+  {
     Header: "Date & Time",
     id: "dateTime",
     accessor: "dateTime",
