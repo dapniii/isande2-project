@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
-import { nanoid } from "nanoid";
+import { customAlphabet } from "nanoid";
+import alphanumeric from "nanoid-dictionary/alphanumeric";
 
 const DepartmentSchema = new mongoose.Schema({
     pubId: {
         type: String,
         unique: true,
         required: true,
+        minLenght: 5,
+        default: customAlphabet(alphanumeric, 5),
     },
     name: {
         type: String,

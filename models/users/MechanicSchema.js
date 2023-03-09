@@ -20,7 +20,5 @@ const MechanicSchema =  new mongoose.Schema({
 })
 
 const Mechanic = mongoose.models.Mechanic || mongoose.model("Mechanic", MechanicSchema)
-// const Test = mongoose.models.User || mongoose.model("User", UserSchema)
-// const Test2 = mongoose.models.Specialty || mongoose.model("Specialty", SpecialtySchema)
 
 export default Mechanic;

@@ -1,16 +1,15 @@
 import mongoose from "mongoose";
-import { nanoid } from "nanoid";
-import Image from "../ImageSchema";
-import Department from "./DepartmentSchema";
-import Role from "./RoleSchema";
-import UserType from "./UserTypeSchema";
+import { customAlphabet } from "nanoid";
+import alphanumeric from "nanoid-dictionary/alphanumeric";
 
 const UserSchema = new mongoose.Schema({
     userID: {
         type: String,
         unique: true,
         required: true,
-        default: nanoid(15),
+        maxLength: 8,
+        minLength: 8,
+        default: customAlphabet(alphanumeric, 8),
     },
     imageID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -34,6 +33,8 @@ const UserSchema = new mongoose.Schema({
     phone: {
         type: String,
         required: true,
+        minLength: 11,
+        maxLength: 11,
     },
     departmentID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -53,6 +54,7 @@ const UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true,
+        minLength: 8,
     },
     creatorID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -69,9 +71,5 @@ const UserSchema = new mongoose.Schema({
 })
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema)
-// const Image1 = mongoose.models.Image || mongoose.model("Image", ImageSchema)
-// const Department1 = mongoose.models.Department || mongoose.model("Department", DepartmentSchema)
-// const Role1 = mongoose.models.Role || mongoose.model("Role", RoleSchema)
-// const UserType1 = mongoose.models.UserType || mongoose.model("UserType", UserTypeSchema)
 
 export default User;

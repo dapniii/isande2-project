@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
 
-const UserTypeSchema = new mongoose.Schema({
+const ItemCategorySchema = new mongoose.Schema({
     pubId: {
         type: String,
         unique: true,
@@ -23,6 +23,6 @@ const UserTypeSchema = new mongoose.Schema({
     }
 })
 
-const UserType = mongoose.models.UserType || mongoose.model("UserType", UserTypeSchema)
+const ItemCategory = mongoose.models.ItemCategory || mongoose.model("ItemCategory", ItemCategorySchema)
 
-export default UserType;
+export default ItemCategory;
