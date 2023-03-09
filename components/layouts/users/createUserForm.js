@@ -85,7 +85,7 @@ function CreateUserForm({data, submitFunc}) {
         let imageRes = await uploadImage(uploadConfig)
         console.log(imageRes)
         let userData = {
-            userID: "00003",
+            userID: nanoid(20),
             imageID: imageRes,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
@@ -96,7 +96,7 @@ function CreateUserForm({data, submitFunc}) {
             userTypeID: userType.current.value,
             specialtyID: specialty.current.value,
             password: password.current.value,
-            creatorID: "00002",
+            creatorID: "00002", // CHANGE HARDCODE
         }
 
         let result = await fetch(userAPI.create_user, {
