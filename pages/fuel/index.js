@@ -8,14 +8,26 @@ import { COLUMNS } from "@/components/layouts/fuel/fuelColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 
-//add param {data}
+
+/* TODO: FIX DROPDOWN REFUEL TYPE*/
+//To be Revised
 export async function getServerSideProps() {
   const res = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
-  const data = await res.json()
-  console.log(data);
+  const fuelData = await res.json()
+
+  const category = {
+    refuelType: [{name:'Refuel Truck'}]
+  }
+
+  let data = {
+    fuel: fuelData,
+    categories: category
+  }
+  console.log(data. categories.refuelType[0]);
   return { props: { data } }
   
 }
+//***************************************************************************************/
 
 export default function FuelPage({ data }) {
   const router = useRouter();
@@ -51,9 +63,10 @@ export default function FuelPage({ data }) {
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <Dropdown
-          title="Refuel Type"
+          title="Refuel Tank"
+          options={data.categories.refuelType}
           id="refuelType"
-          name="refuelType"
+          name="name"
           filter={filter}
           setFilter={setFilter}
         />
@@ -79,10 +92,10 @@ export default function FuelPage({ data }) {
         {/* ADD GRAPH */}
 
         {/* Fuel Data Table */}
-        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflow={"auto"}>
+        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
           <BasicTable
             COLUMNS={COLUMNS}
-            DATA={data}
+            DATA={data.fuel}
             FILTERS={filters}
             HIDDEN={["refuelType"]}
           />
