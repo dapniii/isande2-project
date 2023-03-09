@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
 import Image from "../ImageSchema";
+import Department from "./DepartmentSchema";
+import Role from "./RoleSchema";
+import UserType from "./UserTypeSchema";
+
+const nanoid = customAlphabet(alphanumeric, 5) // id generator
 
 const UserSchema = new mongoose.Schema({
     userID: {
