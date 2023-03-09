@@ -38,7 +38,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
 import { uploadImage } from "@/lib/imageHandler";
 import { userAPI } from "@/lib/routes";
-import { nanoid, customAlphabet } from "nanoid";
+import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/numbers";
 import { Router, useRouter } from "next/router";
 
@@ -46,7 +46,7 @@ function CreateUserForm({data, submitFunc}) {
     const nanoid = customAlphabet(alphanumeric, 8) // id generator
     const router = useRouter()
 
-    const [userID, setUserID] = useState()
+    const [userID, setUserID] = useState(nanoid())
     const firstName = useRef();
     const lastName = useRef();
     const emailAddress = useRef();
@@ -90,7 +90,7 @@ function CreateUserForm({data, submitFunc}) {
         let imageRes = await uploadImage(uploadConfig)
         console.log(imageRes)
         let userData = {
-            userID: nanoid(),
+            userID: userID,
             imageID: imageRes,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
@@ -104,6 +104,7 @@ function CreateUserForm({data, submitFunc}) {
             creatorID: "00002", // CHANGE HARDCODE
         }
 
+        console.log(userData)
         let result = await fetch(userAPI.create_user, {
             method: "POST",
             headers: {
@@ -112,7 +113,8 @@ function CreateUserForm({data, submitFunc}) {
             body: JSON.stringify(userData),
         }).then(result => {
             console.log(result.json())
-            router.push("/users")
+            // location.reload()
+            // router.push("/users")
         })
     }
 

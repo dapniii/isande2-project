@@ -1,6 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
 import Department from "@/models/users/DepartmentSchema";
-import { nanoid } from "nanoid";
 
 export default async (req, res) => {
     await connectToDatabase();
@@ -35,7 +34,6 @@ export default async (req, res) => {
             }
 
         )
-        console.log(edit)
     })
 
     res.json("success")

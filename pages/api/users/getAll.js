@@ -7,11 +7,11 @@ export default async (req, res) => {
     await connectToDatabase();
 
     let users = await User.find({})
-        .populate("imageID")
-        .populate("departmentID")
-        .populate("roleID")
-        .populate("userTypeID")
-        .populate("creatorID")
+    .populate("imageID")
+    .populate("departmentID")
+    .populate("roleID")
+    .populate("userTypeID")
+    .populate("creatorID")
 
 
     let mechanics = await Mechanic.find({}).populate("specialtyID")
@@ -20,7 +20,6 @@ export default async (req, res) => {
         mechanics.map(mech => {
             if (user._id.toString() == mech.userID.toString()) {
                 user.specialtyID = mech.specialtyID
-                console.log(user)
             }
         })
     })
