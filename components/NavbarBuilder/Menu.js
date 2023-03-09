@@ -34,7 +34,6 @@ function AdminMenu() {
             <Fuel />
             <JobOrders />
             <PurchaseOrders />
-            <Reminders />
             <Reports />
         </>
     )
