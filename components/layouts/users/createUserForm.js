@@ -40,7 +40,7 @@ import { uploadImage } from "@/lib/imageHandler";
 import { userAPI } from "@/lib/routes";
 import { nanoid, customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/numbers";
-import Router from "next/router";
+import { Router, useRouter } from "next/router";
 
 function CreateUserForm({data, submitFunc}) {
     const nanoid = customAlphabet(alphanumeric, 8) // id generator
