@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
+import Image from "../ImageSchema";
 
 const UserSchema = new mongoose.Schema({
     userID: {

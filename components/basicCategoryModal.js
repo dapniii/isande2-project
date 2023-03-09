@@ -130,7 +130,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
             body: JSON.stringify(categoryData)
         }).then( result => {
             console.log(result.json())
-            location.reload()
+            location.reload() // TEMP ONLY
         })
 
         

@@ -1,7 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import User from "@/models/users/UserSchema";
 import Mechanic from "@/models/users/MechanicSchema";
-import Specialty from "@/models/users/SpecialtySchema";
+
 
 export default async (req, res) => {
     await connectToDatabase();
@@ -12,7 +12,7 @@ export default async (req, res) => {
         .populate("roleID")
         .populate("userTypeID")
         .populate("creatorID")
-        .lean()
+
 
     let mechanics = await Mechanic.find({}).populate("specialtyID")
     
