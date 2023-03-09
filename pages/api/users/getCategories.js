@@ -7,14 +7,7 @@ import UserType from "@/models/users/UserTypeSchema";
 export default async (req, res) => {
     await connectToDatabase();
 
-    let departments = await Department.find(
-        {},
-        {
-            pubId: 1,
-            name: 1,
-            disabled: 1,
-        }
-    )
+    let departments = await Department.find({})
     let roles = await Role.find({})
     let specialties = await Specialty.find({})
     let userTypes = await UserType.find({})

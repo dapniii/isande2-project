@@ -25,9 +25,11 @@ import {
     Link,
   } from '@chakra-ui/react';
 import { CloseIcon, CheckIcon } from '@chakra-ui/icons';
-import { nanoid } from 'nanoid';
+import { nanoid, customAlphabet } from 'nanoid';
+import { numbers } from 'nanoid-dictionary';
 
 function CategoryListModal({modalOpen, title, options, apiPath}) {
+    const nanoid = customAlphabet(numbers, 5) // id generator
     const { isOpen, onClose } = modalOpen;
     const [addClicked, setAddClicked] = useState(false);
     const [saveActivated, setSaveActivated] = useState(false);
@@ -42,14 +44,19 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
         setAddClicked(true)
         setNewCategory((prevState) => ({
             ...prevState,
-            id: nanoid(15),
+            id: "",
             name: "",
             disabled: false,
         }))
     }
 
     function enableEdit(option) {
-        setNewCategory(option)
+        setNewCategory((prevState) => ({
+            ...prevState,
+            id: option.pubId,
+            name: option.name,
+            disabled: option.disabled,
+        }))
         setAddClicked(false)
     }
     
@@ -72,6 +79,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
 			newOptions.shift();
 		}
         setNewOptions((newOptions) => [...newOptions, newCategory]);
+        console.log("AFTER ADD \n" + newOptions)
         clearNewCategory();
         setAddClicked(false);
 
@@ -83,47 +91,49 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
     function saveEdit() {
         setNewOptions(
             newOptions.map(option => 
-                option.id == newCategory.id
+                option.pubId == newCategory.id
                 ? {...option, name: newCategory.name, disabled: newCategory.disabled}
                 : option
             )
         )
         clearNewCategory()
-        setSaveActivated(activateSave())
+        if (!saveActivated) {
+            setSaveActivated(true)
+        }
     }
 
-    function InOriginal(newOption) {
-        return options.some(option => option.name == newOption.name && option.disabled == newOption.disabled)
-    }
-
-    function activateSave() {
-        return newOptions.every((newOption) => InOriginal(newOption))
-    }
-
-    function saveChanges() {
+    async function saveChanges() {
         let newArr = []
         let editArr = []
-        newOptions.forEach((newOption) => {
-            if (!InOriginal(newOption)) {
-                if (options.find((option) => option.id == newOption.id)) 
-                    editArr.push(newOption)
-                else newArr.push(newOption)
+
+        for (var i=0; i < newOptions.length; i++) {
+            if (i < options.length && (newOptions[i].name != options[i].name || newOptions[i].disabled != options[i].disabled)) 
+                editArr.push(newOptions[i])
+            else if (i >= options.length) {
+                newOptions[i].id = nanoid()
+                newArr.push(newOptions[i])
             }
+                
             
-        })
+        }
 
         let categoryData = {
             additions: newArr,
             edits: editArr,
         }
-        fetch(apiPath, {
+        console.log(categoryData)
+        await fetch(apiPath, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"            
             },
             body: JSON.stringify(categoryData)
+        }).then( result => {
+            console.log(result.json())
+            location.reload()
         })
-    
+
+        
     }
 
     return (
@@ -143,9 +153,9 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                 </Thead>
                 <Tbody>
                     {newOptions.map((option, index) => {
-                        if (option.id == newCategory.id) {
+                        if (option.pubId == newCategory.id) {
                             return (
-                                <Tr key={index}>
+                                <Tr key={option.pubId}>
                                     <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} alignSelf={"center"} /></Td>
                                     <Td display={"flex"} alignItems={"center"} gap={3}>
                                         <Input placeholder={option.name} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />
@@ -162,7 +172,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                         }
                         else 
                             return (
-                                    <Tr key={index} onClick={() => enableEdit(option)} cursor={"pointer"}>
+                                    <Tr key={option.pubId} onClick={() => enableEdit(option)} cursor={"pointer"}>
                                         { option.disabled == false ? (<Td color={"green.300"}>⬤</Td>) : (<Td color={"red.300"}>⬤</Td>)}
                                         <Td>{option.name}</Td>
                                     </Tr>
@@ -170,7 +180,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                     })}
                     { addClicked ? (
                         <>                        
-                            <Tr key={index}>
+                            <Tr key={"New Option"}>
                                 <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} /></Td>
                                 <Td display={"flex"} alignItems={"center"} gap={3}>
                                     <Input placeholder={`Enter New Option`} value={newCategory.name} onChange={(e) => setNewCategory((prevState) => ({...prevState, name: e.target.value}))} />

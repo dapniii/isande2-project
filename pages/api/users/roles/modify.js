@@ -23,15 +23,14 @@ export default async (req, res) => {
     // Update existing roles
     roleInfo.edits.forEach(async element => {
         let duplicates = await Role.find({
-            name: roleInfo.name
+            name: element.name
         })
 
         await Role.updateOne(
-            {pubId: roleInfo.id},
+            {pubId: element.pubId},
             {
-                pubId: roleInfo.id,
-                name: roleInfo.id,
-                disabled: roleInfo.id,
+                name: element.name,
+                disabled: element.disabled,
             }
         )
     })

@@ -23,18 +23,19 @@ export default async (req, res) => {
 
     // Update existing departments
     deptInfo.edits.forEach(async element => {
-        let duplicates = await Department.find({
-            name: deptInfo.name
+        let duplicates = await Department.findOne({
+            name: element.name
         })
 
-        await Department.updateOne(
-            {pubId: deptInfo.id},
-            {
-                pubId: deptInfo.id,
-                name: deptInfo.id,
-                disabled: deptInfo.id,
+        let edit = await Department.updateOne(
+            { pubId: element.pubId },
+            { 
+                name: element.name,
+                disabled: element.disabled,
             }
+
         )
+        console.log(edit)
     })
 
     res.json("success")

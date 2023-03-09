@@ -23,15 +23,14 @@ export default async (req, res) => {
     // Update existing specialties
     specialtyInfo.edits.forEach(async element => {
         let duplicates = await Specialty.find({
-            name: specialtyInfo.name
+            name: element.name
         })
 
         await Specialty.updateOne(
-            {pubId: specialtyInfo.id},
+            {pubId: element.pubId},
             {
-                pubId: specialtyInfo.id,
-                name: specialtyInfo.id,
-                disabled: specialtyInfo.id,
+                name: element.name,
+                disabled: element.disabled,
             }
         )
     })
