@@ -125,7 +125,8 @@ export const COLUMNS = [
         return (
           <Flex flexDirection={"column"}>
             <Text>{props.row.original.roleID.name}</Text>
-            <Text fontSize={"sm"} color={"gray"}>{props.row.original.specialtyID.name}</Text>
+            {props.row.original.specialtyID != null ? (<Text fontSize={"sm"} color={"gray"}>{props.row.original.specialtyID.name}</Text>) : (<></>)}
+            
           </Flex>
         )
       }
