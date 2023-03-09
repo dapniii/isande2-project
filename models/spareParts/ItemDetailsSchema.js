@@ -8,7 +8,7 @@ const ItemDetailsSchema = new mongoose.Schema({
         ref: "Item",
         required: true,
     },
-    itemNumber, {
+    itemNumber: {
         type: String,
         minLength: 10,
         maxLength: 10,
