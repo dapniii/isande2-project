@@ -39,7 +39,6 @@ import CategoryListModal from "@/components/basicCategoryModal";
 import { uploadImage } from "@/lib/imageHandler";
 import { userAPI } from "@/lib/routes";
 import { nanoid } from "nanoid";
-import { AdvancedImage } from "@cloudinary/react";
 
 function CreateUserForm({data, submitFunc}) {
     const [userID, setUserID] = useState(nanoid(20))
@@ -86,17 +85,18 @@ function CreateUserForm({data, submitFunc}) {
         let imageRes = await uploadImage(uploadConfig)
         console.log(imageRes)
         let userData = {
-            employeeID: userID,
-            photo: imageRes.secure_url,
+            userID: "00003",
+            imageID: imageRes,
             firstName: firstName.current.value,
             lastName: lastName.current.value,
             email: emailAddress.current.value,
             phone: phoneNumber.current.value,
-            department: department.current.value,
-            role: role,
-            userType: userType.current.value,
-            specialty: specialty.current.value,
+            departmentID: department.current.value,
+            roleID: role,
+            userTypeID: userType.current.value,
+            specialtyID: specialty.current.value,
             password: password.current.value,
+            creatorID: "00002",
         }
 
         let result = await fetch(userAPI.create_user, {
@@ -204,12 +204,12 @@ function CreateUserForm({data, submitFunc}) {
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
                                     <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userAPI.modify_department} /> 
                                     <Select ref={department}>
-                                        <option defaultValue value="" hidden disabled>Select Department</option>
+                                        <option defaultValue value="" selected hidden disabled>Select Department</option>
                                         {data.department.map((dept) => {
                                             if (dept.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={dept.pubId}
+                                                        key={dept._id}
                                                         value={dept.name}
                                                     >
                                                         {dept.name}
@@ -223,12 +223,12 @@ function CreateUserForm({data, submitFunc}) {
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
                                     <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userAPI.modify_role} />
                                     <Select value={role} onChange={(e) => setRole(e.target.value)}>
-                                        <option defaultValue value="" hidden disabled>Select Role</option>
+                                        <option defaultValue value="" selected hidden disabled>Select Role</option>
                                         {data.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={roleOption.pubId}
+                                                        key={roleOption._id}
                                                         value={roleOption.name}
                                                     >
                                                         {roleOption.name}
@@ -244,12 +244,12 @@ function CreateUserForm({data, submitFunc}) {
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
                                     <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} />
                                     <Select ref={userType}>
-                                        <option defaultValue value="" hidden disabled>Select User Type</option>
+                                        <option defaultValue value="" selected hidden disabled>Select User Type</option>
                                         {data.userTypes.map((type) => {
                                             if (type.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={type.pubId}
+                                                        key={type._id}
                                                         value={type.name}
                                                     >
                                                         {type.name}
@@ -263,12 +263,12 @@ function CreateUserForm({data, submitFunc}) {
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
                                     <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userAPI.modify_specialties} />
                                     <Select ref={specialty} disabled={role != "Mechanic"}>
-                                        <option defaultValue value="" hidden disabled >Select Specialty</option>
+                                        <option defaultValue value="" selected hidden disabled >Select Specialty</option>
                                         {data.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {
                                                 return (
                                                     <option
-                                                        key={specialtyOption.pubId}
+                                                        key={specialtyOption._id}
                                                         value={specialtyOption.name}
                                                     >
                                                         {specialtyOption.name}

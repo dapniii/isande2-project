@@ -22,7 +22,7 @@ import { userAPI } from "@/lib/routes";
 export async function getServerSideProps() {
   const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
-
+  
   const categoryList = {
     department: [],
     roles: [],
@@ -32,10 +32,10 @@ export async function getServerSideProps() {
   const resCat = await fetch(userAPI.get_categories)
   const catData = await resCat.json()
 
-  categoryList.departments = catData.props.departments
-  categoryList.roles = catData.props.roles
-  categoryList.userTypes = catData.props.userTypes
-  categoryList.specialties = catData.props.specialties
+  categoryList.departments = catData.departments
+  categoryList.roles = catData.roles
+  categoryList.userTypes = catData.userTypes
+  categoryList.specialties = catData.specialties
 
   let data = {
     users: userData,
@@ -62,6 +62,7 @@ export default function UsersPage({data}) {
   function headerBreadcrumbs() {return (<></>)}
 
   function headerMain() {
+    console.log(data)
     return (
       //Header Content
       <Flex alignItems={"center"} justifyContent={"space-between"}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Flex, Grid, GridItem, Image, Button, propNames } from "@chakra-ui/react";
+import { Text, Flex, Grid, GridItem, Image, Button, Link } from "@chakra-ui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 import GlobalFilter from "@/components/table/globalFilter";
@@ -23,12 +23,12 @@ export const COLUMNS = [
     // {
     //   Header: "",
     //   id: "photo",
-    //   accessor: "photo",
+    //   accessor: "imageID.secure_url",
     //   Cell: (props) => {
     //     return (
     //       <>
-    //         <Image src={props.row.original.photo} 
-    //           alt={props.row.original.name} 
+    //         <Image src={props.row.original.imageID.secure_url} 
+    //           alt={props.row.original.firstName} 
     //           borderRadius={"full"}
     //           border={"2px solid #9F9F9F"}
     //         />
@@ -53,7 +53,7 @@ export const COLUMNS = [
         return (
           <Flex alignItems={"center"}>
             <Text fontWeight={"semibold"} mr={"1em"}>{props.row.index + 1}</Text>
-            <Image src={props.row.original.photo} 
+            <Image src={props.row.original.imageID.secure_url} 
               alt={props.row.original.firstName + " " + props.row.original.lastName}
               boxSize={"3.5em"} 
               borderRadius={"full"}
@@ -61,7 +61,7 @@ export const COLUMNS = [
             />
             <Flex flexDirection={"column"} ml={"2em"}>
               <Text fontWeight={"semibold"}>{props.row.original.firstName + " " + props.row.original.lastName}</Text>
-              <Text fontSize={"sm"}>{props.row.original.department}</Text>          
+              <Text fontSize={"sm"}>{props.row.original.departmentID.name}</Text>          
             </Flex>
           </Flex>
         )
@@ -85,6 +85,11 @@ export const COLUMNS = [
       id: "email",
       accessor: "email",
       filter: GlobalFilter,
+      Cell: (props) => {
+        return (
+          <Link>{props.row.original.email}</Link>
+        )
+      }
     },
     {
       Header: "Phone Number",
@@ -94,7 +99,7 @@ export const COLUMNS = [
     {
       Header: "Department",
       id: "department",
-      accessor: "department",
+      accessor: "departmentID.name",
       filter: (rows, id, filterValue) => {
         return rows.filter(
           (row) =>
@@ -107,7 +112,7 @@ export const COLUMNS = [
     {
       Header: "Role",
       id: "role",
-      accessor: "role",
+      accessor: "roleID.name",
       filter: (rows, id, filterValue) => {
         return rows.filter(
           (row) =>
@@ -119,8 +124,8 @@ export const COLUMNS = [
       Cell: (props) => {
         return (
           <Flex flexDirection={"column"}>
-            <Text>{props.row.original.role}</Text>
-            <Text fontSize={"sm"} color={"gray"}>{props.row.original.specialty}</Text>
+            <Text>{props.row.original.roleID.name}</Text>
+            <Text fontSize={"sm"} color={"gray"}>{props.row.original.specialtyID.name}</Text>
           </Flex>
         )
       }
@@ -128,7 +133,7 @@ export const COLUMNS = [
     {
         Header: "User Type",
         id: "userType",
-        accessor: "userType",
+        accessor: "userTypeID.name",
         filter: (rows, id, filterValue) => {
           return rows.filter(
             (row) =>
@@ -141,6 +146,6 @@ export const COLUMNS = [
     {
         Header: "Specialty (if Mechanic)",
         id: "specialty",
-        accessor: "specialty",
+        accessor: "specialtyID.name",
     },
 ];

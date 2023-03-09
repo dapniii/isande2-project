@@ -1,15 +1,20 @@
 import mongoose from "mongoose";
 import { nanoid } from "nanoid";
+import Image from "../ImageSchema";
+import Department from "./DepartmentSchema";
+import Role from "./RoleSchema";
+import UserType from "./UserTypeSchema";
 
 const UserSchema = new mongoose.Schema({
-    employeeID: {
+    userID: {
         type: String,
         unique: true,
         required: true,
         default: nanoid(15),
     },
-    photo: {
-        type: String,
+    imageID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Image",
     },
     firstName: {
         type: String,
@@ -30,24 +35,32 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    department: {
-        type: String,
+    departmentID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Department",
         required: true,
     },
-    role: {
-        type: String,
+    roleID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Role",
         required: true,
     },
-    userType: {
-        type: String,
+    userTypeID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "UserType",
         required: true,
-    },
-    specialty: {
-        type: String,
     },
     password: {
         type: String,
         required: true,
+    },
+    creatorID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+    },
+    creationDate: {
+        type: Date,
+        default: new Date(),
     },
     disabled: {
         type: Boolean,
@@ -56,5 +69,9 @@ const UserSchema = new mongoose.Schema({
 })
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema)
+// const Image1 = mongoose.models.Image || mongoose.model("Image", ImageSchema)
+// const Department1 = mongoose.models.Department || mongoose.model("Department", DepartmentSchema)
+// const Role1 = mongoose.models.Role || mongoose.model("Role", RoleSchema)
+// const UserType1 = mongoose.models.UserType || mongoose.model("UserType", UserTypeSchema)
 
 export default User;

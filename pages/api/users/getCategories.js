@@ -20,11 +20,9 @@ export default async (req, res) => {
     let userTypes = await UserType.find({})
 
     res.json({
-        props: {
-            departments,
-            roles,
-            specialties,
-            userTypes
-        }
+        departments,
+        roles,
+        specialties,
+        userTypes
     })
 }
