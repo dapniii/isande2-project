@@ -8,9 +8,6 @@ import {
   ButtonGroup,
   Button, 
   IconButton,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -30,11 +27,16 @@ import {
 import { CheckCircleIcon, CloseIcon, AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
 import { uploadImage } from "@/lib/imageHandler";
-
+import { customAlphabet } from "nanoid";
+import alphanumeric from "nanoid-dictionary/numbers";
+import { Router, useRouter } from "next/router";
+import { sparePartsAPI } from "@/lib/routes";
 
 export default function CreatePartForm({data, submitFunc}) {
-    
-    const [itemID, setItemID] = useState()
+    const nanoid = customAlphabet(alphanumeric, 10); // id generator
+    const router = useRouter();
+
+    const [itemNumber, setitemNumber] = useState()
     const [category, setCategory] = useState()
     const [name, setName] = useState("");
     const [model, setModel] = useState("");
@@ -48,7 +50,6 @@ export default function CreatePartForm({data, submitFunc}) {
         partNum: "",
         brand: "",
         qty: 0,
-        priceUnit: "",
         cost: 0,
     });
     const [detailsArray, setDetailsArray] = useState([{}]);
@@ -60,7 +61,7 @@ export default function CreatePartForm({data, submitFunc}) {
     const brandModalOpen = useDisclosure();
     const currencyModalOpen = useDisclosure();
 
-    
+
     function passSubmitFunc() {
         return submitForm
     }
@@ -68,7 +69,7 @@ export default function CreatePartForm({data, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-    }, [itemID, category, name, model, rp, unit, desc, details, detailsArray])
+    }, [itemNumber, category, name, model, rp, unit, desc, details, detailsArray])
 
     // Generate photo preview
     useEffect(() => {
@@ -81,8 +82,54 @@ export default function CreatePartForm({data, submitFunc}) {
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
-    function submitForm() {
-        console.log("Submit Form")
+    async function submitForm() {
+        let uploadConfig = {
+            file: photo,
+            params: {
+                public_id: itemNumber,
+                folder: "parts",
+                // type: "private",
+            }
+        }
+        let imageRes = await uploadImage(uploadConfig)
+        console.log(imageRes)
+        let partsData = {
+            itemNumber: itemNumber,
+            imageID: imageRes,
+            categoryID: category,
+            itemName: name,
+            itemModel: model,
+            reorderPoint: rp,
+            unitID: unit,
+            description: desc,
+            details: detailsArray,
+            creatorID: "00002", // CHANGE HARDCODE
+        }
+        console.log(partsData)
+        let result = await fetch(sparePartsAPI.create_part, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(partsData),
+        }).then(result => {
+            console.log(result.json())
+            router.push("/parts")
+        })
+    }
+
+    // Set Details function
+    function handleDetailsChange(e) {
+        const { name, value } = e.target;
+
+        setDetails((prevState) => ({
+            ...prevState,
+            [name]: value,
+        }));
+
+        // if (name == "brand") {
+        // 	setDuplicateError(false);
+        // }
     }
 
     return (
@@ -121,9 +168,9 @@ export default function CreatePartForm({data, submitFunc}) {
                       <FormControl isRequired>
                           <FormLabel>Item Number</FormLabel>
                           <Input
-                              name="itemID"
-                              value={itemID}
-                              onChange={(e) => setItemID(e.target.value)}
+                              name="itemNumber"
+                              value={itemNumber}
+                              onChange={(e) => setitemNumber(e.target.value)}
                           />
                       </FormControl>
                       <FormControl isRequired>
@@ -134,18 +181,18 @@ export default function CreatePartForm({data, submitFunc}) {
                               value={category}
                               onChange={(e) => setCategory(e.target.value)}
                           >
-                              {/* {categories.map((category) => {
+                              {data.categories.map((category) => {
                                   if (category.disabled == false) {
                                       return (
                                           <option
-                                              key={category.id}
+                                              key={category.pubId}
                                               value={category.name}
                                           >
                                               {category.name}
                                           </option>
                                       );
                                   }
-                              })} */}
+                              })}
                           </Select>
                       </FormControl>
                   </Flex>
@@ -190,18 +237,18 @@ export default function CreatePartForm({data, submitFunc}) {
                               value={unit}
                               onChange={(e) => setUnit(e.target.value)}
                           >
-                              {/* {units.map((unit) => {
+                              {data.measures.map((unit) => {
                                   if (unit.disabled == false) {
                                       return (
                                           <option
-                                              key={unit.id}
+                                              key={unit.pubId}
                                               value={unit.name}
                                           >
                                               {unit.name}
                                           </option>
                                       );
                                   }
-                              })} */}
+                              })}
                           </Select>
                       </FormControl>
                   </Flex>
@@ -288,7 +335,6 @@ export default function CreatePartForm({data, submitFunc}) {
                       
                   >
                       {/* DETAILS HEADERS */}
-  
                       <GridItem colStart={1}><Text>{" "}</Text></GridItem>
                       <GridItem colStart={2}><Text fontWeight={"medium"}>Part Number</Text></GridItem>
                       <GridItem colStart={3}><Text fontWeight={"medium"}>Brand</Text></GridItem>
@@ -348,11 +394,29 @@ export default function CreatePartForm({data, submitFunc}) {
                           />
                       </GridItem>
                       <GridItem colStart={3} w={"95%"}>
-                          <Input 
+                          {/* <Input 
                               name="brand"
                               value={details.brand}    
                               onChange={(e) => handleDetailsChange(e)}
-                          />
+                          /> */}
+                        <Select
+                              placeholder="Select Brand"
+                              value={details.brand}
+                              onChange={(e) => handleDetailsChange(e.target.value)}
+                        >
+                            {data.brands.map((brand) => {
+                                if (brand.disabled == false) {
+                                    return (
+                                        <option
+                                            key={brand.pubId}
+                                            value={brand.name}
+                                        >
+                                            {brand.name}
+                                        </option>
+                                    );
+                                }
+                            })}
+                          </Select>
                       </GridItem>
                       <GridItem colStart={4} w={"95%"}>
                           <NumberInput min={0} max={1000} precision={0} value={details.qty} onChange={(value) => handleDetailsChange({ target: { name: 'qty', value }})}>
@@ -364,13 +428,14 @@ export default function CreatePartForm({data, submitFunc}) {
                           </NumberInput>
                       </GridItem>
                       <GridItem colStart={5} w={"95%"}>
-                          <NumberInput min={0} precision={2} value={details.cost} onChange={(value) => handleDetailsChange({ target: { name: 'cost', value }})}>
-                              <NumberInputField  />
-                              <NumberInputStepper>
-                                  <NumberIncrementStepper />
-                                  <NumberDecrementStepper />
-                              </NumberInputStepper>
-                          </NumberInput>
+                        <NumberInput min={0} precision={2} value={details.cost} onChange={(value) => handleDetailsChange({ target: { name: 'cost', value }})}>
+                            <NumberInputField  />
+                            <NumberInputStepper>
+                                <NumberIncrementStepper />
+                                <NumberDecrementStepper />
+                            </NumberInputStepper>
+                        </NumberInput>
+                    
                       </GridItem>
                       <GridItem colStart={6} w={"95%"} pr={"1em"}>
                           <Button leftIcon={<AddIcon bg="white" color={"green.300"} borderRadius={100} p="3px" />} bg={"green.300"} color={"white"} onClick={() => addDetails()}>

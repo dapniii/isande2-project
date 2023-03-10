@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
     Button,
     Text,
-    useDisclosure,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -13,16 +12,12 @@ import {
     Table,
     Thead,
     Tbody,
-    Tfoot,
     Tr,
     Th,
     Td,
-    TableCaption,
-    TableContainer,
     Switch, 
     Input,
     IconButton,
-    Link,
   } from '@chakra-ui/react';
 import { CloseIcon, CheckIcon } from '@chakra-ui/icons';
 import { nanoid, customAlphabet } from 'nanoid';
@@ -152,6 +147,9 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                     </Tr>
                 </Thead>
                 <Tbody>
+                    {options.length == 0 ? (
+                        <Text>No records to show</Text>
+                        ) : (<></>)}
                     {newOptions.map((option, index) => {
                         if (option.pubId == newCategory.id) {
                             return (

@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
+import Image from "../ImageSchema";
+import ItemCategory from "./ItemCategorySchema";
+import Measure from "../MeasureSchema";
+import User from "../users/UserSchema";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
+
+const nanoid = customAlphabet(alphanumeric, 10)
 
 const ItemSchema = new mongoose.Schema({
     itemNumber: {
@@ -9,7 +15,11 @@ const ItemSchema = new mongoose.Schema({
         maxLength: 10,
         unique: true,
         required: true,
-        default: customAlphabet(alphanumeric, 10) // Generate random id if not specified
+        default: nanoid() // Generate random id if not specified
+    },
+    imageID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Image"
     },
     categoryID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -32,10 +42,9 @@ const ItemSchema = new mongoose.Schema({
         default: 0,
     },
     unitID: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "Measure",
-        // required: true, 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Measure",
+        required: true, 
     },
     description: {
         type: String,
@@ -50,6 +59,10 @@ const ItemSchema = new mongoose.Schema({
     },
     disabled: {
         type: Boolean,
-        default: true,
+        default: false,
     }
 })
+
+const Item = mongoose.models.ItemSchema || mongoose.model("Item", ItemSchema);
+
+export default Item;

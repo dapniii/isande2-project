@@ -6,7 +6,7 @@ import Department from "./DepartmentSchema";
 import Role from "./RoleSchema";
 import UserType from "./UserTypeSchema";
 
-const nanoid = customAlphabet(alphanumeric, 5) // id generator
+const nanoid = customAlphabet(alphanumeric, 8) // id generator
 
 const UserSchema = new mongoose.Schema({
     userID: {
@@ -15,7 +15,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         maxLength: 8,
         minLength: 8,
-        default: customAlphabet(alphanumeric, 8),
+        default: nanoid(),
     },
     imageID: {
         type: mongoose.Schema.Types.ObjectId,

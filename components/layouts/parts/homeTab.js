@@ -23,18 +23,19 @@ export default function PartsHomeTab({data}) {
             ></GlobalFilter>
             <Dropdown 
               title="Categories"
+              options={data.categories.itemCategories}
               id="categoryID"
-              name="category"
+              name="name"
               filter={filter}
               setFilter={setFilter}
             ></Dropdown>
-            <Dropdown 
+            {/* <Dropdown 
               title="Status"
               id="status"
               name="status"
               filter={filter}
               setFilter={setFilter}
-            ></Dropdown>
+            ></Dropdown> */}
           </>
         )
     }
@@ -69,12 +70,12 @@ export default function PartsHomeTab({data}) {
                     </StatHelpText>
                 </Stat>
             </StatGroup>
-            {/* <BasicTable 
+            <BasicTable 
               COLUMNS={COLUMNS} 
-              DATA={data} 
+              DATA={data.parts} 
               FILTERS={filters}
               HIDDEN={["code", "model", "name", "status"]}
-            /> */}
+            />
         </Flex>
     )
 }

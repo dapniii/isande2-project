@@ -139,6 +139,7 @@ function BasicTable({
               </Tr>
             ))}
           </Thead>
+          {/* { data.length == 0 ? (<Text>No records to show</Text>) : (<></>)} */}
           <Tbody {...getTableBodyProps()}>
             {page.map((row, i) => {
               prepareRow(row);

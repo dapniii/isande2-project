@@ -14,12 +14,32 @@ import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import PartsHomeTab from "@/components/layouts/parts/homeTab";
+import { sparePartsAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const res = await fetch(`https://my.api.mockaroo.com/spare_parts.json?key=abdcd8e0`)
-  const data = await res.json()
+  // const resParts = await fetch(sparePartsAPI.get_all_parts)
+  // const partsData = await resParts.json()
 
-  return { props: { data } }
+  const partsData = []
+  
+  const categoryList = {
+    brands: [],
+    itemCategories: [],
+    measures: [],
+  }
+  const resCat = await fetch(sparePartsAPI.get_categories)
+  const catData = await resCat.json()
+
+  categoryList.brands = catData.brands
+  categoryList.itemCategories = catData.categories
+  categoryList.measures = catData.measures
+  
+  let data = {
+    parts: partsData,
+    categories: categoryList,
+  }
+  
+  return { props: { data }}
 }
 
 export default function PartsPage({data}) {

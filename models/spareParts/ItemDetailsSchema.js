@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
+import Item from "./ItemSchema";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
+
 
 const ItemDetailsSchema = new mongoose.Schema({
     itemID: {
@@ -12,9 +14,7 @@ const ItemDetailsSchema = new mongoose.Schema({
         type: String,
         minLength: 10,
         maxLength: 10,
-        unique: true,
         required: true,
-        default: customAlphabet(alphanumeric, 10)
     },
     partNumber: {
         type: String,

@@ -3,7 +3,7 @@ import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
 
 const nanoid = customAlphabet(alphanumeric, 5)
-const ItemCategorySchema = new mongoose.Schema({
+const MeasureSchema = new mongoose.Schema({
     pubId: {
         type: String,
         unique: true,
@@ -24,6 +24,6 @@ const ItemCategorySchema = new mongoose.Schema({
     }
 })
 
-const ItemCategory = mongoose.models.ItemCategory || mongoose.model("ItemCategory", ItemCategorySchema)
+const Measure = mongoose.models.Measure || mongoose.model("Measure", MeasureSchema)
 
-export default ItemCategory;
+export default Measure;

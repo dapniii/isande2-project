@@ -11,26 +11,19 @@ import {
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Router, useRouter } from "next/router";
 import CreatePartForm from "@/components/layouts/parts/createPartForm";
 import { sparePartsAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const categoryList = {
-    categories: [],
-    brands: [],
-    units: [],
-    currencies: [],
-  }
+  const res = await fetch(sparePartsAPI.get_categories)
+  const data = await res.json()
 
-  // const res = await fetch(sparePartsAPI.get_categories)
-  // const data = await res.json()
-
-  return { props: { categoryList } }
+  return { props: { data } }
 }
   
-export default function CreatePartsPage({categoryList}) {
+export default function CreatePartsPage({data}) {
   const router = useRouter();
   const [submitForm, setSubmitForm] = useState();
 
@@ -90,7 +83,7 @@ function getSubmit(func) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          <CreatePartForm data={categoryList} submitFunc={getSubmit} />
+          <CreatePartForm data={data} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select } from "@chakra-ui/react";
 
 export const Dropdown = ({
@@ -11,6 +11,10 @@ export const Dropdown = ({
     }) => {
 
     const [value, setValue] = useState(filter)
+
+    useEffect(() => {
+        console.log(options)
+    }, [])
 
     return (
         <>
