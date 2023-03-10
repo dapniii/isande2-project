@@ -24,6 +24,8 @@ function BasicTable({
   DATA,
   FILTERS,
   HIDDEN,
+  ID,
+  clickRowFunction,
 }) {
   const columns = useMemo(() => COLUMNS, []);
   const data = useMemo(() => DATA, [DATA])
@@ -142,7 +144,7 @@ function BasicTable({
               prepareRow(row);
               return (
                 <Tr {...row.getRowProps()}
-                    onClick={() => console.log("tee")}
+                    onClick={() =>clickRowFunction(row.original[ID])}
                     transitionDuration="180ms"
                     _hover={{
                       bg: "blackAlpha.300",

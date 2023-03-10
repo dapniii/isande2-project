@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Grid,
   GridItem,
@@ -12,13 +13,36 @@ import {
 } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
-import { BackButton, EditButton } from "@/components/buttons";
+import { BackButton, EditButton, SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
+import { userAPI } from "@/lib/routes";
 
-import ViewUserForm from "@/components/layouts/users/viewUserForm";
+import ViewUserForm from "@/components/layouts/users/viewUserLayout";
 
-export default function UserDetails() {
+export async function getServerSideProps() {
+  const categoryList = {
+    department: [],
+    roles: [],
+    userTypes: [],
+    specialties: [],
+  }
+  
+  const res = await fetch(userAPI.get_categories)
+  const data = await res.json()
+  
+  categoryList.department = data.departments
+  categoryList.roles = data.roles
+  categoryList.userTypes = data.userTypes
+  categoryList.specialties = data.specialties
+  
+  return { props: { categoryList }}
+}
+
+export default function UserDetails({categoryList}) {
   const router = useRouter();
+  const { userID } = router.query;
+  const [isEdit, setIsEdit] = useState(false);
+  const [submitForm, setSubmitForm] = useState();
 
   // Temp
   const user = {
@@ -32,11 +56,6 @@ export default function UserDetails() {
     role: "Role",
   };
 
-  // Header Functions
-  function submitForm() {
-    console.log("Save User");
-  }
-
   function cancel() {
     router.back();
   }
@@ -48,7 +67,7 @@ export default function UserDetails() {
           <BreadcrumbItem>
             <BreadcrumbLink href="/users">
               <Text as="u" color="#005DF2">
-                Home
+                Users
               </Text>
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -70,11 +89,23 @@ export default function UserDetails() {
         <Text fontSize={"3xl"} fontWeight={"bold"}>
           User Details
         </Text>
-        <EditButton title={"Edit User"} clickFunction={submitForm} />
+        { isEdit ? (
+          <Flex gap={2}>
+            <CancelButton title={"Cancel"} clickFunction={() => setIsEdit(!isEdit)} />
+            <SaveButton title={"Save Changes"} clickFunction={submitForm} />
+          </Flex>
+          ) 
+          : (<EditButton title={"Edit User"} clickFunction={() => setIsEdit(!isEdit)} />)
+        }
+        
       </Flex>
     );
   }
 
+    // Get submit form function from create user form component
+    function getSubmit(func) {
+      setSubmitForm(func)
+    }
   // MAIN
   return (
     <>
@@ -82,13 +113,13 @@ export default function UserDetails() {
         minH="100vh"
         templateColumns={"1fr 7fr"}
         templateRows={"0fr 1fr"}
-        overflowY={"auto"}
+        
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
           <Navbar user={user} />
         </GridItem>
 
-        <GridItem colStart={2}>
+        <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
           <Header
             breadcrumb={headerBreadcrumbs()}
             main={headerMain()}
@@ -97,8 +128,14 @@ export default function UserDetails() {
         </GridItem>
 
         {/* Main Content */}
-        <GridItem colStart={2} bg={"blackAlpha.100"}>
-          <ViewUserForm />
+        <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
+          <ViewUserForm 
+            userID={userID} 
+            data={categoryList} 
+            isEdit={isEdit} 
+            setIsEdit={setIsEdit}
+            submitFunc={getSubmit} 
+          />
         </GridItem>
       </Grid>
     </>

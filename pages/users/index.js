@@ -59,6 +59,10 @@ export default function UsersPage({data}) {
     router.push("/users/create");
   }
 
+  function navToDetails(id) {
+    router.push(`/users/${id}`)
+  }
+
   function headerBreadcrumbs() {return (<></>)}
 
   function headerMain() {
@@ -107,7 +111,7 @@ export default function UsersPage({data}) {
         />
       </>
     )
-}
+  }
   
   // MAIN
   return (
@@ -132,6 +136,8 @@ export default function UsersPage({data}) {
             DATA={data.users}
             FILTERS={filters}
             HIDDEN={["firstName", "lastName", "department", "specialty"]}
+            ID={"userID"}
+            clickRowFunction={navToDetails}
           />        
         </GridItem>
       </Grid>

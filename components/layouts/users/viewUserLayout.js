@@ -28,25 +28,19 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
-    Link,
     Divider,
-    useDisclosure,
-    Box,
-    Img,
+    Link,
+    useDisclosure
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import { uploadImage } from "@/lib/imageHandler";
 import { userAPI } from "@/lib/routes";
-import { customAlphabet } from "nanoid";
-import alphanumeric from "nanoid-dictionary/numbers";
 import { Router, useRouter } from "next/router";
+import { uploadImage } from "@/lib/imageHandler";
 
-function CreateUserForm({data, submitFunc}) {
-    const nanoid = customAlphabet(alphanumeric, 8) // id generator
-    const router = useRouter()
+function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
+    const router = useRouter();
 
-    const [userID, setUserID] = useState(nanoid())
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -67,8 +61,6 @@ function CreateUserForm({data, submitFunc}) {
     const userModalOpen = useDisclosure();
     const specialModalOpen = useDisclosure();
 
-    
-
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
@@ -79,15 +71,18 @@ function CreateUserForm({data, submitFunc}) {
     }
 
     async function submitForm() {
-        let uploadConfig = {
-            file: photo,
-            params: {
-                public_id: userID,
-                folder: "users",
-                // type: "private",
+        let imageRes = "";
+        if (photo) {
+            let uploadConfig = {
+                file: photo,
+                params: {
+                    public_id: userID,
+                    folder: "users",
+                    // type: "private",
+                }
             }
+            imageRes = await uploadImage(uploadConfig)
         }
-        let imageRes = await uploadImage(uploadConfig)
         console.log(imageRes)
         let userData = {
             userID: userID,
@@ -104,7 +99,7 @@ function CreateUserForm({data, submitFunc}) {
             creatorID: "00002", // CHANGE HARDCODE
         }
         console.log(userData)
-        let result = await fetch(userAPI.create_user, {
+        let result = await fetch(userAPI.edit_user, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -116,16 +111,38 @@ function CreateUserForm({data, submitFunc}) {
         })
     }
 
+    // Fetch user data
+    useEffect(() => {
+		fetch("/api/users/" + userID, {
+			method: "GET",
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+		})
+			.then((res) => res.json())
+			.then((data) => {
+				// console.log(data)
+                setFirstName(data.firstName)
+                setLastName(data.lastName)
+                setPreview(data.imageID.secure_url)
+                setEmail(data.email)
+                setPhone(data.phone)
+                setDepartment(data.departmentID.name)
+                setRole(data.roleID.name)
+                setUserType(data.userTypeID.name)
+                setSpecialty(data.specialtyID.name || "")
+			});
+	}, [userID]);
 
     // Generate photo preview
     useEffect(() => {
-        if (!inputPhoto.current.files[0]) {
+        if (!photo) {
             return
         }
-        const objectUrl = URL.createObjectURL(inputPhoto.current.files[0])
+        const objectUrl = URL.createObjectURL(photo)
         setPreview(objectUrl)
         // free memory when ever this component is unmounted
-        
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
@@ -144,7 +161,7 @@ function CreateUserForm({data, submitFunc}) {
                             mt={"0.5em"}
                             gap={3}
                         >   
-                            { photo != null ? (
+                            
                                 <Flex flexDirection={"column"}>
                                     <Text fontWeight={"bold"}>Preview</Text>
                                     <Image 
@@ -156,7 +173,7 @@ function CreateUserForm({data, submitFunc}) {
                                         h={"15em"}
                                     />
                                 </Flex>
-                            ) : (<></>)}
+                            
                             <Button
                                 // @ts-ignore
                                 mt={photo != null ? ("1.5em") : (0)}
@@ -188,28 +205,28 @@ function CreateUserForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel>First Name</FormLabel>
-                                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+                                    <Input value={firstName} onChange={(e) => setFirstName(e.target.value)} disabled={!isEdit} />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>Last Name</FormLabel>
-                                    <Input value={lastName} onChange={(e) => setLastName(e.target.value)} />
+                                    <Input value={lastName} onChange={(e) => setLastName(e.target.value)} disabled={!isEdit} />
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel>Email</FormLabel>
-                                    <Input value={email} onChange={(e) => setEmail(e.target.value)} />
+                                    <Input value={email} onChange={(e) => setEmail(e.target.value)} disabled={!isEdit} />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel>Phone Number</FormLabel>
-                                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
+                                    <Input value={phone} onChange={(e) => setPhone(e.target.value)} disabled={!isEdit} />
                                 </FormControl>
                             </Flex>
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
                                     <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userAPI.modify_department} /> 
-                                    <Select value={department} onChange={(e) => setDepartment(e.target.value)}>
+                                    <Select value={department} onChange={(e) => setDepartment(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select Department</option>
                                         {data.department.map((dept) => {
                                             if (dept.disabled == false) {
@@ -228,7 +245,7 @@ function CreateUserForm({data, submitFunc}) {
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
                                     <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userAPI.modify_role} />
-                                    <Select value={role} onChange={(e) => setRole(e.target.value)}>
+                                    <Select value={role} onChange={(e) => setRole(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select Role</option>
                                         {data.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
@@ -249,7 +266,7 @@ function CreateUserForm({data, submitFunc}) {
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
                                     <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} />
-                                    <Select value={userType} onChange={(e) => setUserType(e.target.value)}>
+                                    <Select value={userType} onChange={(e) => setUserType(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select User Type</option>
                                         {data.userTypes.map((type) => {
                                             if (type.disabled == false) {
@@ -268,7 +285,7 @@ function CreateUserForm({data, submitFunc}) {
                                 <FormControl>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
                                     <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userAPI.modify_specialties} />
-                                    <Select value={specialty} onChange={(e) => setSpecialty(e.target.value)} disabled={role != "Mechanic"}>
+                                    <Select value={specialty} onChange={(e) => setSpecialty(e.target.value)} disabled={role != "Mechanic" || !isEdit}>
                                         <option value="" hidden disabled >Select Specialty</option>
                                         {data.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {
@@ -291,11 +308,11 @@ function CreateUserForm({data, submitFunc}) {
                     <CardFooter gap={2}>
                         <FormControl isRequired>
                             <FormLabel>Password</FormLabel>
-                            <Input type={"password"} value={password} onChange={(e) => setPassword(e.target.value)} />
+                            <Input type={"password"} value={password} onChange={(e) => setPassword(e.target.value)} disabled={!isEdit} />
                         </FormControl>
                         <FormControl isRequired>
                             <FormLabel>Confirm Password</FormLabel>
-                            <Input type={"password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+                            <Input type={"password"} value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} disabled={!isEdit} />
                         </FormControl>
                     </CardFooter>
                 </Card>
@@ -305,4 +322,4 @@ function CreateUserForm({data, submitFunc}) {
     )
 }
 
-export default CreateUserForm;
+export default ViewUserForm;
