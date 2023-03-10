@@ -36,14 +36,14 @@ export default function CreatePartForm({data, submitFunc}) {
     const nanoid = customAlphabet(alphanumeric, 10); // id generator
     const router = useRouter();
 
-    const [itemNumber, setitemNumber] = useState()
-    const [category, setCategory] = useState()
+    const [itemNumber, setItemNumber] = useState("")
+    const [category, setCategory] = useState("")
     const [name, setName] = useState("");
     const [model, setModel] = useState("");
     const [rp, setRP] = useState(0); // Reorder Point
     const [unit, setUnit] = useState("");
     const [desc, setDesc] = useState(""); // Description
-    const [photo, setPhoto] = useState();
+    const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
     const [details, setDetails] = useState({
@@ -78,21 +78,59 @@ export default function CreatePartForm({data, submitFunc}) {
         }
         const objectUrl = URL.createObjectURL(photo)
         setPreview(objectUrl)
+        
         // free memory when ever this component is unmounted
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
+    // Add Detail to Array function
+    function addDetails() {
+        if (JSON.stringify(detailsArray[0]) == "{}") {
+            detailsArray.shift();
+        }
+        setDetailsArray((detailsArray) => [...detailsArray, details]);
+        clearDetails()
+        paginationFunc().addPage();
+    }
+
+    // Clear details function
+    function clearDetails() {
+        setDetails({
+            partNum: "",
+            brand: "",
+            qty: 0,
+            priceUnit: "",
+            cost: 0,
+        });
+    }
+
+    function clear() {
+        setItemNumber("")
+        setCategory("")
+        setName("")
+        setRP(0)
+        setModel("")
+        setUnit("")
+        setDesc("")
+        setPhoto()
+        setPreview("")
+        clearDetails()
+        setDetailsArray([{}])
+        inputPhoto.current.value = null
+    }
+
     async function submitForm() {
         let uploadConfig = {
-            file: photo,
+            file: inputPhoto.current.files[0],
             params: {
-                public_id: itemNumber,
+                public_id: itemNumber || nanoid(),
                 folder: "parts",
                 // type: "private",
             }
         }
         let imageRes = await uploadImage(uploadConfig)
-        console.log(imageRes)
+        console.log(uploadConfig)
+
         let partsData = {
             itemNumber: itemNumber,
             imageID: imageRes,
@@ -114,6 +152,7 @@ export default function CreatePartForm({data, submitFunc}) {
             body: JSON.stringify(partsData),
         }).then(result => {
             console.log(result.json())
+            clear()
             router.push("/parts")
         })
     }
@@ -170,7 +209,8 @@ export default function CreatePartForm({data, submitFunc}) {
                           <Input
                               name="itemNumber"
                               value={itemNumber}
-                              onChange={(e) => setitemNumber(e.target.value)}
+                              type="text"
+                              onChange={(e) => setItemNumber(e.target.value)}
                           />
                       </FormControl>
                       <FormControl isRequired>
@@ -401,8 +441,9 @@ export default function CreatePartForm({data, submitFunc}) {
                           /> */}
                         <Select
                               placeholder="Select Brand"
+                              name="brand"
                               value={details.brand}
-                              onChange={(e) => handleDetailsChange(e.target.value)}
+                              onChange={(e) => handleDetailsChange(e)}
                         >
                             {data.brands.map((brand) => {
                                 if (brand.disabled == false) {

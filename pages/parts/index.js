@@ -17,10 +17,8 @@ import PartsHomeTab from "@/components/layouts/parts/homeTab";
 import { sparePartsAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  // const resParts = await fetch(sparePartsAPI.get_all_parts)
-  // const partsData = await resParts.json()
-
-  const partsData = []
+  const resParts = await fetch(sparePartsAPI.get_all_parts)
+  const partsData = await resParts.json()
   
   const categoryList = {
     brands: [],

@@ -12,10 +12,6 @@ export const Dropdown = ({
 
     const [value, setValue] = useState(filter)
 
-    useEffect(() => {
-        console.log(options)
-    }, [])
-
     return (
         <>
             <Select

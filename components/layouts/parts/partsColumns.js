@@ -23,15 +23,14 @@ export const COLUMNS = [
     {
       Header: "",
       id: "photo",
-      accessor: "photo",
+      accessor: "imageID.secure_url",
       Cell: (props) => {
         return (
           <>
-            <Image src={props.row.original.photo} 
-              alt={props.row.original.name} 
+            <Image src={props.row.original.imageID.secure_url} 
+              alt={props.row.original.itemName} 
               borderRadius={"1em"}
-              border={"2px solid #9F9F9F"}
-            
+              border={"2px solid #9F9F9F"}  
             />
           </>
         )
@@ -45,8 +44,14 @@ export const COLUMNS = [
       Cell: (props) => {
         return (
         <>
-          <Text fontWeight={"medium"}>{props.row.original.name} ({props.row.original.model})</Text>
-          <Text fontSize={"xs"}>{props.row.original.code} </Text>
+          <Text fontWeight={"medium"}>{props.row.original.itemName} 
+          {
+            props.row.original.itemModel != "" ? (
+              <>({props.row.original.itemModel})</>
+            ) : (<></>)
+          }
+          </Text>
+          <Text fontSize={"xs"}>{props.row.original.itemNumber} </Text>
         </>
       )},
       disableSortBy: true,
@@ -55,7 +60,7 @@ export const COLUMNS = [
     {
       Header: "Category",
       id: "categoryID",
-      accessor: "category",
+      accessor: "categoryID.name",
       filter: (rows, id, filterValue) => {
         return rows.filter(
           (row) =>
@@ -99,7 +104,7 @@ export const COLUMNS = [
           </>
         )
       },
-      accessor: "qty",
+      accessor: "quantity",
       Cell: (props) => {
         return (
         <>
@@ -120,7 +125,7 @@ export const COLUMNS = [
 
             <GridItem display={"flex"} flexDirection={"column"}>
               <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-              <Text fontSize={"sm"} color={"gray"}>{props.row.original.unit}</Text>
+              <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
             </GridItem>
           </Grid>
         </>
@@ -154,7 +159,7 @@ export const COLUMNS = [
         return (
         <>
           <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unit}</Text>
+          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
         </>
         )
       },
@@ -187,7 +192,7 @@ export const COLUMNS = [
         return (
         <>
           <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unit}</Text>
+          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
         </>
         )
       },
@@ -197,22 +202,22 @@ export const COLUMNS = [
     {
       // HIDDEN
       Header: "Item Code",
-      id: "code",
-      accessor: "code",
+      id: "itemNumber",
+      accessor: "itemNumber",
       Filter: GlobalFilter,
     },
     {
       // HIDDEN
       Header: "Name",
-      id: "name",
-      accessor: "name",
+      id: "itemName",
+      accessor: "itemName",
       Filter: GlobalFilter,
     },
     {
       // HIDDEN
       Header: "Model",
-      id: "model",
-      accessor: "model",
+      id: "itemModel",
+      accessor: "itemModel",
       Filter: GlobalFilter,
     },
   ];

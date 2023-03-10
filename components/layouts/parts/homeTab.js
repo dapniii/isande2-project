@@ -11,6 +11,7 @@ import { COLUMNS } from './partsColumns'
 import BasicTable from '@/components/table/basicTable'
 import GlobalFilter from '@/components/table/globalFilter'
 import Dropdown from '@/components/table/dropdown'
+import { useEffect } from 'react'
 
 export default function PartsHomeTab({data}) {
 
@@ -74,7 +75,7 @@ export default function PartsHomeTab({data}) {
               COLUMNS={COLUMNS} 
               DATA={data.parts} 
               FILTERS={filters}
-              HIDDEN={["code", "model", "name", "status"]}
+              HIDDEN={["itemNumber", "itemModel", "itemName", "status"]}
             />
         </Flex>
     )

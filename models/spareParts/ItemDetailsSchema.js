@@ -23,6 +23,7 @@ const ItemDetailsSchema = new mongoose.Schema({
     },
     itemBrandID: {
         type: mongoose.Schema.Types.ObjectId,
+        ref: "ItemBrand",
         required: true,
     },
     quantity: {

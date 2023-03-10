@@ -65,9 +65,26 @@ function CreateUserForm({data, submitFunc}) {
         return submitForm
     }
 
+    function clear() {
+        setUserID(nanoid())
+        setFirstName("")
+        setLastName("")
+        setEmail("")
+        setPhone("")
+        setDepartment("")
+        setRole("")
+        setUserType("")
+        setSpecialty("")
+        setPassword("")
+        setConfirmPassword("")
+        setPhoto()
+        setPreview("")
+        inputPhoto.current.value = null
+    }
+
     async function submitForm() {
         let uploadConfig = {
-            file: photo,
+            file: inputPhoto.current.files[0],
             params: {
                 public_id: userID,
                 folder: "users",
@@ -99,6 +116,7 @@ function CreateUserForm({data, submitFunc}) {
             body: JSON.stringify(userData),
         }).then(result => {
             console.log(result.json())
+            clear()
             router.push("/users")
         })
     }

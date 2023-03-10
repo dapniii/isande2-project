@@ -45,7 +45,7 @@ export default async (req, res) => {
         // Create Item
         let itemResult = await Item.create({
             itemNumber: itemInfo.itemNumber,
-            // imageID: itemInfo.imageID,
+            imageID: itemInfo.imageID,
             categoryID: itemInfo.categoryID,
             itemName: itemInfo.itemName,
             itemModel: itemInfo.itemModel,
