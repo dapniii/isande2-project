@@ -2,35 +2,38 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
-import { Grid, GridItem, Flex, Text } from "@chakra-ui/react";
+import { Grid, GridItem, Flex, Text, Button, Icon } from "@chakra-ui/react";
 import BasicTable from "@/components/table/basicTable";
 import { COLUMNS } from "@/components/layouts/fuel/fuelColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
-
+import { useDisclosure } from "@chakra-ui/hooks";
+import AddFuelEntryForm from "@/components/layouts/fuel/addFuelEntryForm";
+import { MdAddCircle } from "react-icons/md";
+import { useState } from "react";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
 export async function getServerSideProps() {
   const res = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
-  const fuelData = await res.json()
+  const fuelData = await res.json();
 
   const category = {
-    refuelType: [{name:'Refuel Truck'}]
-  }
+    refuelType: [{ name: "Refuel Truck" }],
+  };
 
   let data = {
     fuel: fuelData,
-    categories: category
-  }
-  console.log(data. categories.refuelType[0]);
-  return { props: { data } }
-  
+    categories: category,
+  };
+  console.log(data.categories.refuelType[0]);
+  return { props: { data } };
 }
 //***************************************************************************************/
 
 export default function FuelPage({ data }) {
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   //Temp
   const user = {
@@ -38,9 +41,16 @@ export default function FuelPage({ data }) {
     role: "Admin",
   };
 
-  //Add fuel entry button function
+
+  //Add fuel entry button function -OPEN CLOSE FORMS
+  const [isFormOpen, setIsFormOpen] = useState(false)
+
+  
   function addFuelEntry() {
-    router.push("/fuel/add-fuel");
+    setIsFormOpen(true)
+  }
+  function closeFuelEntryForm() {
+    setIsFormOpen(false)
   }
 
   function headerBreadcrumbs() {
@@ -54,6 +64,7 @@ export default function FuelPage({ data }) {
           Fuel
         </Text>
         <AddButton title={"Add Fuel Entry"} clickFunction={addFuelEntry} />
+        <AddFuelEntryForm isOpen={isFormOpen} onClose={closeFuelEntryForm} />
       </Flex>
     );
   }
