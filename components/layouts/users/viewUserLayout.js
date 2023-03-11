@@ -84,6 +84,7 @@ function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
             imageRes = await uploadImage(uploadConfig)
         }
         console.log(imageRes)
+
         let userData = {
             userID: userID,
             imageID: imageRes,
@@ -94,10 +95,14 @@ function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
             departmentID: department,
             roleID: role,
             userTypeID: userType,
-            specialtyID: specialty,
             password: password,
             creatorID: "00002", // CHANGE HARDCODE
         }
+
+        if (specialty == "Mechanic") {
+            userData.specialtyID = specialty
+        }
+
         console.log(userData)
         let result = await fetch(userAPI.edit_user, {
             method: "POST",
@@ -131,7 +136,11 @@ function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
                 setDepartment(data.departmentID.name)
                 setRole(data.roleID.name)
                 setUserType(data.userTypeID.name)
-                setSpecialty(data.specialtyID.name || "")
+
+                try {
+                    setSpecialty(data.specialtyID.name)
+                } catch {}
+                
 			});
 	}, [userID]);
 

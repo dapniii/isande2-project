@@ -20,6 +20,7 @@ import { BackButton, EditButton, SaveButton, CancelButton } from "@/components/b
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import ViewPartLayout from "@/components/layouts/parts/viewPartLayout";
+import { qtyStatusIndicator } from "@/components/statusIndicators";
 
 export async function getServerSideProps() {
   const categoryList = {
@@ -149,12 +150,14 @@ export default function ItemDetails({categoryList}) {
             h={"8em"}
           />
           <Flex flexDirection={"column"} lineHeight={"1.5"} gap={1} py={1}>
-            <Flex>
+            <Flex gap={5} alignItems={"center"}>
               <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"1"} >{itemInfo.name}</Text>
+              {qtyStatusIndicator(itemInfo.quantity, itemInfo.reorderPoint)}
             </Flex>
             
             <Text fontSize={"xl"}>{itemInfo.model}</Text>
             <Text 
+              w={"7em"}
               py={"0.2"}
               px={"5"} 
               fontWeight={"bold"} 

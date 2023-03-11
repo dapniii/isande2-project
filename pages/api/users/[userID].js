@@ -16,9 +16,13 @@ export default async (req, res) => {
     .populate("userTypeID")
 
     let mechanicInfo = await Mechanic.findOne({userID: ObjectId(userInfo._id)}).populate("specialtyID")
-    userInfo.set("specialtyID", mechanicInfo.specialtyID, {strict: false})
     
+    
+    if (mechanicInfo != null) {
+        userInfo.set("specialtyID", mechanicInfo.specialtyID, {strict: false})
+    }
 
+        
     if (userInfo == null) {
         let error = "User not found";
         console.log(`Error: ${error}`);

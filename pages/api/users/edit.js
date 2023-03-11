@@ -40,8 +40,10 @@ export default async (req, res) => {
             bodyData.userTypeID = userTypeObjID._id
     
             // Get specialty if applicable 
-            let specialtyID = await Specialty.findOne({name: bodyData.specialtyID})
-            delete bodyData.specialty
+            if (bodyData.specialtyID != null) {
+                let specialtyID = await Specialty.findOne({name: bodyData.specialtyID})
+                delete bodyData.specialtyID
+            }
             
             // Add image details to image collection
 
