@@ -170,18 +170,17 @@ function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
                             mt={"0.5em"}
                             gap={3}
                         >   
-                            
-                                <Flex flexDirection={"column"}>
-                                    <Text fontWeight={"bold"}>Preview</Text>
-                                    <Image 
-                                        src={preview}
-                                        alt={"Upload Preview"}
-                                        objectFit={"cover"}
-                                        borderRadius={"15"}
-                                        w={"15em"}
-                                        h={"15em"}
-                                    />
-                                </Flex>
+                            <Flex flexDirection={"column"}>
+                                <Text fontWeight={"bold"}>Preview</Text>
+                                <Image 
+                                    src={preview}
+                                    alt={"Upload Preview"}
+                                    objectFit={"cover"}
+                                    borderRadius={"15"}
+                                    w={"15em"}
+                                    h={"15em"}
+                                />
+                            </Flex>
                             
                             <Button
                                 // @ts-ignore

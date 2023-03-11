@@ -17,7 +17,6 @@ export default async (req, res) => {
     let saltRounds = 10;
 
     const userInfo = await User.findOne({userID: bodyData.userID})
-    console.log(userInfo)
     if (userInfo != null) {
         if (bodyData.password != null) {
             let salt = await genSalt(saltRounds);
