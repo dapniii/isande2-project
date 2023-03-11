@@ -1,20 +1,19 @@
 import { connectToDatabase } from "@/lib/db";
-import Measure from "@/models/MeasureSchema";
+import ItemStatus from "@/models/spareParts/ItemStatusSchema";
 
 export default async (req, res) => {
     await connectToDatabase();
-    const measureInfo = req.body;
+    const categoryInfo = req.body;
 
     // Insert new item categories
-    measureInfo.additions.forEach(async element => {
-        let duplicates = await Measure.find({
-            $or: [ {'pubId': measureInfo.id}, {'name': measureInfo.name}]
+    categoryInfo.additions.forEach(async element => {
+        let duplicates = await ItemStatus.find({
+            $or: [ {'pubId': categoryInfo.id}, {'name': categoryInfo.name}]
             
         }) 
-        await Measure.create({
+        await ItemStatus.create({
             pubId: element.id,
             name: element.name,
-            abbreviation: element.abbreviation,
             disabled: element.disabled,
         })
        
@@ -22,16 +21,15 @@ export default async (req, res) => {
     })
 
     // Update existing item categories
-    measureInfo.edits.forEach(async element => {
-        let duplicates = await Measure.findOne({
+    categoryInfo.edits.forEach(async element => {
+        let duplicates = await ItemStatus.findOne({
             name: element.name
         })
 
-        let edit = await Measure.updateOne(
+        let edit = await ItemStatus.updateOne(
             { pubId: element.pubId },
             { 
                 name: element.name,
-                abbreviation: element.abbreviation,
                 disabled: element.disabled,
             }
 

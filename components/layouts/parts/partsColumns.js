@@ -47,7 +47,7 @@ export const COLUMNS = [
           <Text fontWeight={"medium"}>{props.row.original.itemName} 
           {
             props.row.original.itemModel != "" ? (
-              <>({props.row.original.itemModel})</>
+              <> ({props.row.original.itemModel})</>
             ) : (<></>)
           }
           </Text>
@@ -125,7 +125,7 @@ export const COLUMNS = [
 
             <GridItem display={"flex"} flexDirection={"column"}>
               <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-              <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
+              <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.abbreviation}</Text>
             </GridItem>
           </Grid>
         </>
@@ -159,7 +159,7 @@ export const COLUMNS = [
         return (
         <>
           <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
+          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.abbreviation}</Text>
         </>
         )
       },
@@ -192,7 +192,7 @@ export const COLUMNS = [
         return (
         <>
           <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
-          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.name}</Text>
+          <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.abbreviation}</Text>
         </>
         )
       },

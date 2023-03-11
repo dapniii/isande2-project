@@ -31,9 +31,10 @@ export async function getServerSideProps() {
   categoryList.brands = catData.brands
   categoryList.itemCategories = catData.categories
   categoryList.measures = catData.measures
+  categoryList.status = catData.status
   
   let data = {
-    parts: partsData,
+    partsData: partsData,
     categories: categoryList,
   }
   

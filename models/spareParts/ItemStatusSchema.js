@@ -3,7 +3,7 @@ import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
 
 const nanoid = customAlphabet(alphanumeric, 5)
-const MeasureSchema = new mongoose.Schema({
+const ItemStatusSchema = new mongoose.Schema({
     pubId: {
         type: String,
         unique: true,
@@ -17,10 +17,6 @@ const MeasureSchema = new mongoose.Schema({
         required: true,
         maxLenght: 50,
     },
-    abbreviation: {
-        type: String,
-        maxLength: 3,
-    },
     disabled: {
         type: Boolean,
         required: true,
@@ -28,6 +24,6 @@ const MeasureSchema = new mongoose.Schema({
     }
 })
 
-const Measure = mongoose.models.Measure || mongoose.model("Measure", MeasureSchema)
+const ItemStatus = mongoose.models.ItemStatus || mongoose.model("ItemStatus", ItemStatusSchema)
 
-export default Measure;
+export default ItemStatus;

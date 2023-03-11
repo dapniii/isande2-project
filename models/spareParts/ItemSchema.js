@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Image from "../ImageSchema";
 import ItemCategory from "./ItemCategorySchema";
+import ItemStatus from "./ItemStatusSchema";
 import Measure from "../MeasureSchema";
 import User from "../users/UserSchema";
 import { customAlphabet } from "nanoid";
@@ -49,6 +50,10 @@ const ItemSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    // itemStatusID: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "ItemStatus"
+    // },
     creatorID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

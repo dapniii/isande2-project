@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Item from "./ItemSchema";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
+import { Double } from "mongodb";
 
 
 const ItemDetailsSchema = new mongoose.Schema({
@@ -33,10 +34,10 @@ const ItemDetailsSchema = new mongoose.Schema({
         default: 0
     },
     unitPrice: {
-        type: Number,
-        min: 0,
+        type: mongoose.Types.Decimal128,
+        min: 0.00,
         required: true,
-        default: 0
+        default: 0.00
     },
     disabled: {
         type: Boolean,

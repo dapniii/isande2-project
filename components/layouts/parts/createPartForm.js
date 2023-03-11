@@ -24,8 +24,9 @@ import {
   Link,
   useDisclosure,
 } from "@chakra-ui/react";
-import { CheckCircleIcon, CloseIcon, AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
+import MeasureListModal from "@/components/measureModal";
 import { uploadImage } from "@/lib/imageHandler";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/numbers";
@@ -215,7 +216,7 @@ export default function CreatePartForm({data, submitFunc}) {
                       </FormControl>
                       <FormControl isRequired>
                           <FormLabel onClick={() => catModalOpen.onOpen()}><Link>Category</Link></FormLabel>
-                          <CategoryListModal modalOpen={catModalOpen} options={data.categories} title={"Spare Parts Categories"}></CategoryListModal>
+                          <CategoryListModal modalOpen={catModalOpen} options={data.categories} title={"Spare Parts Categories"} apiPath={sparePartsAPI.modify_category}></CategoryListModal>
                           <Select
                               placeholder="Select Category"
                               value={category}
@@ -271,7 +272,7 @@ export default function CreatePartForm({data, submitFunc}) {
                       </FormControl>
                       <FormControl isRequired>
                           <FormLabel onClick={() => unitModalOpen.onOpen()}><Link>Unit of Measurement</Link></FormLabel>
-                          {/* <MeasureListModal modalOpen={unitModalOpen} options={MEASURE_DATA} title={"Unit of Measurement"}></MeasureListModal> */}
+                          <MeasureListModal modalOpen={unitModalOpen} options={data.measures} title={"Unit of Measurement"} apiPath={sparePartsAPI.modify_measure}></MeasureListModal>
                           <Select
                               placeholder="Select Unit"
                               value={unit}
@@ -377,7 +378,8 @@ export default function CreatePartForm({data, submitFunc}) {
                       {/* DETAILS HEADERS */}
                       <GridItem colStart={1}><Text>{" "}</Text></GridItem>
                       <GridItem colStart={2}><Text fontWeight={"medium"}>Part Number</Text></GridItem>
-                      <GridItem colStart={3}><Text fontWeight={"medium"}>Brand</Text></GridItem>
+                      <GridItem colStart={3}><Link><Text fontWeight={"medium"} onClick={brandModalOpen.onOpen}>Brand</Text></Link></GridItem>
+                      <CategoryListModal modalOpen={brandModalOpen} options={data.brands} title={"Spare Parts Brands"} apiPath={sparePartsAPI.modify_brand}></CategoryListModal>
                       <GridItem colStart={4}><Text fontWeight={"medium"}>Quantity</Text></GridItem>
                       <GridItem colStart={5}><Text fontWeight={"medium"}>Unit Price</Text></GridItem>
                       <GridItem colSpan={6} mb={"1em"}><hr /></GridItem>

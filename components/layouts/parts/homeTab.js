@@ -15,6 +15,10 @@ import { useEffect } from 'react'
 
 export default function PartsHomeTab({data}) {
 
+    useEffect(() => {
+      console.log(data)
+    }, [])
+
     function filters(filter, setFilter, globalFilter, setGlobalFilter) {
         return (
           <>
@@ -30,13 +34,14 @@ export default function PartsHomeTab({data}) {
               filter={filter}
               setFilter={setFilter}
             ></Dropdown>
-            {/* <Dropdown 
+            <Dropdown 
               title="Status"
+              options={data.categories.status}
               id="status"
-              name="status"
+              name="name"
               filter={filter}
               setFilter={setFilter}
-            ></Dropdown> */}
+            ></Dropdown>
           </>
         )
     }
@@ -46,7 +51,7 @@ export default function PartsHomeTab({data}) {
             <StatGroup bg={"white"} p={5} boxShadow={"xl"} borderRadius={5}>
                 <Stat>
                     <StatLabel>Total Inventory Value</StatLabel>
-                    <StatNumber>P 345,670</StatNumber>
+                    <StatNumber>P {data.partsData.totalValue}</StatNumber>
                     <StatHelpText>
                     <StatArrow type='increase' />
                     23.36%
@@ -55,7 +60,7 @@ export default function PartsHomeTab({data}) {
 
                 <Stat>
                     <StatLabel>Low Stock</StatLabel>
-                    <StatNumber>45</StatNumber>
+                    <StatNumber>{data.partsData.count.lowStock}</StatNumber>
                     <StatHelpText>
                     <StatArrow type='decrease' />
                     9.05%
@@ -64,7 +69,7 @@ export default function PartsHomeTab({data}) {
 
                 <Stat>
                     <StatLabel>Out of Stock</StatLabel>
-                    <StatNumber>45</StatNumber>
+                    <StatNumber>{data.partsData.count.outOfStock}</StatNumber>
                     <StatHelpText>
                     <StatArrow type='decrease' />
                     9.05%
@@ -73,7 +78,7 @@ export default function PartsHomeTab({data}) {
             </StatGroup>
             <BasicTable 
               COLUMNS={COLUMNS} 
-              DATA={data.parts} 
+              DATA={data.partsData.parts} 
               FILTERS={filters}
               HIDDEN={["itemNumber", "itemModel", "itemName", "status"]}
             />
