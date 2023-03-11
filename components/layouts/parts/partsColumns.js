@@ -5,21 +5,7 @@ import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import GlobalFilter from "@/components/table/globalFilter";
 
 export const COLUMNS = [
-    {
-      Header: "",
-      id: "index",
-      accessor: (/** @type {any} */ _row, /** @type {number} */ i) => i + 1,
-      Cell: (props) => {
-        return (
-          <>
-            <Text fontWeight={"bold"} float={"left"}>
-              {props.value}
-            </Text>
-          </>
-        )
-      },
-      width: 10,
-    },
+
     {
       Header: "",
       id: "photo",
@@ -35,7 +21,7 @@ export const COLUMNS = [
           </>
         )
       },
-      width: 90,
+      width: 100,
     },
     {
       Header: "Item",
@@ -55,7 +41,7 @@ export const COLUMNS = [
         </>
       )},
       disableSortBy: true,
-      width: 200,
+      width: 130,
     },
     {
       Header: "Category",
@@ -197,7 +183,7 @@ export const COLUMNS = [
         )
       },
       disableGlobalFilter: true,
-      width: 100,
+      width: 90,
     },
     {
       // HIDDEN

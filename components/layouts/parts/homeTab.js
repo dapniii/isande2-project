@@ -3,8 +3,6 @@ import {
     Stat,
     StatLabel,
     StatNumber,
-    StatHelpText,
-    StatArrow,
     StatGroup,
 } from '@chakra-ui/react'
 import { COLUMNS } from './partsColumns'
@@ -12,12 +10,31 @@ import BasicTable from '@/components/table/basicTable'
 import GlobalFilter from '@/components/table/globalFilter'
 import Dropdown from '@/components/table/dropdown'
 import { useEffect } from 'react'
+import { Router, useRouter } from "next/router"
 
 export default function PartsHomeTab({data}) {
+    const router = useRouter();
+    
+    // Table Functions
+    function getRowData(rowData) {
+      let query = {
+        id: rowData.itemNumber,
+        name: rowData.itemName,
+        model: rowData.itemModel
+      }
 
-    useEffect(() => {
-      console.log(data)
-    }, [])
+      return query;
+    }
+
+    function navToDetails(query) {
+      router.push({
+        pathname: `/parts/${query.id}`,
+        query: {
+          itemName: query.name,
+          itemModel: query.model,
+        }
+      })
+    }
 
     function filters(filter, setFilter, globalFilter, setGlobalFilter) {
         return (
@@ -52,28 +69,16 @@ export default function PartsHomeTab({data}) {
                 <Stat>
                     <StatLabel>Total Inventory Value</StatLabel>
                     <StatNumber>P {data.partsData.totalValue}</StatNumber>
-                    <StatHelpText>
-                    <StatArrow type='increase' />
-                    23.36%
-                    </StatHelpText>
                 </Stat>
 
                 <Stat>
                     <StatLabel>Low Stock</StatLabel>
                     <StatNumber>{data.partsData.count.lowStock}</StatNumber>
-                    <StatHelpText>
-                    <StatArrow type='decrease' />
-                    9.05%
-                    </StatHelpText>
                 </Stat>
 
                 <Stat>
                     <StatLabel>Out of Stock</StatLabel>
                     <StatNumber>{data.partsData.count.outOfStock}</StatNumber>
-                    <StatHelpText>
-                    <StatArrow type='decrease' />
-                    9.05%
-                    </StatHelpText>
                 </Stat>
             </StatGroup>
             <BasicTable 
@@ -81,6 +86,8 @@ export default function PartsHomeTab({data}) {
               DATA={data.partsData.parts} 
               FILTERS={filters}
               HIDDEN={["itemNumber", "itemModel", "itemName", "status"]}
+              getRowData={getRowData}
+              clickRowFunction={navToDetails}
             />
         </Flex>
     )

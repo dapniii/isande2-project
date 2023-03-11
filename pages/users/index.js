@@ -59,14 +59,9 @@ export default function UsersPage({data}) {
     router.push("/users/create");
   }
 
-  function navToDetails(id) {
-    router.push(`/users/${id}`)
-  }
-
   function headerBreadcrumbs() {return (<></>)}
 
   function headerMain() {
-    console.log(data)
     return (
       //Header Content
       <Flex alignItems={"center"} justifyContent={"space-between"}>
@@ -76,6 +71,18 @@ export default function UsersPage({data}) {
         <AddButton title={"Add New User"} clickFunction={navToCreate} />
       </Flex>
     )
+  }
+
+  // Table Functions
+  function getRowData(rowData) {
+    let query = {
+      id: rowData.userID
+    }
+    return query
+  }
+
+  function navToDetails(query) {
+    router.push(`/users/${query.id}`)
   }
 
   function filters(filter, setFilter, globalFilter, setGlobalFilter) {
@@ -136,7 +143,7 @@ export default function UsersPage({data}) {
             DATA={data.users}
             FILTERS={filters}
             HIDDEN={["firstName", "lastName", "department", "specialty"]}
-            ID={"userID"}
+            getRowData={getRowData}
             clickRowFunction={navToDetails}
           />        
         </GridItem>

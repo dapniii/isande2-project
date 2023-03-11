@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import Item from "./ItemSchema";
+import ItemBrand from "./ItemBrandSchema"
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
-import { Double } from "mongodb";
-
 
 const ItemDetailsSchema = new mongoose.Schema({
     itemID: {

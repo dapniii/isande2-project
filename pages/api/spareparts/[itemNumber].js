@@ -2,6 +2,7 @@ import { connectToDatabase } from "@/lib/db";
 import mongoose from "mongoose";
 import Item from "@/models/spareParts/ItemSchema";
 import ItemDetails from "@/models/spareParts/ItemDetailsSchema";
+import { getRandomInt, calcQuantityStatus } from "@/lib/dataHandler";
 
 export default async (req, res) => {
     await connectToDatabase();
@@ -23,6 +24,7 @@ export default async (req, res) => {
     let quantity = 0
     let itemValue = 0
     detailsInfo.map(detail => {
+        
         if (itemInfo._id.toString() == detail.itemID.toString() && !detail.disabled) {
             detailsArray.push(detail)
             quantity += detail.quantity
@@ -33,6 +35,8 @@ export default async (req, res) => {
     itemInfo.set("details", detailsInfo, {strict: false})
     itemInfo.set("quantity", quantity, {strict: false})
     itemInfo.set("itemValue", itemValue, {strict: false})
+    itemInfo.set("status", calcQuantityStatus(quantity, itemInfo.reorderPoint), {strict: false})
+    itemInfo.set("eoq", getRandomInt(0, 20), {strict: false}) // TEMPORARY ONLY
 
     if (itemInfo == null) {
         let error = "Item not found";

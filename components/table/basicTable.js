@@ -24,7 +24,7 @@ function BasicTable({
   DATA,
   FILTERS,
   HIDDEN,
-  ID,
+  getRowData, // Get data from the table that will be used by clickRowFunction
   clickRowFunction,
 }) {
   const columns = useMemo(() => COLUMNS, []);
@@ -145,7 +145,7 @@ function BasicTable({
               prepareRow(row);
               return (
                 <Tr {...row.getRowProps()}
-                    onClick={() =>clickRowFunction(row.original[ID])}
+                    onClick={() =>clickRowFunction(getRowData(row.original))}
                     transitionDuration="180ms"
                     _hover={{
                       bg: "blackAlpha.300",
