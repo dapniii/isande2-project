@@ -9,8 +9,8 @@ import { COLUMNS } from './partsColumns'
 import BasicTable from '@/components/table/basicTable'
 import GlobalFilter from '@/components/table/globalFilter'
 import Dropdown from '@/components/table/dropdown'
-import { useEffect } from 'react'
 import { Router, useRouter } from "next/router"
+import { addCommasToNum } from '@/lib/dataHandler'
 
 export default function PartsHomeTab({data}) {
     const router = useRouter();
@@ -68,7 +68,7 @@ export default function PartsHomeTab({data}) {
             <StatGroup bg={"white"} p={5} boxShadow={"xl"} borderRadius={5}>
                 <Stat>
                     <StatLabel>Total Inventory Value</StatLabel>
-                    <StatNumber>P {data.partsData.totalValue}</StatNumber>
+                    <StatNumber>P {addCommasToNum(data.partsData.totalValue)}</StatNumber>
                 </Stat>
 
                 <Stat>

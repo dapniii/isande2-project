@@ -43,8 +43,6 @@ export async function getServerSideProps() {
 export default function ItemDetails({categoryList}) {
   const router = useRouter();
   const { itemNumber, itemName, itemModel } = router.query;
-  const [isEdit, setIsEdit] = useState(false);
-  const [submitForm, setSubmitForm] = useState();
 
   const [itemInfo, setItemInfo] = useState({
     itemNumber: itemNumber,
@@ -104,6 +102,15 @@ export default function ItemDetails({categoryList}) {
     router.back();
   }
 
+  function navToEdit() {
+    router.push({
+      pathname: "/parts/edit",
+      query: {
+        id: itemNumber
+      }
+    })
+  }
+
   function headerBreadcrumbs() {
     return (
       <Flex justifyContent={"space-between"}>
@@ -160,20 +167,9 @@ export default function ItemDetails({categoryList}) {
             </Text>
           </Flex>
         </Flex>
-          { isEdit ? 
-              (
-                <Flex gap={2} alignSelf={"end"}>
-                  <CancelButton title={"Cancel"} clickFunction={() => setIsEdit(!isEdit)} />
-                  <SaveButton title={"Save Changes"} clickFunction={submitForm} />
-                </Flex>
-              ) 
-              : 
-              (
-                <Flex alignSelf={"end"}> 
-                  <EditButton title={"Edit Item"} clickFunction={() => setIsEdit(!isEdit)} />
-                </Flex>
-              )
-          }
+        <Flex alignSelf={"end"}> 
+          <EditButton title={"Edit Item"} clickFunction={() => navToEdit()} />
+        </Flex>
       </Flex>
     );
   }
