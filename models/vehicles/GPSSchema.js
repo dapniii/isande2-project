@@ -1,0 +1,26 @@
+import mongoose from "mongoose";
+
+const GPSSchema = new mongoose.Schema({
+    pubId: {
+        type: String,
+        unique: true,
+        required: true,
+        minLenght: 5,
+    },
+    name: {
+        type: String,
+        unique: true,
+        required: true,
+        maxLenght: 50,
+    },
+    disabled: {
+        type: Boolean,
+        required: true,
+        default: false,
+    }
+})
+
+const GPS = mongoose.models.GPS || mongoose.model("GPS", GPSSchema)
+
+
+export default GPS;

@@ -23,12 +23,14 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
+    useDisclosure,
+    Link,
 } from '@chakra-ui/react';
 import { SaveButton } from '@/components/buttons';
 import { EditIcon } from '@chakra-ui/icons';
 import { MdOutlineSave } from 'react-icons/md';
 import { sparePartsAPI } from '@/lib/routes';
-
+import CategoryListModal from "@/components/basicCategoryModal"
 
 
 function ItemAdjustmentModal ({modalOpen, data, options}) {
@@ -38,6 +40,8 @@ function ItemAdjustmentModal ({modalOpen, data, options}) {
     const [editArray, setEditArray] = useState(data.detailsArray);
     const [newQuantity, setNewQuantity] = useState(0)
     const [isEdit, setIsEdit] = useState(-1);
+
+    const reasonModal = useDisclosure();
 
     // TEMPORARY ONLY
     let userID = "00001"
@@ -167,7 +171,8 @@ function ItemAdjustmentModal ({modalOpen, data, options}) {
                     <Flex w={"35%"} flexDirection={"column"} gap={5}>
                         {/* Reason Input */}
                         <FormControl isRequired>
-                            <FormLabel>Reason</FormLabel>
+                            <FormLabel><Link onClick={reasonModal.onOpen}>Reason</Link></FormLabel>
+                            <CategoryListModal modalOpen={reasonModal} options={options.reasons} title={"Adjustment Reasons"} apiPath={sparePartsAPI.modify_reason} />
                             <Select value={reason} onChange={(e) => setReason(e.target.value)}>
                                 <option value="" hidden disabled>Select Reason</option>
                                 {options.reasons.map((reasons) => {
