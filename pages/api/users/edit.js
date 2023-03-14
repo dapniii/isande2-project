@@ -45,7 +45,6 @@ export default async (req, res) => {
             }
             
             // Add image details to image collection
-
             if (bodyData.imageID != "") {
                 let imageResult = await Image.findByIdAndUpdate(userInfo.imageID,
                     {

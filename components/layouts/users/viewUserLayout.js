@@ -38,7 +38,7 @@ import { userAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 import { uploadImage } from "@/lib/imageHandler";
 
-function ViewUserForm({ userID, data, submitFunc, isEdit, setIsEdit }) {
+function ViewUserForm({ userID, data, submitFunc, isEdit }) {
     const router = useRouter();
 
     const [firstName, setFirstName] = useState("");

@@ -133,7 +133,6 @@ export default function UserDetails({categoryList}) {
             userID={userID} 
             data={categoryList} 
             isEdit={isEdit} 
-            setIsEdit={setIsEdit}
             submitFunc={getSubmit} 
           />
         </GridItem>

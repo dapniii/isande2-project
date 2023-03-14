@@ -1,30 +1,29 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { calcQuantityStatus } from "@/lib/dataHandler";
 
-export function qtyStatusIndicator(qty, rp) {
-    let status = calcQuantityStatus(qty, rp)
+export function qtyStatusIndicator(status) {
 
-    if (status == "In Stock") 
+    if (status == "In Stock") {
         return (
-            <Flex gap={1} border={"2px solid black"} borderRadius={"20px"} px={2}>
-                <Text color={"green.300"}>⬤</Text>
-                <Text>{status}</Text>
+            <Flex gap={1} bg={"rgba(104, 211, 145, 0.35)"} borderRadius={"30em"} px={3.5} py={0.3}>
+                <Text color={"green.400"} fontWeight={"bold"}>{status}</Text>
             </Flex> 
         )
-    else if (status == "Low Stock")
+    }
+    else if (status == "Low Stock") {
         return (
-            <Flex gap={1} border={"2px solid black"} borderRadius={"20px"} px={2}>
-                <Text color={"yellow.300"}>⬤</Text>
-                <Text>{status}</Text>
+            <Flex gap={1} bg={"rgba(246, 224, 94, 0.35)"} borderRadius={"30em"} px={3.5} py={0.3}>
+                <Text color={"yellow.400"} fontWeight={"bold"}>{status}</Text>
             </Flex> 
         )
-    else if (status == "Out of Stock")
+    }
+    else if (status == "Out of Stock") {
         return (
-            <Flex gap={1} border={"2px solid black"} borderRadius={"20px"} px={2}>
-                <Text color={"red.400"}>⬤ </Text>
-                <Text>{status}</Text>
+            <Flex gap={1} bg={"rgba(245, 101, 101, 0.3)"} borderRadius={"30em"} px={3.5} py={0.3}>
+                <Text color={"red.400"} fontWeight={"bold"}>{status}</Text>
             </Flex> 
         )
-    
-    else return <Text>⬤ {status}</Text>
-} 
+    }
+
+    else return <Text>{status}</Text>
+}
+

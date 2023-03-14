@@ -152,7 +152,7 @@ export default function ItemDetails({categoryList}) {
           <Flex flexDirection={"column"} lineHeight={"1.5"} gap={1} py={1}>
             <Flex gap={5} alignItems={"center"}>
               <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"1"}>{itemInfo.name}</Text>
-              {qtyStatusIndicator(itemInfo.quantity, itemInfo.reorderPoint)}
+              {qtyStatusIndicator(itemInfo.status)}
             </Flex>
             
             <Text fontSize={"lg"}>{itemInfo.model}</Text>

@@ -1,5 +1,4 @@
 import { useState, useRef, useEffect } from "react";
-
 import { 
   Image,
   Text, 
@@ -32,6 +31,7 @@ import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/numbers";
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
+import { CreateItemDetailsTable } from "./itemDetailsTable";
 
 export default function CreatePartForm({data, submitFunc}) {
     const nanoid = customAlphabet(alphanumeric, 10); // id generator
@@ -47,21 +47,12 @@ export default function CreatePartForm({data, submitFunc}) {
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
-    const [details, setDetails] = useState({
-        partNum: "",
-        brand: "",
-        qty: 0,
-        cost: 0,
-    });
     const [detailsArray, setDetailsArray] = useState([{}]);
-    const [detailsPageIndex, setDetailsPageIndex] = useState(1);
-    const [detailsPageSize, setDetailsPageSize] = useState(5);
+
 
     const catModalOpen = useDisclosure();
     const unitModalOpen = useDisclosure();
     const brandModalOpen = useDisclosure();
-    const currencyModalOpen = useDisclosure();
-
 
     function passSubmitFunc() {
         return submitForm
@@ -70,7 +61,7 @@ export default function CreatePartForm({data, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-    }, [itemNumber, category, name, model, rp, unit, desc, details, detailsArray])
+    }, [itemNumber, category, name, model, rp, unit, desc, detailsArray])
 
     // Generate photo preview
     useEffect(() => {
@@ -84,27 +75,6 @@ export default function CreatePartForm({data, submitFunc}) {
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
-    // Add Detail to Array function
-    function addDetails() {
-        if (JSON.stringify(detailsArray[0]) == "{}") {
-            detailsArray.shift();
-        }
-        setDetailsArray((detailsArray) => [...detailsArray, details]);
-        clearDetails()
-        paginationFunc().addPage();
-    }
-
-    // Clear details function
-    function clearDetails() {
-        setDetails({
-            partNum: "",
-            brand: "",
-            qty: 0,
-            priceUnit: "",
-            cost: 0,
-        });
-    }
-
     function clear() {
         setItemNumber("")
         setCategory("")
@@ -115,7 +85,6 @@ export default function CreatePartForm({data, submitFunc}) {
         setDesc("")
         setPhoto()
         setPreview("")
-        clearDetails()
         setDetailsArray([{}])
         inputPhoto.current.value = null
     }
@@ -158,19 +127,6 @@ export default function CreatePartForm({data, submitFunc}) {
         })
     }
 
-    // Set Details function
-    function handleDetailsChange(e) {
-        const { name, value } = e.target;
-
-        setDetails((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-
-        // if (name == "brand") {
-        // 	setDuplicateError(false);
-        // }
-    }
 
     return (
     <>
@@ -383,122 +339,9 @@ export default function CreatePartForm({data, submitFunc}) {
                       <GridItem colStart={4}><Text fontWeight={"medium"}>Quantity</Text></GridItem>
                       <GridItem colStart={5}><Text fontWeight={"medium"}>Unit Price</Text></GridItem>
                       <GridItem colSpan={6} mb={"1em"}><hr /></GridItem>
-                      
-                      { showDetailsTable() ? (
-                          <>
-                              {
-                                  detailsArray.map((detail, index) => {
-                                     if (paginationFunc().limitToPageSize(index)) {
-                                          return (
-                                              <>
-                                                  <GridItem colStart={1} m={"auto"}>
-                                                      <Text fontWeight={"semibold"}>{index+1}</Text>
-                                                  </GridItem>
-                                                  <GridItem colStart={2}>
-                                                      <Text>{detail.partNum}</Text>
-                                                  </GridItem>
-                                                  <GridItem colStart={3}>
-                                                      <Text>{detail.brand}</Text>
-                                                  </GridItem>
-                                                  <GridItem colStart={4}>
-                                                      <Text>{detail.qty}</Text>
-                                                  </GridItem>
-                                                  <GridItem colStart={5}>
-                                                      <Text>{detail.cost}</Text>
-                                                  </GridItem>
-                                                  <GridItem colStart={6}>
-                                                      <IconButton
-                                                          variant='outline'
-                                                          size={"sm"}
-                                                          colorScheme='gray'
-                                                          aria-label='Delete Detail Row'
-                                                          icon={<DeleteIcon />}
-                                                          onClick={() => deleteRow(detail)}
-                                                      />
-                                                  </GridItem>
-                                              </>
-                                          ) 
-                                     } 
-                                  })
-                              }
-                          </>
-                      ) : (<></>)
-                      }
-                      {/* DETAILS INPUT  */}
-                      <GridItem colStart={1} m={"auto"}>
-                          <Text fontWeight={"semibold"}>{ JSON.stringify(detailsArray[0]) == "{}" ? (detailsArray.length) : (detailsArray.length + 1) }</Text>
-                      </GridItem>
-                      <GridItem colStart={2} w={"95%"} >
-                          <Input 
-                              name="partNum"
-                              value={details.partNum}    
-                              onChange={(e) => handleDetailsChange(e)}
-                          />
-                      </GridItem>
-                      <GridItem colStart={3} w={"95%"}>
-                          {/* <Input 
-                              name="brand"
-                              value={details.brand}    
-                              onChange={(e) => handleDetailsChange(e)}
-                          /> */}
-                        <Select
-                              placeholder="Select Brand"
-                              name="brand"
-                              value={details.brand}
-                              onChange={(e) => handleDetailsChange(e)}
-                        >
-                            {data.brands.map((brand) => {
-                                if (brand.disabled == false) {
-                                    return (
-                                        <option
-                                            key={brand.pubId}
-                                            value={brand.name}
-                                        >
-                                            {brand.name}
-                                        </option>
-                                    );
-                                }
-                            })}
-                          </Select>
-                      </GridItem>
-                      <GridItem colStart={4} w={"95%"}>
-                          <NumberInput min={0} max={1000} precision={0} value={details.qty} onChange={(value) => handleDetailsChange({ target: { name: 'qty', value }})}>
-                              <NumberInputField  />
-                              <NumberInputStepper>
-                                  <NumberIncrementStepper />
-                                  <NumberDecrementStepper />
-                              </NumberInputStepper>
-                          </NumberInput>
-                      </GridItem>
-                      <GridItem colStart={5} w={"95%"}>
-                        <NumberInput min={0} precision={2} value={details.cost} onChange={(value) => handleDetailsChange({ target: { name: 'cost', value }})}>
-                            <NumberInputField  />
-                            <NumberInputStepper>
-                                <NumberIncrementStepper />
-                                <NumberDecrementStepper />
-                            </NumberInputStepper>
-                        </NumberInput>
-                    
-                      </GridItem>
-                      <GridItem colStart={6} w={"95%"} pr={"1em"}>
-                          <Button leftIcon={<AddIcon bg="white" color={"green.300"} borderRadius={100} p="3px" />} bg={"green.300"} color={"white"} onClick={() => addDetails()}>
-                                  Add Item
-                          </Button>
-                      </GridItem>
-                      {
-                          showDetailsTable() ? (
-                              <GridItem colSpan={6}>
-                              {/* PAGINATION */}
-                                  <ButtonGroup p={"1em"} width={"100%"} justifyContent={"right"} alignItems={"center"} gap={"0"}>
-                                      {/* <Text>
-                                      {pageIndex + 1} of {pageOptions.length}
-                                      </Text> */}
-                                      {backButton()}
-                                      {nextButton()}
-                                  </ButtonGroup>
-                              </GridItem>
-                          ) : (<></>)
-                      }  
+
+
+                      <CreateItemDetailsTable detailsArray={detailsArray} setDetailsArray={setDetailsArray} brands={data.brands} />
                   </Grid>  {/* Details Table Grid */}
               </GridItem>
             </Grid> {/* Form Grid */}
@@ -506,81 +349,4 @@ export default function CreatePartForm({data, submitFunc}) {
       </>
     )
   
-    // PAGINATION FOR DETAILS TABLE
-    function showDetailsTable() {
-      return JSON.stringify(detailsArray[0]) != "{}" && detailsArray.length != 0;
-    }
-  
-  
-    function nextButton() {
-      return (
-          <Button
-              color={"gray"}
-              onClick={() => paginationFunc().next()}
-              disabled={paginationFunc().nextDisabled()}
-          >
-              {">"}
-          </Button>
-      );
-    }
-  
-    function backButton() {
-      return (
-          <Button
-              color={"gray"}
-              onClick={() => paginationFunc().back()}
-              disabled={paginationFunc().backDisabled()}
-          >
-              {"<"}
-          </Button>
-      );
-    }
-  
-    function paginationFunc() {
-      var func = {
-          test:
-              function() {
-                  console.log("Test")
-              },
-          next:
-              function() {
-                  setDetailsPageIndex(detailsPageIndex+1);
-              },
-          back:
-              function() {
-                  setDetailsPageIndex(detailsPageIndex-1);
-              },
-          nextDisabled: 
-              function() {
-                  return detailsArray.length <= detailsPageSize || detailsPageIndex == Math.ceil((detailsArray.length/detailsPageSize));
-              },
-          backDisabled:
-              function() {
-                  return detailsPageIndex == 1;
-              },
-          limitToPageSize:
-              function(index) {
-                  if (detailsPageSize > 0) {
-                      return index < detailsPageIndex*detailsPageSize && index >= (detailsPageIndex*detailsPageSize) - detailsPageSize;
-                  }
-                  else {
-                      // No pagination
-                      return true; 
-                  } 
-              },
-          addPage:
-              function() {
-                  if (detailsArray.length % detailsPageSize == 0 && detailsArray.length > 1) {
-                      setDetailsPageIndex(detailsPageIndex+1);
-                      }
-              },
-          removePage:
-              function() {
-                  if (detailsArray.length == (detailsPageIndex-1) * detailsPageSize + 1) 
-                      setDetailsPageIndex(detailsPageIndex-1);
-              }
-      }
-  
-      return func;
-    }
 }
