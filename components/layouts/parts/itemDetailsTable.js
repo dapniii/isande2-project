@@ -12,7 +12,8 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
-    Icon, 
+    Link,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { useState, useEffect } from "react";
@@ -207,6 +208,7 @@ function editableRow (
     // Clear details function
     function clearDetails() {
         setDetails({
+            _id: "",
             partNum: "",
             brand: "",
             qty: 0,
@@ -262,15 +264,9 @@ function editableRow (
                     })}
                 </Select>
             </GridItem>
-            <GridItem colStart={4} w={"95%"}>
-                <NumberInput min={0} max={1000} precision={0} value={details.qty} onChange={(value) => handleDetailsChange({ target: { name: 'qty', value }})}>
-                    <NumberInputField  />
-                    <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                    </NumberInputStepper>
-                </NumberInput>
-            </GridItem>
+
+            <GridItem colStart={4} py={2}><Text>{details.qty}</Text></GridItem>
+
             <GridItem colStart={5} w={"95%"}>
                 <NumberInput min={0} precision={2} value={details.cost} onChange={(value) => handleDetailsChange({ target: { name: 'cost', value }})}>
                     <NumberInputField  />
@@ -299,29 +295,12 @@ function editableRow (
                         onClick={() => saveEdit()}
                     /> 
                 </ButtonGroup>
-                {/* <ButtonGroup>
-                    
-                    <SaveButton title={"Save Edit"} clickFunction={saveEdit} />
-                    <CancelButton title={"Close Edit"} clickFunction={() => setIsEdit(-1)} />
-                </ButtonGroup> */}
-
             </GridItem> 
-
         </>
     )
 }
 
-// {
-//     !editArray ? (
-//         <GridItem colSpan={6}>
-//         {/* PAGINATION */}
-//             <ButtonGroup p={"1em"} width={"100%"} justifyContent={"right"} alignItems={"center"} gap={"0"}>
-//                 {backButton()}
-//                 {nextButton()}
-//             </ButtonGroup>
-//         </GridItem>
-//     ) : (<></>) 
-// }
+
 
 export function EditItemDetailsTable({
     data,
@@ -337,13 +316,12 @@ export function EditItemDetailsTable({
     const [isAdd, setIsAdd] = useState(false)
     const [isEdit, setIsEdit] = useState(-1)
     const [details, setDetails] = useState({
-        index: 0,
+        _id: "",
         partNum: "",
         brand: "",
         qty: 0,
         cost: 0,
     })
-    const [viewEditArray, setViewEditArray] = useState([])
 
     let value;
 
@@ -364,6 +342,7 @@ export function EditItemDetailsTable({
 
         try {
             setDetails({
+                _id: detail._id,
                 partNum: convertDetails(detail).partNum,
                 brand: convertDetails(detail).brand,
                 qty: convertDetails(detail).qty,
@@ -376,9 +355,11 @@ export function EditItemDetailsTable({
 
     function deleteEditRow(detail, index) {
         let temp = disabledArray
+        let filtered = editArray.filter(element => { return editArray.indexOf(element) != index})
         detail.disabled = true
         temp.push(detail)
-        setEditArray(editArray.filter(element => { return addArray.indexOf(element) != index}))
+        
+        setEditArray(filtered)
         setDisabledArray(temp)
         temp = []
     }

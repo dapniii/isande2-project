@@ -18,7 +18,7 @@ export default async (req, res) => {
     let detailsInfo = await ItemDetails.find({
         itemID: itemInfo._id,
         itemNumber: req.query.itemNumber
-    }, {_id: 0, __v: 0}).populate("itemBrandID", "pubId name disabled")
+    }, {__v: 0}).populate("itemBrandID", "pubId name disabled")
 
     let detailsArray = []
     let quantity = 0

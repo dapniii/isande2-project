@@ -45,24 +45,11 @@ function EditPartForm({ id, categoryList, submitFunc}) {
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
-    const [details, setDetails] = useState({
-        partNum: "",
-        brand: "",
-        qty: 0,
-        cost: 0,
-    });
-    const [detailsArray, setDetailsArray] = useState({
-        additions: [],
-        edits: []
-    });
+
     const [addArray, setAddArray] = useState([]);
     const [editArray, setEditArray] = useState([]);
     const [disabledArray, setDisabledArray] = useState([]);
-    const [detailsPageIndex, setDetailsPageIndex] = useState(1);
-    const [detailsPageSize, setDetailsPageSize] = useState(5);
-    const [detailsTableData, setDetailsTableData] = useState({
-        
-    });
+    const [detailsTableData, setDetailsTableData] = useState({});
 
     const catModalOpen = useDisclosure();
     const unitModalOpen = useDisclosure();
@@ -106,12 +93,28 @@ function EditPartForm({ id, categoryList, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-    }, [itemNumber, category, name, model, rp, unit, desc, details, addArray, editArray, disabledArray])
+    }, [itemNumber, category, name, model, rp, unit, desc, addArray, editArray, disabledArray])
 
     function passSubmitFunc() {
         return submitForm
     }
 
+    function clear() {
+        setItemNumber("")
+        setCategory("")
+        setName("");
+        setModel("");
+        setRP(0); // Reorder Point
+        setUnit("");
+        setDesc(""); // Description
+        setPhoto(null);
+        setPreview("");
+        inputPhoto.current.value= null;
+        setAddArray([]);
+        setEditArray([]);
+        setDisabledArray([]);
+        setDetailsTableData({});
+    }
     async function submitForm() {
         let uploadConfig = {
             file: inputPhoto.current.files[0],
@@ -121,17 +124,18 @@ function EditPartForm({ id, categoryList, submitFunc}) {
                 // type: "private",
             }
         }
-        let imageRes = await uploadImage(uploadConfig)
-        console.log(uploadConfig)
+        // let imageRes = await uploadImage(uploadConfig)
+        // console.log(uploadConfig)
 
         let detailsArray = {
             additions: addArray,
             edits: editArray,
+            disabled: disabledArray,
         }
 
         let partsData = {
             itemNumber: itemNumber,
-            imageID: imageRes,
+            imageID: preview,
             categoryID: category,
             itemName: name,
             itemModel: model,
@@ -150,8 +154,8 @@ function EditPartForm({ id, categoryList, submitFunc}) {
             body: JSON.stringify(partsData),
         }).then(result => {
             console.log(result.json())
-            clear()
-            router.push("/parts")
+            location.reload()
+            // router.push("/parts")
         })
     }
     

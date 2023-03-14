@@ -20,7 +20,7 @@ import {
     IconButton,
   } from '@chakra-ui/react';
 import { CloseIcon, CheckIcon } from '@chakra-ui/icons';
-import { nanoid, customAlphabet } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 import { numbers } from 'nanoid-dictionary';
 
 function CategoryListModal({modalOpen, title, options, apiPath}) {

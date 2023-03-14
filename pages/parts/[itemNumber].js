@@ -28,6 +28,7 @@ export async function getServerSideProps() {
     categories: [],
     measures: [],
     status: [],
+    reasons: [],
   }
   
   const res = await fetch(sparePartsAPI.get_categories)
@@ -37,6 +38,7 @@ export async function getServerSideProps() {
   categoryList.categories = data.categories
   categoryList.measures = data.measures
   categoryList.status = data.status
+  categoryList.reasons = data.reasons
   
   return { props: { categoryList }}
 }
@@ -207,7 +209,7 @@ export default function ItemDetails({categoryList}) {
             </TabList>
             <TabPanels>
               <TabPanel overflowY={"auto"}>
-                <ViewPartLayout data={itemInfo} />
+                <ViewPartLayout data={itemInfo} categoryList={categoryList} />
               </TabPanel>
               <TabPanel>Transaction History</TabPanel>
             </TabPanels>

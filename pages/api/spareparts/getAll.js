@@ -7,12 +7,12 @@ export default async (req, res) => {
     await connectToDatabase();
 
     let items = await Item.find({})
-        .populate("imageID", "secure_url disabled")
-        .populate("categoryID", "pubId name disabled")
-        .populate("unitID", "pubId name abbreviation disabled")
+        .populate("imageID")
+        .populate("categoryID")
+        .populate("unitID")
 
     let details = await ItemDetails.find({})
-        .populate("itemBrandID", "pubId name disabled")
+        .populate("itemBrandID")
     
     let totalValue = 0
     items.map(item => {
