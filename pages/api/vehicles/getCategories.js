@@ -1,14 +1,13 @@
 import { connectToDatabase } from "@/lib/db";
-import VehicleType from "./VehicleTypeSchema";
-import VehicleBrand from "./VehicleBrandSchema";
-import Transmission from "./TransmissionSchema";
-import VehicleStatus from "./VehicleStatus";
-import EngineType from "./EngineTypeSchema";
-import Chassis from "./ChassisSchema"
-import TireSize from "./TireSizeSchema";
-import GPS from "./GPSSchema";
-import FuelSensor from "./FuelSensor";
-
+import VehicleType from "@/models/vehicles/VehicleTypeSchema";
+import VehicleBrand from "@/models/vehicles/VehicleBrandSchema";
+import Transmission from "@/models/vehicles/TransmissionSchema";
+import VehicleStatus from "@/models/vehicles/VehicleStatus";
+import EngineType from "@/models/vehicles/EngineTypeSchema";
+import Chassis from "@/models/vehicles/ChassisSchema";
+import TireSize from "@/models/vehicles/TireSizeSchema";
+import GPS from "@/models/vehicles/GPSSchema";
+import FuelSensor from "@/models/vehicles/FuelSensor";
 
 export default async (req, res) => {
     await connectToDatabase();

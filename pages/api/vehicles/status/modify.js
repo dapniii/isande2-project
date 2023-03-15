@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
-import VehicleStatus from "@/models/vehicles/VehicleStatusSchema";
+import VehicleStatus from "@/models/vehicles/VehicleStatus";
 
 export default async (req, res) => {
     await connectToDatabase();
