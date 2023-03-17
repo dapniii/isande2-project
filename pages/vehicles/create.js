@@ -13,23 +13,39 @@ import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { useState } from "react";
 import { Router, useRouter } from "next/router";
-import CreatePartForm from "@/components/layouts/parts/createPartForm";
+import { vehicleAPI } from "@/lib/routes";
+import CreateVehicleForm from "@/components/layouts/vehicles/createVehicleForm";
 
 export async function getServerSideProps() {
   const categoryList = {
-    categories: [],
     brands: [],
-    units: [],
-    currencies: [],
+    chassis: [],
+    engineType: [],
+    fuelSensor: [],
+    gps: [],
+    status: [],
+    tireSize: [],
+    transmission: [],
+    vehicleTypes: []
   };
 
-  // const res = await fetch(sparePartsAPI.get_categories)
-  // const data = await res.json()
+  const res = await fetch(vehicleAPI.get_categories)
+  const data = await res.json()
+
+  categoryList.brands = data.brands
+  categoryList.chassis = data.chassis
+  categoryList.engineType = data.engineType
+  categoryList.fuelSensor = data.fuelSensor
+  categoryList.gps = data.gps
+  categoryList.status = data.status
+  categoryList.tireSize = data.tireSize
+  categoryList.transmission = data.transmission
+  categoryList.vehicleTypes = data.vehicleType
 
   return { props: { categoryList } };
 }
 
-export default function AddVehiclesPage() {
+export default function AddVehiclesPage({categoryList}) {
   const router = useRouter();
   const [submitForm, setSubmitForm] = useState();
 
@@ -42,22 +58,26 @@ export default function AddVehiclesPage() {
     router.back();
   }
 
+  function getSubmit(func) {
+    setSubmitForm(func)
+  }
+
   function headerBreadcrumbs() {
     return (
       <Breadcrumb pt={1}>
         <BreadcrumbItem>
           <BreadcrumbLink
-            href="/"
+            href="/vehicles"
             color={"blue"}
             textDecor={"underline"}
             fontSize={"lg"}
           >
-            Spare Parts
+            Vehicles
           </BreadcrumbLink>
         </BreadcrumbItem>
 
         <BreadcrumbItem isCurrentPage>
-          <BreadcrumbLink fontSize={"lg"}>New Item</BreadcrumbLink>
+          <BreadcrumbLink fontSize={"lg"}>New Vehicle</BreadcrumbLink>
         </BreadcrumbItem>
       </Breadcrumb>
     );
@@ -71,7 +91,7 @@ export default function AddVehiclesPage() {
         </Text>
         <ButtonGroup>
           <CancelButton title={"Cancel"} clickFunction={cancel} />
-          <SaveButton title={"Save Item"} clickFunction={submitForm} />
+          <SaveButton title={"Save Vehicle"} clickFunction={submitForm} />
         </ButtonGroup>
       </Flex>
     );
@@ -97,7 +117,7 @@ export default function AddVehiclesPage() {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          <CreatePartForm data={categoryList} submitFunc={getSubmit} />
+          <CreateVehicleForm data={categoryList} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>

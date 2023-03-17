@@ -12,7 +12,7 @@ import FuelSensor from "@/models/vehicles/FuelSensor";
 export default async (req, res) => {
     await connectToDatabase();
 
-    let vehicleTypes = await VehicleType.find({})
+    let vehicleType = await VehicleType.find({})
     let brands = await VehicleBrand.find({})
     let transmission = await Transmission.find({})
     let status = await VehicleStatus.find({})
@@ -23,7 +23,7 @@ export default async (req, res) => {
     let fuelSensor = await FuelSensor.find({})
 
     res.json({
-        vehicleTypes,
+        vehicleType,
         brands,
         transmission,
         status,
