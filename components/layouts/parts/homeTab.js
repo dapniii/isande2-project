@@ -85,7 +85,7 @@ export default function PartsHomeTab({data}) {
               COLUMNS={COLUMNS} 
               DATA={data.partsData.parts} 
               FILTERS={filters}
-              HIDDEN={["itemNumber", "itemModel", "itemName", "status"]}
+              HIDDEN={["itemNumber", "itemModel", "itemName"]}
               getRowData={getRowData}
               clickRowFunction={navToDetails}
             />

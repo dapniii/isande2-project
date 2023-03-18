@@ -49,15 +49,54 @@ export const COLUMNS = [
     },
     Cell: (props) => {
       return (
-        <Flex gap={2}>
+        <>
           {{
-            "Active": <Text color={"#25C685"}>⬤</Text>,
-            "Travelling": <Text color={"#005DF2"}>⬤</Text>,
-            "Repair": <Text color={"#FFC000"}>⬤</Text>,   
-            "Inactive": <Text color={"#F83A3A"}>⬤</Text>,      
-          }[props.row.original.vehicleStatusID.name] || <Text>⬤</Text>}
-          <Flex alignItems={"center"}>{props.row.original.vehicleStatusID.name}</Flex>
-        </Flex>
+            "Active":            
+              <Flex 
+                bg={"rgba(37, 198, 133, 0.3)"}
+                borderRadius={"30em"} 
+                w={"90%"}
+                px={3.5} 
+                py={0.3}
+                justifyContent={"center"}
+              >
+                <Text color={"#25C685"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+              </Flex>, 
+            "Repair":                   
+              <Flex 
+                bg={"rgba(255, 192, 0, 0.3)"}
+                borderRadius={"30em"} 
+                w={"90%"}
+                px={3.5} 
+                py={0.3}
+                justifyContent={"center"}
+              >
+                <Text color={"#FFC000"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+              </Flex>, 
+            "Inactive":
+              <Flex 
+                bg={"rgba(248, 58, 58, 0.3)"}
+                borderRadius={"30em"} 
+                w={"90%"}
+                px={3.5} 
+                py={0.3}
+                justifyContent={"center"}
+              >
+                <Text color={"#F83A3A"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+              </Flex>,  
+            "Travelling":
+              <Flex 
+                bg={"rgba(0, 93, 242, 0.35)"}
+                borderRadius={"30em"} 
+                w={"90%"}
+                px={3.5} 
+                py={0.3}
+                justifyContent={"center"}
+              >
+                <Text color={"#005DF2"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+              </Flex>,     
+          }[props.value] || <Text>⬤</Text>}
+      </>
       )
     },
   },

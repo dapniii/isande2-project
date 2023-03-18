@@ -30,7 +30,7 @@ export const COLUMNS = [
       Cell: (props) => {
         return (
         <>
-          <Text fontWeight={"medium"}>{props.row.original.itemName} 
+          <Text fontWeight={"medium"} fontSize={"sm"}>{props.row.original.itemName} 
           {
             props.row.original.itemModel != "" ? (
               <> ({props.row.original.itemModel})</>
@@ -41,7 +41,7 @@ export const COLUMNS = [
         </>
       )},
       disableSortBy: true,
-      width: 130,
+      width: 170,
     },
     {
       Header: "Category",
@@ -54,6 +54,9 @@ export const COLUMNS = [
             !filterValue ||
             filterValue.includes(row.values[id])
         );
+      },
+      Cell: (props) => {
+        return (<Text fontSize={"sm"}>{props.value} </Text>)
       },
       width: 120,
     },
@@ -69,6 +72,48 @@ export const COLUMNS = [
             filterValue.includes(row.values[id])
         );
       },
+      Cell: (props) => {
+        return (
+          <>
+              {{
+                "In Stock":            
+                  <Flex 
+                    bg={"rgba(37, 198, 133, 0.3)"}
+                    borderRadius={"30em"} 
+                    w={"100%"}
+                    px={3.5} 
+                    py={0.3}
+                    justifyContent={"center"}
+                  >
+                    <Text color={"#25C685"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+                  </Flex>, 
+                "Low Stock":                   
+                  <Flex 
+                    bg={"rgba(255, 192, 0, 0.3)"}
+                    borderRadius={"30em"} 
+                    w={"100%"}
+                    px={3.5} 
+                    py={0.3}
+                    justifyContent={"center"}
+                  >
+                    <Text color={"#FFC000"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+                  </Flex>, 
+                "Out of Stock":
+                  <Flex 
+                    bg={"rgba(248, 58, 58, 0.3)"}
+                    borderRadius={"30em"} 
+                    w={"100%"}
+                    px={3.5} 
+                    py={0.3}
+                    justifyContent={"center"}
+                  >
+                    <Text color={"#F83A3A"} fontWeight={"bold"} fontSize={"sm"}>{props.value}</Text>
+                  </Flex>,      
+              }[props.value] || <Text>⬤</Text>}
+          </>
+        )
+      },
+      width: 120,
     },
     {
       Header: (props) => {
@@ -94,26 +139,11 @@ export const COLUMNS = [
       Cell: (props) => {
         return (
         <>
-          <Grid
-            w={"5em"}
-            gap={1}
-            float={"right"}
-            templateColumns={"1fr 1fr"}
-          >
-            <GridItem>
-              {{
-                "In Stock": <Text color={"green.300"}>⬤</Text>,
-                "Low Stock": <Text color={"yellow.300"}>⬤</Text>,
-                "Out of Stock": <Text color={"red.400"}>⬤</Text>,      
-              }[props.row.original.status] || <Text>⬤</Text>}
-
-            </GridItem>
-
-            <GridItem display={"flex"} flexDirection={"column"}>
+            <Flex flexDirection={"column"}>
               <Text fontSize={"xl"} fontWeight={"bold"}>{props.value}</Text>
               <Text fontSize={"sm"} color={"gray"}>{props.row.original.unitID.abbreviation}</Text>
-            </GridItem>
-          </Grid>
+            </Flex>
+
         </>
         )
      },
