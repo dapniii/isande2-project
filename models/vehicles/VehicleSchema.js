@@ -59,8 +59,14 @@ const VehicleSchema = new mongoose.Schema({
     insuranceAmount: {
         type: mongoose.Types.Decimal128,
     },
+    insuranceExpiry: {
+        type: Date,
+    },
+    preventive: {
+        type: Number
+    },
     gpsID: {
-        type: mongoose.Types.GPS,
+        type: mongoose.Types.ObjectId,
         ref: "GPS"
     },
     fuelSensorID: {
@@ -81,7 +87,7 @@ const VehicleSchema = new mongoose.Schema({
     },
     disabled: {
         type: Boolean,
-        detault: false
+        default: false
     }
 
 })

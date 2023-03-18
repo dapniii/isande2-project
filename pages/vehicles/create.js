@@ -87,7 +87,7 @@ export default function AddVehiclesPage({categoryList}) {
     return (
       <Flex alignItems={"center"} justifyContent={"space-between"}>
         <Text fontSize={"3xl"} fontWeight={"bold"}>
-          New Item
+          New Vehicle
         </Text>
         <ButtonGroup>
           <CancelButton title={"Cancel"} clickFunction={cancel} />

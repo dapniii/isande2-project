@@ -7,27 +7,40 @@ import BasicTable from "@/components/table/basicTable";
 import { COLUMNS } from "@/components/layouts/vehicles/vehicleColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
+import { vehicleAPI } from "@/lib/routes";
 
 export async function getServerSideProps() {
-  const res = await fetch(
-    "https://my.api.mockaroo.com/vehicle.json?key=12757c70"
-  );
-  const vehicleData = await res.json();
+  const vehicleRes = await fetch(vehicleAPI.get_all);
+  const vehicleData = await vehicleRes.json();
 
-  const category = {
-    status: [
-      { name: "Active" },
-      { name: "Inactive" },
-      { name: "Traveling" },
-      { name: "Repair" },
-    ],
-    vehicleType: [{ name: "Truck" }],
-    transmission: [{ name: "Manual" }, { name: "Automatic" }],
+  const categoryList = {
+    brands: [],
+    chassis: [],
+    engineType: [],
+    fuelSensor: [],
+    gps: [],
+    status: [],
+    tireSize: [],
+    transmission: [],
+    vehicleTypes: []
   };
+
+  const catRes = await fetch(vehicleAPI.get_categories)
+  const catData = await catRes.json()
+
+  categoryList.brands = catData.brands
+  categoryList.chassis = catData.chassis
+  categoryList.engineType = catData.engineType
+  categoryList.fuelSensor = catData.fuelSensor
+  categoryList.gps = catData.gps
+  categoryList.status = catData.status
+  categoryList.tireSize = catData.tireSize
+  categoryList.transmission = catData.transmission
+  categoryList.vehicleTypes = catData.vehicleType
 
   let data = {
     vehicle: vehicleData,
-    categories: category,
+    categories: categoryList,
   };
 
   return { props: { data } };
@@ -76,7 +89,7 @@ export default function VehiclesPage({ data }) {
         />
         <Dropdown
           title="Vehicle Type"
-          options={data.categories.vehicleType}
+          options={data.categories.vehicleTypes}
           id="vehicleType"
           name="name"
           filter={filter}
@@ -92,6 +105,21 @@ export default function VehiclesPage({ data }) {
         />
       </>
     );
+  }
+
+  // Table Functions
+  function getRowData(rowData) {
+    let query = {
+      id: rowData.plateNumber,
+    }
+
+    return query;
+  }
+
+  function navToDetails(query) {
+    router.push({
+      pathname: `/vehicles/${query.id}`,
+    })
   }
 
   return (
@@ -115,7 +143,9 @@ export default function VehiclesPage({ data }) {
             COLUMNS={COLUMNS}
             DATA={data.vehicle}
             FILTERS={filters}
-            HIDDEN={["refuelType"]}
+            HIDDEN={[]}
+            getRowData={getRowData}
+            clickRowFunction={navToDetails}
           />
         </GridItem>
       </Grid>

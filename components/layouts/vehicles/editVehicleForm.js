@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react"
 import {
     Image,
     Text, 
@@ -35,10 +35,10 @@ import { uploadImage } from "@/lib/imageHandler";
 import { vehicleAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 
-function CreateVehicleForm({data, submitFunc}) {
+function EditVehicleForm({ id, data, submitFunc}) {
     const router = useRouter()
     
-    const [plateNumber, setPlateNumber] = useState("")
+    const plateNumber = id
     const [vehicleType, setVehicleType] = useState("")
     const [brand, setBrand] = useState("")
     const [manufacturingYear, setManufacturingYear] = useState("")
@@ -67,7 +67,6 @@ function CreateVehicleForm({data, submitFunc}) {
     const gpsModalOpen = useDisclosure()
     const fuelModalOpen = useDisclosure()
 
-
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
@@ -75,13 +74,6 @@ function CreateVehicleForm({data, submitFunc}) {
 
     function passSubmitFunc() {
         return submitForm
-    }
-
-    function clear() {
-
-        setPhoto()
-        setPreview("")
-        inputPhoto.current.value = null
     }
 
     async function submitForm() {
@@ -93,7 +85,8 @@ function CreateVehicleForm({data, submitFunc}) {
                 // type: "private",
             }
         }
-        let imageRes = await uploadImage(uploadConfig)
+        let imageRes = await uploadImage(uploadConfig)    
+        
         console.log(imageRes)
         let vehicleData = {
             plateNumber: plateNumber,
@@ -113,10 +106,9 @@ function CreateVehicleForm({data, submitFunc}) {
             gpsID: gps,
             fuelSensorID: fuelSensor,
             vehicleStatusID: "Active", 
-            creatorID: "00002", // CHANGE HARDCODE
         }
         console.log(vehicleData)
-        let result = await fetch(vehicleAPI.create_vehicle, {
+        let result = await fetch(vehicleAPI.edit_vehicle, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -124,21 +116,51 @@ function CreateVehicleForm({data, submitFunc}) {
             body: JSON.stringify(vehicleData),
         }).then(result => {
             console.log(result.json())
-            clear()
+            // clear()
             router.push("/vehicles")
         })
     }
 
+    // Fetch data 
+    useEffect(() => {
+        fetch("/api/vehicles/" + id, {
+            method: "GET",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            setVehicleType(data.vehicleTypeID.name)
+            setBrand(data.brandID.name)
+            setManufacturingYear(data.manufactureYear)
+            setTransmission(data.transmissionID.name)
+            setModel(data.model)     
+            setEngineNumber(data.engineNumber)
+            setTransmission(data.transmissionID.name)
+            setTransmission(data.transmissionID.name)
+            setEngineType(data.engineTypeID.name)
+            setChassis(data.chassisTypeID.name)
+            setTireSize(data.tireSizeID.name)
+            setInsuranceAmount(parseFloat(data.insuranceAmount.$numberDecimal))
+            setExpiry(data.insuranceExpiry)
+            setPreventive(data.preventive)
+            setGPS(data.gpsID.name)
+            setFuelSensor(data.fuelSensorID.name)
+            setPreview(data.imageID.secure_url)
+        });
+    }, [id])
 
     // Generate photo preview
     useEffect(() => {
-        if (!inputPhoto.current.files[0]) {
+        if (!photo) {
             return
         }
-        const objectUrl = URL.createObjectURL(inputPhoto.current.files[0])
+        const objectUrl = URL.createObjectURL(photo)
         setPreview(objectUrl)
-        // free memory when ever this component is unmounted
         
+        // free memory when ever this component is unmounted
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
 
@@ -158,14 +180,14 @@ function CreateVehicleForm({data, submitFunc}) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel>Plate Number</FormLabel>
-                                    <Input value={plateNumber} onChange={(e) => setPlateNumber(e.target.value)} />
+                                    <Input value={plateNumber} disabled />
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={vTypeModalOpen.onOpen}><Link>Vehicle Type </Link></FormLabel>
-                                    <CategoryListModal modalOpen={vTypeModalOpen} options={data.vehicleTypes} title={"Vehicle Types"} apiPath={vehicleAPI.modify_vehicle_type} />
+                                    <CategoryListModal modalOpen={vTypeModalOpen} options={data.vehicleType} title={"Vehicle Types"} apiPath={vehicleAPI.modify_vehicle_type} />
                                     <Select value={vehicleType} onChange={(e) => setVehicleType(e.target.value)}>
                                         <option value="" hidden disabled>Select Vehicle Type</option>
-                                        {data.vehicleTypes.map((type) => {
+                                        {data.vehicleType.map((type) => {
                                             if (type.disabled == false) {
                                                 return (
                                                     <option
@@ -227,24 +249,8 @@ function CreateVehicleForm({data, submitFunc}) {
                                     </Select>
                                 </FormControl>
                                 <FormControl isRequired>
-                                    <FormLabel><Link>Model</Link></FormLabel>
+                                    <FormLabel>Model</FormLabel>
                                     <Input value={model} onChange={(e) => setModel(e.target.value)} />
-                                    {/* <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} /> */}
-                                    {/* <Select>
-                                        <option value="" hidden disabled>Select Model</option>
-                                        {data.userTypes.map((type) => {
-                                            if (type.disabled == false) {
-                                                return (
-                                                    <option
-                                                        key={type._id}
-                                                        value={type.name}
-                                                    >
-                                                        {type.name}
-                                                    </option>
-                                                );
-                                            }
-                                        })}
-                                    </Select> */}
                                 </FormControl>
                             </Flex>
                         </Stack>
@@ -290,7 +296,7 @@ function CreateVehicleForm({data, submitFunc}) {
                                     <FormLabel onClick={chassisModalOpen.onOpen}><Link>Chassis</Link></FormLabel>
                                     <CategoryListModal modalOpen={chassisModalOpen} options={data.chassis} title={"Chassis"} apiPath={vehicleAPI.modify_chassis} />
                                     <AutoComplete openOnFocus suggestWhenEmpty value={chassis} onChange={(value) => setChassis(value)}>
-                                        <AutoCompleteInput variant="outline"  />
+                                        <AutoCompleteInput variant="outline" placeholder={chassis}  />
                                         <AutoCompleteList>
                                             {data.chassis.map((item, cid) => (
                                                 <AutoCompleteItem
@@ -307,7 +313,7 @@ function CreateVehicleForm({data, submitFunc}) {
                                     <FormLabel onClick={tireModalOpen.onOpen}><Link>Tire Size</Link></FormLabel>
                                     <CategoryListModal modalOpen={tireModalOpen} options={data.tireSize} title={"Tire Sizes"} apiPath={vehicleAPI.modify_tire_size} />
                                     <AutoComplete openOnFocus suggestWhenEmpty value={tireSize} onChange={(value) => setTireSize(value)}>
-                                        <AutoCompleteInput variant="outline"  />
+                                        <AutoCompleteInput variant="outline" placeholder={tireSize} />
                                         <AutoCompleteList>
                                             {data.tireSize.map((item, cid) => (
                                                 <AutoCompleteItem
@@ -371,7 +377,7 @@ function CreateVehicleForm({data, submitFunc}) {
                                 <FormLabel onClick={gpsModalOpen.onOpen}><Link>GPS Provider</Link></FormLabel>
                                 <CategoryListModal modalOpen={gpsModalOpen} options={data.gps} title={"GPS Providers"} apiPath={vehicleAPI.modify_gps} />
                                 <AutoComplete openOnFocus suggestWhenEmpty value={gps} onChange={(value) => setGPS(value)}>
-                                    <AutoCompleteInput variant="outline" w={"70%"} />
+                                    <AutoCompleteInput variant="outline" w={"70%"} placeholder={gps} />
                                     <AutoCompleteList>
                                         {data.gps.map((item, cid) => (
                                             <AutoCompleteItem
@@ -387,8 +393,13 @@ function CreateVehicleForm({data, submitFunc}) {
                             <FormControl>
                                 <FormLabel onClick={fuelModalOpen.onOpen}><Link>Fuel Sensor Provider</Link></FormLabel>
                                 <CategoryListModal modalOpen={fuelModalOpen} options={data.fuelSensor} title={"Fuel Sensor Providers"} apiPath={vehicleAPI.modify_fuel_sensor} />
-                                <AutoComplete openOnFocus suggestWhenEmpty value={fuelSensor} onChange={(value) => setFuelSensor(value)}>
-                                    <AutoCompleteInput variant="outline" w={"70%"} />
+                                <AutoComplete 
+                                    openOnFocus 
+                                    suggestWhenEmpty 
+                                    value={fuelSensor}
+                                    onChange={(value) => setFuelSensor(value)}
+                                >
+                                    <AutoCompleteInput variant="outline" w={"70%"} placeholder={fuelSensor}  />
                                     <AutoCompleteList>
                                         {data.fuelSensor.map((item, cid) => (
                                             <AutoCompleteItem
@@ -413,19 +424,19 @@ function CreateVehicleForm({data, submitFunc}) {
                             mt={"0.5em"}
                             gap={3}
                         >   
-                            { photo != null ? (
-                                <Flex flexDirection={"column"}>
-                                    <Text fontWeight={"bold"}>Preview</Text>
-                                    <Image 
-                                        src={preview}
-                                        alt={"Upload Preview"}
-                                        objectFit={"cover"}
-                                        borderRadius={"15"}
-                                        w={"15em"}
-                                        h={"15em"}
-                                    />
-                                </Flex>
-                            ) : (<></>)}
+
+                            <Flex flexDirection={"column"}>
+                                <Text fontWeight={"bold"}>Preview</Text>
+                                <Image 
+                                    src={preview}
+                                    alt={"Upload Preview"}
+                                    objectFit={"cover"}
+                                    borderRadius={"15"}
+                                    w={"15em"}
+                                    h={"15em"}
+                                />
+                            </Flex>
+
                             <Button
                                 // @ts-ignore
                                 mt={photo != null ? ("1.5em") : (0)}
@@ -452,4 +463,4 @@ function CreateVehicleForm({data, submitFunc}) {
     )
 }
 
-export default CreateVehicleForm;
+export default EditVehicleForm

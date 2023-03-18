@@ -74,7 +74,7 @@ export default async (req, res) => {
         })
         
         res.json({
-            item: itemInfo,
+            item: itemResult,
             details: detailsArray,
             msg: "success"
         })

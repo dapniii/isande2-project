@@ -60,8 +60,8 @@ function EditPartForm({ id, categoryList, submitFunc}) {
     fetch("/api/spareparts/" + id, {
         method: "GET",
         headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
+            Accept: "application/json",
+            "Content-Type": "application/json",
         },
     })
         .then((res) => res.json())
@@ -124,7 +124,7 @@ function EditPartForm({ id, categoryList, submitFunc}) {
                 // type: "private",
             }
         }
-        // let imageRes = await uploadImage(uploadConfig)
+        let imageRes = await uploadImage(uploadConfig)
         // console.log(uploadConfig)
 
         let detailsArray = {
