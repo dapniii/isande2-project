@@ -9,40 +9,47 @@ import { Grid, GridItem,
 import Navbar from "../components/navbar";
 import Header from '@/components/header';
 import { SaveButton } from '@/components/buttons'; // Temp
-import getSessionUser from '@/lib/auth/getSessionUser';
-import { useRouter } from 'next/router';
+import { withSessionSsr } from '@/lib/auth/withSession';
+
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+      const user = req.session.user;
+
+      if(user == null) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: "/login",
+            },
+            props: { user: {
+              isLoggedIn: false 
+              }, 
+            }
+        }
+      }
+
+      return {
+          props: { user: {
+            data: user,
+            isLoggedIn: true 
+            }, 
+          }
+      }
+});
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
-export default function HomePage() {
-  const [user, setUser] = useState("")
-  const router = useRouter();
+export default function HomePage({user}) {
 
-  useEffect(() => {
-    fetch("/api/auth/getUser", {
-      method: "GET",
-      headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-    })
-      .then((res) => res.json())
-      .then((user) => {
-        if (!user.isLoggedIn)
-          router.replace("/login")
-        else
-          setUser(user.data)
-      })
-    
-  }, [])
+  function test() {
+    console.log("test")
+  }
 
   const user2 = {
     firstName: "FirstName",
     role: "Admin"
   };
 
-  function test() {
-    console.log("test")
-  }
+
   
   // Sample how to pass header components as props
   // QUESTION: Should it be in a separate file nalang?
@@ -87,7 +94,7 @@ export default function HomePage() {
         overflowY={"auto"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
         
         <GridItem colStart={2}>

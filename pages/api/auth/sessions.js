@@ -1,11 +1,13 @@
 import { withSessionRoute } from "@/lib/auth/withSession";
-import User from "@/models/users/UserSchema"
-import { genSalt, hash, compare } from "bcryptjs";
-import { verifyPassword } from "@/lib/auth/auth";
+import { connectToDatabase } from "@/lib/db";
+import User from "@/models/users/UserSchema";
+import { compare } from "bcryptjs";
 
 export default withSessionRoute(createSessionRoute)
 
 async function createSessionRoute(req, res) {
+    await connectToDatabase()
+    
     if (req.method === "POST") {
         const loginInfo = req.body;
         let user = await User.findOne({
@@ -38,7 +40,6 @@ async function createSessionRoute(req, res) {
                 isAdmin: user.userTypeID.name == "Admin"
             };
             await req.session.save();
-            console.log(req.session)
             return res.status(200).json({ ok: true });
         }
         
