@@ -27,7 +27,7 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
 import MeasureListModal from "@/components/measureModal";
 import { EditItemDetailsTable } from "./itemDetailsTable";
-import { uploadImage } from "@/lib/imageHandler";
+import { uploadImage } from "@/lib/images/imageHandler";
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 

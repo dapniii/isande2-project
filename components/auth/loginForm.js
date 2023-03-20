@@ -13,6 +13,7 @@ import {
   FormErrorMessage,
   FormHelperText,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 
 import { useRef, useState } from "react";
 import { MdLogin, MdPassword, MdPerson } from "react-icons/md";
@@ -20,6 +21,7 @@ import { MdLogin, MdPassword, MdPerson } from "react-icons/md";
 import { signIn } from "next-auth/react";
 
 export default function LoginForm(props) {
+  const router = useRouter()
   const employeeIDInputRef = useRef();
   const passwordInputRef = useRef();
 
@@ -32,16 +34,29 @@ export default function LoginForm(props) {
   async function submitHandler(event) {
     event.preventDefault();
 
-    const enteredEmployeeID = employeeIDInputRef.current.value;
-    const enteredPassword = passwordInputRef.current.value;
+    // const enteredEmployeeID = employeeIDInputRef.current.value;
+    // const enteredPassword = passwordInputRef.current.value;
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      employeeID: enteredEmployeeID,
-      password: enteredPassword,
+    const userID = employeeIDInputRef.current.value;
+    const password = passwordInputRef.current.value;
+
+    const response = await fetch("/api/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userID, password })
     });
-    console.log("*** loginForm.js ***")
-    console.log(result)
+
+    if (response.ok) {
+      router.push("/");
+    }
+
+    // const result = await signIn("credentials", {
+    //   redirect: false,
+    //   employeeID: enteredEmployeeID,
+    //   password: enteredPassword,
+    // });
+    // console.log("*** loginForm.js ***")
+    // console.log(result)
   }
 
   return (

@@ -26,7 +26,7 @@ import {
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
 import MeasureListModal from "@/components/measureModal";
-import { uploadImage } from "@/lib/imageHandler";
+import { uploadImage } from "@/lib/images/imageHandler";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/numbers";
 import { Router, useRouter } from "next/router";

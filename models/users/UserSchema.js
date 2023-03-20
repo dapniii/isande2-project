@@ -1,12 +1,8 @@
 import mongoose from "mongoose";
-import { customAlphabet } from "nanoid";
-import alphanumeric from "nanoid-dictionary/alphanumeric";
 import Image from "../ImageSchema";
 import Department from "./DepartmentSchema";
 import Role from "./RoleSchema";
 import UserType from "./UserTypeSchema";
-
-const nanoid = customAlphabet(alphanumeric, 8) // id generator
 
 const UserSchema = new mongoose.Schema({
     userID: {
@@ -15,7 +11,6 @@ const UserSchema = new mongoose.Schema({
         required: true,
         maxLength: 8,
         minLength: 8,
-        default: nanoid(),
     },
     imageID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -24,17 +19,17 @@ const UserSchema = new mongoose.Schema({
     firstName: {
         type: String,
         required: true,
-        maxLenght: 50,
+        maxLength: 50,
     },
     lastName: {
         type: String,
         required: true,
-        maxLenght: 50,
+        maxLength: 50,
     },
     email: {
         type: String,
         required: true,
-        maxLenght: 50,
+        maxLength: 50,
     },
     phone: {
         type: String,

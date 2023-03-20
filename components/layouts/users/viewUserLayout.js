@@ -36,7 +36,7 @@ import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
 import { userAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
-import { uploadImage } from "@/lib/imageHandler";
+import { uploadImage } from "@/lib/images/imageHandler";
 
 function ViewUserForm({ userID, data, submitFunc, isEdit }) {
     const router = useRouter();

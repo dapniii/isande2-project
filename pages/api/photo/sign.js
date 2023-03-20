@@ -1,5 +1,5 @@
 import { v2 as cloudinary }  from "cloudinary";
-import { cloudinary_config } from "@/lib/cloudinary";
+import { cloudinary_config } from "@/lib/images/cloudinary";
 
 const sign = async (req, res) => {
   let paramsToSign = JSON.parse(req.body);

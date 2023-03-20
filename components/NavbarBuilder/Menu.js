@@ -19,7 +19,7 @@ export function selectMenu(role) {
         case "Admin": 
             return (<>{AdminMenu()}</>)
         default: 
-            return (<></>)
+            return (<>{AdminMenu()}</>)
     }
 }
 

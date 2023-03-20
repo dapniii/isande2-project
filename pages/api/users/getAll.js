@@ -22,5 +22,8 @@ export default async (req, res) => {
         })
     })
     
-    res.json(users)
+    res.json({
+        users,
+        count: users.length
+    })
 }

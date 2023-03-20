@@ -1,4 +1,4 @@
-import { hashPassword } from "@/lib/auth";
+import { hashPassword } from "@/lib/auth/auth";
 import { connectToDatabase } from "@/lib/db";
 
 export default async function signupHandler(req, res) {

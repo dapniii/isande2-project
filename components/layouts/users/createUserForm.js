@@ -23,17 +23,17 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import { uploadImage } from "@/lib/imageHandler";
+import { uploadImage } from "@/lib/images/imageHandler";
 import { userAPI } from "@/lib/routes";
-import { customAlphabet } from "nanoid";
-import alphanumeric from "nanoid-dictionary/numbers";
+import { generateID } from "@/lib/dataHandler";
+
+
 import { Router, useRouter } from "next/router";
 
 function CreateUserForm({data, submitFunc}) {
-    const nanoid = customAlphabet(alphanumeric, 8) // id generator
     const router = useRouter()
 
-    const [userID, setUserID] = useState(nanoid())
+    const [userID, setUserID] = useState(generateID(data.count, 8))
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -66,7 +66,7 @@ function CreateUserForm({data, submitFunc}) {
     }
 
     function clear() {
-        setUserID(nanoid())
+        setUserID(generateID(data.count, 8))
         setFirstName("")
         setLastName("")
         setEmail("")
@@ -105,7 +105,7 @@ function CreateUserForm({data, submitFunc}) {
             userTypeID: userType,
             specialtyID: specialty,
             password: password,
-            creatorID: "00002", // CHANGE HARDCODE
+            // creatorID: "00002", // CHANGE HARDCODE
         }
         console.log(userData)
         let result = await fetch(userAPI.create_user, {
@@ -115,6 +115,8 @@ function CreateUserForm({data, submitFunc}) {
             },
             body: JSON.stringify(userData),
         }).then(result => {
+            if (!result.ok)
+                console.log("not ok")
             console.log(result.json())
             clear()
             router.push("/users")

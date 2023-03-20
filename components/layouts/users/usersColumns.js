@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Flex, Grid, GridItem, Image, Button, Link } from "@chakra-ui/react";
+import { Text, Flex, Grid, GridItem, Image, Button, Link, Avatar } from "@chakra-ui/react";
 import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
 
 import GlobalFilter from "@/components/table/globalFilter";
@@ -53,10 +53,9 @@ export const COLUMNS = [
         return (
           <Flex alignItems={"center"}>
             <Text fontWeight={"semibold"} mr={"1em"}>{props.row.index + 1}</Text>
-            <Image src={props.row.original.imageID.secure_url} 
-              alt={props.row.original.firstName + " " + props.row.original.lastName}
-              boxSize={"3.5em"} 
-              borderRadius={"full"}
+            <Avatar src={props.row.original.imageID.secure_url} 
+              name={props.row.original.firstName + " " + props.row.original.lastName}
+              size={"lg"} 
               border={"2px solid #9F9F9F"}
             />
             <Flex flexDirection={"column"} ml={"2em"}>

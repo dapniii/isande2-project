@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Grid, GridItem,     
   Breadcrumb,
   BreadcrumbItem,
@@ -9,11 +9,33 @@ import { Grid, GridItem,
 import Navbar from "../components/navbar";
 import Header from '@/components/header';
 import { SaveButton } from '@/components/buttons'; // Temp
+import getSessionUser from '@/lib/auth/getSessionUser';
+import { useRouter } from 'next/router';
 
 //TEMP INDEX PAGE, SOON TO BE CHANGED FOR SIGNIN PAGE (TENTATIVE)
 export default function HomePage() {
+  const [user, setUser] = useState("")
+  const router = useRouter();
 
-  const user = {
+  useEffect(() => {
+    fetch("/api/auth/getUser", {
+      method: "GET",
+      headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+			},
+    })
+      .then((res) => res.json())
+      .then((user) => {
+        if (!user.isLoggedIn)
+          router.replace("/login")
+        else
+          setUser(user.data)
+      })
+    
+  }, [])
+
+  const user2 = {
     firstName: "FirstName",
     role: "Admin"
   };

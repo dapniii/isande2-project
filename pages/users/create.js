@@ -28,11 +28,15 @@ export async function getServerSideProps() {
   
   const res = await fetch(userAPI.get_categories)
   const data = await res.json()
+
+  const resCount = await fetch(userAPI.get_all_users)
+  const countData = await resCount.json()
   
   categoryList.department = data.departments
   categoryList.roles = data.roles
   categoryList.userTypes = data.userTypes
   categoryList.specialties = data.specialties
+  categoryList.count = countData.count
   
   return { props: { categoryList }}
 }

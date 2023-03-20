@@ -31,7 +31,7 @@ import {
   } from "@choc-ui/chakra-autocomplete";
 import { AddIcon } from "@chakra-ui/icons";
 import CategoryListModal from "@/components/basicCategoryModal";
-import { uploadImage } from "@/lib/imageHandler";
+import { uploadImage } from "@/lib/images/imageHandler";
 import { vehicleAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 

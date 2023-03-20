@@ -7,8 +7,9 @@ import { Router, useRouter } from "next/router"
 function Navbar({user}) {
     const router = useRouter();
     
-    function Logout() {
+    async function Logout() {
         // TODO: Logout backend
+        await fetch ("/api/auth/logout") 
         router.replace("/login");
     }
 
@@ -42,7 +43,7 @@ function Navbar({user}) {
                 <Flex flexDirection={"column"}>
                     <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"8"}>Hello</Text>
                     
-                    <Text fontSize={"sm"}>{user.firstName}</Text>
+                    <Text fontSize={"lg"}>{user.firstName}</Text>
                 </Flex>
             </Flex>
             {/* Displays apporpriate NavBar items depending on user role */}
