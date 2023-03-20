@@ -35,18 +35,7 @@ export const getServerSideProps = withSessionSsr(
         }
       }
 
-      if (user.role != "Admin") {
-        return {
-          redirect: {
-            permanent: false,
-            destination: "/",
-          },
-          props: { user: {
-            isLoggedIn: true 
-            }, 
-          }
-        }
-      }
+
       const categoryList = {
         department: [],
         roles: [],

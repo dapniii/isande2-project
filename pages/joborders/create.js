@@ -13,34 +13,57 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { SaveButton, CancelButton, AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
-import { customAlphabet } from "nanoid";
-import numbers from "nanoid-dictionary/numbers";
 import CreateJobOrderForm from "@/components/layouts/joborders/JobOrderForm/mainForm";
+import { withSessionSsr } from "@/lib/auth/withSession";
+import { jobOrderAPI } from "@/lib/routes";
+// import { generateID } from "@/lib/dataHandler";
 
-export async function getServerSideProps() {
-    let res = await fetch("http://localhost:3000/api/joborders/getFormCategories")
-    let data = await res.json()
+export const getServerSideProps = withSessionSsr(
+    async ({req, res}) => {
+        const user = req.session.user;
+  
+        if (user == null) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: "/login",
+            },
+            props: { user: {
+              data: user,
+              isLoggedIn: false 
+              }, 
+            }
+          }
+        }
+  
 
-    return { props: { data } }
-}
+  
+        const result = await fetch(jobOrderAPI.get_form_categories)
+        const data = await result.json()
+  
 
-export default function JobOrdersPage({ data }) {
+  
+        return {
+            props: { 
+              user: {
+                data: user,
+                isLoggedIn: true 
+              }, 
+              categoryList: data
+            }
+        }
+  });
+
+export default function JobOrdersPage({ user, categoryList }) {
     const joLength = 10
     const countJOs = 11
     const currentLength = countJOs.toString().length + 1
 
     const router = useRouter();
-    const nanoid = customAlphabet(numbers, 10)
     const [submitForm, setSubmitForm] = useState();
     const [JONumber, setJONumber] = useState("")
     const [issueDate, setIssueDate] = useState(new Date())
     
-    //Temp
-    const user = {
-        firstName: "FirstName",
-        role: "Admin",
-    };
-
 
     // Do on render
     useEffect(() => {
@@ -97,7 +120,7 @@ export default function JobOrdersPage({ data }) {
         <>
             <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
                 <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-                    <Navbar user={user} />
+                    <Navbar user={user.data} />
                 </GridItem>
 
                 <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
@@ -110,7 +133,7 @@ export default function JobOrdersPage({ data }) {
 
                 {/* Job Order */}
                 <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
-                    <CreateJobOrderForm data={data} />
+                    <CreateJobOrderForm data={categoryList} />
                 </GridItem>
             </Grid>
         </>

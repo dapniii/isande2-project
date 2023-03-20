@@ -84,7 +84,7 @@ function CreateJobOrderForm({data}) {
                                         key={item._id}
                                         value={item.userID.firstName + " " + item.userID.lastName}
                                     >
-                                        {item.userID.firstName + " " + item.userID.lastName}
+                                        <Text>{item.userID.firstName} {item.userID.lastName}</Text>
                                     </AutoCompleteItem>
                                 ))}
                             </AutoCompleteList>
@@ -137,7 +137,7 @@ function CreateJobOrderForm({data}) {
                 </CardBody>
             </Card>
         </Flex>
-        <CreateJobOrderPartsList />                              
+        <CreateJobOrderPartsList itemsList={data.partItems}/>                              
     </Flex>
     )
 }

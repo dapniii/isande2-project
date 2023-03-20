@@ -106,14 +106,16 @@ function CreateUserForm({creatorID, data, userCount, submitFunc}) {
             creatorID: creatorID
         }
         console.log(userData)
-        let result = await fetch(userAPI.create_user, {
+        await fetch(userAPI.create_user, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(userData),
-        }).then(result => {
-            console.log(result.json())
+        }).then(result => result.json())
+        .then(data => {
+            if (data.error != null) 
+                console.log(data.error)
             clear()
             router.push("/users")
         })

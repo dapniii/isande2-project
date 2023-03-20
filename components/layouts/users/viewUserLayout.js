@@ -96,7 +96,6 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
             roleID: role,
             userTypeID: userType,
             password: password,
-            creatorID: creatorID.userID,
             specialtyID: specialty
         }
 
@@ -107,8 +106,11 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(userData),
-        }).then(result => {
-            console.log(result.json())
+        }).then(result => result.json())
+        .then(data => {
+            if (data.error != null) 
+                console.log(data.error)
+            clear()
             router.push("/users")
         })
     }
@@ -178,23 +180,28 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                                     h={"15em"}
                                 />
                             </Flex>
+                            { isEdit ? (
+                                <>
+                                    <Button
+                                        // @ts-ignore
+                                        mt={photo != null ? ("1.5em") : (0)}
+                                        bg={"#005DF2"}
+                                        color={"white"}
+                                        leftIcon={<AddIcon />}
+                                        onClick={() => inputPhoto.current.click()}
+                                    >
+                                        Select Image
+                                    </Button>
+                                    <Input 
+                                        type={"file"}
+                                        display={"none"}
+                                        onChange={(e) => {setPhoto(e.target.files[0])}}
+                                        ref={inputPhoto}
+                                    />
+                                </>
                             
-                            <Button
-                                // @ts-ignore
-                                mt={photo != null ? ("1.5em") : (0)}
-                                bg={"#005DF2"}
-                                color={"white"}
-                                leftIcon={<AddIcon />}
-                                onClick={() => inputPhoto.current.click()}
-                            >
-                                Select Image
-                            </Button>
-                            <Input 
-                                type={"file"}
-                                display={"none"}
-                                onChange={(e) => {setPhoto(e.target.files[0])}}
-                                ref={inputPhoto}
-                            />
+                            ) : (<></>)}
+
                         </Flex> 
                     </CardBody>
                 </Card>

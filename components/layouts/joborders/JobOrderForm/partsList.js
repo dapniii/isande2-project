@@ -69,14 +69,14 @@ export default function CreateJobOrderPartsList({
                         <AutoComplete openOnFocus>
                             <AutoCompleteInput variant="outline" />
                             <AutoCompleteList >
-                            {/* {data.vehicles.map((item) => (
-                                <AutoCompleteItem
-                                    key={item.plateNumber}
-                                    value={item.plateNumber}
-                                >
-                                    {item.plateNumber}
-                                </AutoCompleteItem>
-                            ))} */}
+                                {itemsList.map((item) => (
+                                    <AutoCompleteItem
+                                        key={item.itemNumber}
+                                        value={item.itemNumber}
+                                    >
+                                        <Text>{item.itemName} {item.itemModel}</Text>
+                                    </AutoCompleteItem>
+                                ))}
                             </AutoCompleteList>
                         </AutoComplete>
                     </Flex>
