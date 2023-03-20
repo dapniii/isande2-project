@@ -38,7 +38,7 @@ import { userAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 import { uploadImage } from "@/lib/images/imageHandler";
 
-function ViewUserForm({ userID, data, submitFunc, isEdit }) {
+function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
     const router = useRouter();
 
     const [firstName, setFirstName] = useState("");
@@ -96,11 +96,8 @@ function ViewUserForm({ userID, data, submitFunc, isEdit }) {
             roleID: role,
             userTypeID: userType,
             password: password,
-            creatorID: "00002", // CHANGE HARDCODE
-        }
-
-        if (specialty == "Mechanic") {
-            userData.specialtyID = specialty
+            creatorID: creatorID.userID,
+            specialtyID: specialty
         }
 
         console.log(userData)

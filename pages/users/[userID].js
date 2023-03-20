@@ -13,45 +13,71 @@ import Header from "@/components/header";
 import { BackButton, EditButton, SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import { userAPI } from "@/lib/routes";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
 import ViewUserForm from "@/components/layouts/users/viewUserLayout";
 
-export async function getServerSideProps() {
-  const categoryList = {
-    department: [],
-    roles: [],
-    userTypes: [],
-    specialties: [],
-  }
-  
-  const res = await fetch(userAPI.get_categories)
-  const data = await res.json()
-  
-  categoryList.department = data.departments
-  categoryList.roles = data.roles
-  categoryList.userTypes = data.userTypes
-  categoryList.specialties = data.specialties
-  
-  return { props: { categoryList }}
-}
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+      const user = req.session.user;
 
-export default function UserDetails({categoryList}) {
+      if (user == null) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/login",
+          },
+          props: { user: {
+            data: user,
+            isLoggedIn: false 
+            }, 
+          }
+        }
+      }
+
+      if (user.role != "Admin") {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/",
+          },
+          props: { user: {
+            isLoggedIn: true 
+            }, 
+          }
+        }
+      }
+      const categoryList = {
+        department: [],
+        roles: [],
+        userTypes: [],
+        specialties: [],
+      }
+
+      const result = await fetch(userAPI.get_categories)
+      const data = await result.json()
+
+      categoryList.department = data.departments
+      categoryList.roles = data.roles
+      categoryList.userTypes = data.userTypes
+      categoryList.specialties = data.specialties
+
+      return {
+          props: { 
+            user: {
+              data: user,
+              isLoggedIn: true 
+            }, 
+            categoryList: categoryList
+          }
+      }
+});
+
+export default function UserDetails({user, categoryList}) {
   const router = useRouter();
   const { userID } = router.query;
   const [isEdit, setIsEdit] = useState(false);
   const [submitForm, setSubmitForm] = useState();
-
-  // Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
-
-  const tempUserData = {
-    firstName: "FirstName",
-    lastName: "LastName",
-    role: "Role",
-  };
 
   function cancel() {
     router.back();
@@ -113,7 +139,7 @@ export default function UserDetails({categoryList}) {
         
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
@@ -127,6 +153,7 @@ export default function UserDetails({categoryList}) {
         {/* Main Content */}
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
           <ViewUserForm 
+            creatorID={user.data}
             userID={userID} 
             data={categoryList} 
             isEdit={isEdit} 

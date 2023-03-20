@@ -15,7 +15,7 @@ import { SaveButton, CancelButton, AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import { customAlphabet } from "nanoid";
 import numbers from "nanoid-dictionary/numbers";
-import CreateJobOrderForm from "@/components/layouts/joborders/CreateJobOrderForm/mainForm";
+import CreateJobOrderForm from "@/components/layouts/joborders/JobOrderForm/mainForm";
 
 export async function getServerSideProps() {
     let res = await fetch("http://localhost:3000/api/joborders/getFormCategories")

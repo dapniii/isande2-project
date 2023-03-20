@@ -14,6 +14,10 @@ const JobOrderDetailsSchema = {
     jobID: {
         type: mongoose.Types.ObjectId,
         ref: "JobItem"
+    },
+    recordDate: {
+        type: Date,
+        default: new Date()
     }
 }
 

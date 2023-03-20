@@ -26,14 +26,12 @@ import CategoryListModal from "@/components/basicCategoryModal";
 import { uploadImage } from "@/lib/images/imageHandler";
 import { userAPI } from "@/lib/routes";
 import { generateID } from "@/lib/dataHandler";
-
-
 import { Router, useRouter } from "next/router";
 
-function CreateUserForm({data, submitFunc}) {
+function CreateUserForm({creatorID, data, userCount, submitFunc}) {
     const router = useRouter()
 
-    const [userID, setUserID] = useState(generateID(data.count, 8))
+    const [userID, setUserID] = useState(generateID(userCount, 8))
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -66,7 +64,7 @@ function CreateUserForm({data, submitFunc}) {
     }
 
     function clear() {
-        setUserID(generateID(data.count, 8))
+        setUserID("")
         setFirstName("")
         setLastName("")
         setEmail("")
@@ -105,7 +103,7 @@ function CreateUserForm({data, submitFunc}) {
             userTypeID: userType,
             specialtyID: specialty,
             password: password,
-            // creatorID: "00002", // CHANGE HARDCODE
+            creatorID: creatorID
         }
         console.log(userData)
         let result = await fetch(userAPI.create_user, {
@@ -115,8 +113,6 @@ function CreateUserForm({data, submitFunc}) {
             },
             body: JSON.stringify(userData),
         }).then(result => {
-            if (!result.ok)
-                console.log("not ok")
             console.log(result.json())
             clear()
             router.push("/users")

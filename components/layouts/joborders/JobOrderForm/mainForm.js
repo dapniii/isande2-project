@@ -10,7 +10,8 @@ import {
     FormLabel,
     FormErrorMessage,
     FormHelperText,
-    Textarea, 
+    Textarea,
+    Box, 
 } from "@chakra-ui/react";
 import {
     AutoComplete,
@@ -23,23 +24,17 @@ import {
     AutoCompleteCreatable
 } from "@choc-ui/chakra-autocomplete";
 import CategoryListModal from "@/components/basicCategoryModal";
+import CreateJobOrderPartsList from "./partsList";
 
 function CreateJobOrderForm({data}) {
     const [plateNumber, setPlateNumber] = useState("");
     const [mechanics, setMechanics] = useState([]);
     const [selectedJobs, setSelectedJobs] = useState([]);
     const [description, setDescription] = useState("");
-    const [itemTemplate, setItemTemplate] = useState({
-        name: "",
-        model: "",
-        partNumber: "",
-        brand: "",
-        quantity: "",
-    })
 
     const [partsList, setPartsList] = useState([])
     return (
-    <>
+    <Flex flexDirection={"column"} gap={3}> 
         {/* Top part of the form */}
         <Flex justifyContent={"space-between"} gap={2}>
         {/* Job Details */}
@@ -110,7 +105,7 @@ function CreateJobOrderForm({data}) {
                             openOnFocus 
                             multiple
                             restoreOnBlurIfEmpty={false}  
-                            onChange={vals => setPartsList(vals)}>
+                            onChange={vals => setSelectedJobs(vals)}>
                             <AutoCompleteInput variant="outline" hidePlaceholder>
                                 {({ tags }) =>
                                     tags.map((tag, tid) => (
@@ -142,7 +137,8 @@ function CreateJobOrderForm({data}) {
                 </CardBody>
             </Card>
         </Flex>
-    </>
+        <CreateJobOrderPartsList />                              
+    </Flex>
     )
 }
 

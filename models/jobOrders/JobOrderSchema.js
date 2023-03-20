@@ -17,10 +17,6 @@ const JobOrderSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "JobOrderStatus"
     },
-    priorityID: {
-        type: mongoose.Types.ObjectId,
-        ref: "JobOrderPriority"
-    },
     description: {
         type: String,
     },

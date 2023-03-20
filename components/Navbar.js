@@ -49,7 +49,7 @@ function Navbar({user}) {
             {/* Displays apporpriate NavBar items depending on user role */}
             <Flex w={"100%"} h={"100%"} flexDirection={"column"} justifyContent={"space-between"} alignItems={"center"}>                
                 <VStack w={"100%"}>
-                    {selectMenu(user.role)}
+                    {selectMenu(user.role, user.userType)}
                 </VStack>
 
                 {/* Logout Button */}
