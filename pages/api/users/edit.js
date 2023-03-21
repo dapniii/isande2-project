@@ -27,11 +27,6 @@ export default async (req, res) => {
         // Get user type id
         let userTypeID = await UserType.findOne({name: bodyData.userTypeID})
         
-        let specialtyID 
-        // Get specialty if applicable
-        if (isMechanic) 
-            specialtyID = await Specialty.findOne({name: bodyData.specialtyID})
-
         let imageResult 
         try {
             imageResult = await Image.findByIdAndUpdate(originalUser.imageID, {
@@ -58,29 +53,53 @@ export default async (req, res) => {
                 newUser["email"] = bodyData.email
             if (bodyData.phone != originalUser.phone)
                 newUser["phone"] = bodyData.phone
-            if (departmentID._id != originalUser.departmentID)
+            if (departmentID._id.toString() != originalUser.departmentID.toString())
                 newUser["departmentID"] = departmentID._id
-            if (roleID._id != originalUser.roleID)
+            if (roleID._id.toString() != originalUser.roleID.toString())
                 newUser["roleID"] = roleID._id
-            if (userTypeID._id != originalUser.userTypeID)
+            if (userTypeID._id.toString() != originalUser.userTypeID.toString())
                 newUser["userTypeID"] = userTypeID._id
+            if (bodyData.disabled != null)
+                newUser["disabled"] = bodyData.disabled 
             
-            let originalMechanic 
-            if (isMechanic) {
-                originalMechanic = await Mechanic.findOne({
+            try {
+                let specialtyID = await Specialty.findOne({name: bodyData.specialtyID})
+                let originalMechanic = await Mechanic.findOne({
                     userID: originalUser._id
                 })
-                if (originalMechanic == null) {
+                // If user wasn't a mechanic originally but was updated to be so, add them to mechanic collection
+                if (originalMechanic == null && isMechanic) {
                     let mechResult = await Mechanic.create({
                         userID: originalUser._id,
                         specialtyID: specialtyID._id
                     })
+                    console.log("Employee was recently reassigned a mechanic role")
                 }
-                else if (originalMechanic.specialtyID != specialtyID._id) {
-                    
+                // If mechanic specialty was changed
+                else if (originalMechanic.specialtyID.toString() != specialtyID._id.toString() && isMechanic) {
+                    let updatedMech = await Mechanic.findByIdAndUpdate(originalMechanic._id, {
+                        specialtyID: specialtyID._id,
+                    })
+                    console.log("Updated specialty")
                 }
+                // If user was originally a mechanic but was changed to something else
+                else if (originalMechanic != null && !isMechanic || bodyData.disabled == true) {
+                    await Mechanic.findByIdAndUpdate(originalMechanic._id, {
+                        disabled: true
+                    })
+                    console.log("Mechanic was disabled")
+                }
+                // If user was originally a mechanic, changed to something else, then reverted back
+                else if (originalMechanic.disabled == true && isMechanic) {
+                    await Mechanic.findByIdAndUpdate(originalMechanic._id, {
+                        disabled: false
+                    })
+                    console.log("Mechanic was disabled")
+                }
+            } catch(e) {
+                res.status(400).json({ error: "Cannot update mechanic" })
             }
-                newUser["specialtyID"] = specialtyID._id
+
             console.log(newUser)
             // Update user
             try {

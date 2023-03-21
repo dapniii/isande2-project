@@ -38,7 +38,7 @@ import { userAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 import { uploadImage } from "@/lib/images/imageHandler";
 
-function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
+function ViewUserForm({ creatorID, userID, userData, categoryList, submitFunc, isEdit }) {
     const router = useRouter();
 
     const [firstName, setFirstName] = useState("");
@@ -69,6 +69,31 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
     function passSubmitFunc() {
         return submitForm
     }
+
+    // Fetch user data
+    useEffect(() => {
+        fetch("/api/users/" + userID, {
+        method: "GET",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        })
+        .then((res) => res.json())
+        .then((data) => {
+            setFirstName(data.firstName)
+            setLastName(data.lastName)
+            setEmail(data.email)
+            setPhone(data.phone)
+            setDepartment(data.departmentID.name)
+            setRole(data.roleID.name)
+            setUserType(data.userTypeID.name)
+            try {
+                setSpecialty(data.specialtyID.name)
+            } catch {}
+            setPreview(data.imageID.secure_url)           
+        });
+    }, [userID]);
 
     async function submitForm() {
         let imageRes = "";
@@ -110,38 +135,9 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
         .then(data => {
             if (data.error != null) 
                 console.log(data.error)
-            clear()
             router.push("/users")
         })
     }
-
-    // Fetch user data
-    useEffect(() => {
-		fetch("/api/users/" + userID, {
-			method: "GET",
-			headers: {
-				Accept: "application/json",
-				"Content-Type": "application/json",
-			},
-		})
-			.then((res) => res.json())
-			.then((data) => {
-				// console.log(data)
-                setFirstName(data.firstName)
-                setLastName(data.lastName)
-                setPreview(data.imageID.secure_url)
-                setEmail(data.email)
-                setPhone(data.phone)
-                setDepartment(data.departmentID.name)
-                setRole(data.roleID.name)
-                setUserType(data.userTypeID.name)
-
-                try {
-                    setSpecialty(data.specialtyID.name)
-                } catch {}
-                
-			});
-	}, [userID]);
 
     // Generate photo preview
     useEffect(() => {
@@ -237,10 +233,10 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => deptModalOpen.onOpen()}><Link>Department</Link></FormLabel>
-                                    <CategoryListModal modalOpen={deptModalOpen} options={data.department} title={"Department List"} apiPath={userAPI.modify_department} /> 
+                                    <CategoryListModal modalOpen={deptModalOpen} options={categoryList.department} title={"Department List"} apiPath={userAPI.modify_department} /> 
                                     <Select value={department} onChange={(e) => setDepartment(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select Department</option>
-                                        {data.department.map((dept) => {
+                                        {categoryList.department.map((dept) => {
                                             if (dept.disabled == false) {
                                                 return (
                                                     <option
@@ -256,10 +252,10 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                                 </FormControl>
                                 <FormControl isRequired>
                                     <FormLabel onClick={(() => roleModalOpen.onOpen())}><Link>Role</Link></FormLabel>
-                                    <CategoryListModal modalOpen={roleModalOpen} options={data.roles} title={"Role List"} apiPath={userAPI.modify_role} />
+                                    <CategoryListModal modalOpen={roleModalOpen} options={categoryList.roles} title={"Role List"} apiPath={userAPI.modify_role} />
                                     <Select value={role} onChange={(e) => setRole(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select Role</option>
-                                        {data.roles.map((roleOption) => {
+                                        {categoryList.roles.map((roleOption) => {
                                             if (roleOption.disabled == false) {
                                                 return (
                                                     <option
@@ -277,10 +273,10 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                             <Flex gap={2}>
                                 <FormControl isRequired>
                                     <FormLabel onClick={() => userModalOpen.onOpen()}><Link>User Type</Link></FormLabel>
-                                    <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} />
+                                    <CategoryListModal modalOpen={userModalOpen} options={categoryList.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} />
                                     <Select value={userType} onChange={(e) => setUserType(e.target.value)} disabled={!isEdit}>
                                         <option value="" hidden disabled>Select User Type</option>
-                                        {data.userTypes.map((type) => {
+                                        {categoryList.userTypes.map((type) => {
                                             if (type.disabled == false) {
                                                 return (
                                                     <option
@@ -296,10 +292,10 @@ function ViewUserForm({ creatorID, userID, data, submitFunc, isEdit }) {
                                 </FormControl>
                                 <FormControl>
                                     <FormLabel onClick={() => specialModalOpen.onOpen()}><Link>{"Specialty (if Mechanic)"}</Link></FormLabel>
-                                    <CategoryListModal modalOpen={specialModalOpen} options={data.specialties} title={"Mechanic Specialties"} apiPath={userAPI.modify_specialties} />
+                                    <CategoryListModal modalOpen={specialModalOpen} options={categoryList.specialties} title={"Mechanic Specialties"} apiPath={userAPI.modify_specialties} />
                                     <Select value={specialty} onChange={(e) => setSpecialty(e.target.value)} disabled={role != "Mechanic" || !isEdit}>
                                         <option value="" hidden disabled >Select Specialty</option>
-                                        {data.specialties.map((specialtyOption) => {
+                                        {categoryList.specialties.map((specialtyOption) => {
                                             if (specialtyOption.disabled == false) {
                                                 return (
                                                     <option

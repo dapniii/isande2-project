@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button, Icon } from "@chakra-ui/react";
-import { MdAddCircle, MdCheckCircle, MdCancel, MdEdit, MdKeyboardArrowLeft } from "react-icons/md";
+import { MdAddCircle, MdCheckCircle, MdCancel, MdEdit, MdKeyboardArrowLeft, MdRemoveCircle } from "react-icons/md";
 
 export function AddButton({title, clickFunction}) {
     return (
@@ -77,6 +77,22 @@ export function BackButton({title, clickFunction}) {
             leftIcon={<Icon as={MdKeyboardArrowLeft} boxSize={"1.8em"} />}
             onClick={() => clickFunction()}
             fontWeight={"bold"}
+        >
+            {title}
+        </Button>
+    )
+}
+
+export function DeleteButton({title, clickFunction}) {
+    return (
+        <Button
+            bg={"#FF575F"}
+            color={"white"}
+            px={"0.7em"}
+            size={"sm"}
+            borderRadius={"0.4em"}
+            leftIcon={<Icon as={MdRemoveCircle} boxSize={"1.3em"} />}
+            onClick={() => clickFunction()}
         >
             {title}
         </Button>

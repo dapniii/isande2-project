@@ -24,7 +24,7 @@ export async function getServerSideProps() {
   const userData = await resUsers.json()
   
   const categoryList = {
-    department: [],
+    departments: [],
     roles: [],
     userTypes: [],
     specialties: [],
@@ -134,18 +134,38 @@ export default function UsersPage({data}) {
         </GridItem>
         
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
-          <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={true} />
+          <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={false} />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
-          <BasicTable 
-            COLUMNS={COLUMNS}
-            DATA={data.users}
-            FILTERS={filters}
-            HIDDEN={["firstName", "lastName", "department", "specialty"]}
-            getRowData={getRowData}
-            clickRowFunction={navToDetails}
-          />        
+        <GridItem colStart={2} bg={"blackAlpha.300"} >
+          <Tabs>
+            <TabList bg={"white"} top={"1em"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}>
+              <Tab>Active</Tab>
+              <Tab>Inactive</Tab>
+            </TabList>
+            <TabPanels p={2} overflowY={"auto"}>
+              <TabPanel>
+                <BasicTable 
+                  COLUMNS={COLUMNS}
+                  DATA={data.users.active}
+                  FILTERS={filters}
+                  HIDDEN={["firstName", "lastName", "department", "specialty"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                /> 
+              </TabPanel>
+              <TabPanel>
+                <BasicTable 
+                  COLUMNS={COLUMNS}
+                  DATA={data.users.inactive}
+                  FILTERS={filters}
+                  HIDDEN={["firstName", "lastName", "department", "specialty"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>       
         </GridItem>
       </Grid>
     </>

@@ -6,7 +6,13 @@ import Mechanic from "@/models/users/MechanicSchema";
 export default async (req, res) => {
     await connectToDatabase();
 
-    let users = await User.find({})
+    let active = await User.find({disabled: false})
+    .populate("imageID")
+    .populate("departmentID")
+    .populate("roleID")
+    .populate("userTypeID")
+
+    let inactive = await User.find({disabled: true})
     .populate("imageID")
     .populate("departmentID")
     .populate("roleID")
@@ -14,7 +20,15 @@ export default async (req, res) => {
 
     let mechanics = await Mechanic.find({}).populate("specialtyID")
     
-    users.map(user => {
+    active.map(user => {
+        mechanics.map(mech => {
+            if (user._id.toString() == mech.userID.toString()) {
+                user.set("specialtyID", mech.specialtyID, {strict: false})
+            }
+        })
+    })
+
+    inactive.map(user => {
         mechanics.map(mech => {
             if (user._id.toString() == mech.userID.toString()) {
                 user.set("specialtyID", mech.specialtyID, {strict: false})
@@ -23,7 +37,10 @@ export default async (req, res) => {
     })
     
     res.json({
-        users,
-        count: users.length
+        users: {
+            active: active,
+            inactive: inactive,
+        },
+        count: active.length + inactive.length
     })
 }
