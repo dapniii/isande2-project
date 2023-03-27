@@ -28,7 +28,8 @@ export default function EditPartsPage({categoryList}) {
   const router = useRouter();
   const { id } = router.query;
   const [submitForm, setSubmitForm] = useState()
-  const initial = useRef() // initial data
+  const [initial, setInitial] = useState()
+  // const initial = useRef() // initial data
     // Fetch user data
     useEffect(() => {
       fetch("/api/spareparts/" + id, {
@@ -40,7 +41,7 @@ export default function EditPartsPage({categoryList}) {
       })
           .then((res) => res.json())
           .then((data) => {
-            initial.current = data
+            setInitial(data)
           })
           
     }, []);
@@ -86,7 +87,7 @@ export default function EditPartsPage({categoryList}) {
   
   // MAIN
   return (
-    <EditPartContext.Provider value={initial.current}>
+    <EditPartContext.Provider value={initial}>
       <Grid
         minH="100vh"
         templateColumns={"1fr 7fr"}

@@ -49,7 +49,7 @@ function EditPartForm({ categoryList, submitFunc}) {
     const brandModalOpen = useDisclosure();
     
     useEffect(() => {
-        if (contextData != null) {
+        try {
             setItemNumber(contextData.itemNumber)
             setCategory(contextData.categoryID.name)
             setName(contextData.itemName)
@@ -58,8 +58,8 @@ function EditPartForm({ categoryList, submitFunc}) {
             setUnit(contextData.unitID.name)
             setDesc(contextData.description)
             setPreview(contextData.imageID.secure_url)
-        }
-    }, [contextData])
+        } catch{}
+    }, [contextData, itemNumber, category, name, model, rp, unit, desc, preview, photo])
 
     // Generate photo preview
     useEffect(() => {
@@ -96,7 +96,6 @@ function EditPartForm({ categoryList, submitFunc}) {
         setAddArray([]);
         setEditArray([]);
         setDisabledArray([]);
-        setDetailsTableData({});
     }
     async function submitForm() {
         let uploadConfig = {
@@ -143,9 +142,9 @@ function EditPartForm({ categoryList, submitFunc}) {
     }
     
     if (contextData == null) {
-        return <></>
+        return <Text>Loading...</Text>
     }
-    else if (contextData!=null)
+    else 
         return (
             <>
             {/* MAIN CONTAINER */}
