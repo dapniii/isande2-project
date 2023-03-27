@@ -42,7 +42,6 @@ function EditDetailsTable({brands}) {
                     mode: "isAdd"
                 }
             case "edit": {
-                console.log(action.payload.index)
                 return {
                     index: action.payload.index,
                     info: action.payload.item,
@@ -59,19 +58,18 @@ function EditDetailsTable({brands}) {
     })
     const [editArray, dispatch] = useReducer((state, action) => {
         switch (action.type) {
-            case "initialize": 
+            case "initialize": // Get item data from context
                 return action.payload
-            case "edit": {
+            case "edit": { // replace edited item at index and return edited array
                 return state.map((row, i) => i === action.payload.index ? action.payload.item : row)
             } 
-            case "add":
+            case "add": // add new item at end of array
                 return [...state, action.payload]
-            case "delete":
+            case "delete": // delete item at specified index from array 
                 return state.filter((row, i) => {return i != action.payload})
-            case "disable": {
+            case "disable": { // set disable to true for item at specified index
                 return state.map((row, i) => i == action.payload ? {...row, disabled: true} : row)
             }
-
             default: 
                 return state
         }
@@ -85,7 +83,7 @@ function EditDetailsTable({brands}) {
         }
     }, [initialData])
 
-    // Fill template with details when an item to edit has been selected 
+    // Configure data template whenever editState is changed
     useEffect(() => {
         try {
             if (editState.mode == "isEdit") {
@@ -108,7 +106,7 @@ function EditDetailsTable({brands}) {
         } catch {}
     }, [editState])
 
-    // Clear template whenever an edit has been made
+    // Clear template and editState when the editArray has been updated
     useEffect(() => {
         clearTemplate()
         switchState("reset")
@@ -137,16 +135,19 @@ function EditDetailsTable({brands}) {
 
     }
 
+    // Loading state (wait to initialize data from context)
     if (initialData == null) 
         return (<></>)
     else if (initialData != null && editArray != null)
         return (
             <>
-                {
+                {   // Show only non-disabled items
                     editArray.filter(row => {return row.disabled != true}).map((item, index) => {
+                        // Show editable row
                         if (index == editState.index){
                             return (<>{showInputTable()}</>)
                         }
+                        // Normal table
                         else 
                             return (
                                 <>
@@ -166,6 +167,7 @@ function EditDetailsTable({brands}) {
                                         {item.unitPrice.$numberDecimal ? (<Text>PHP {item.unitPrice.$numberDecimal}</Text>) : (<Text>PHP {item.unitPrice}</Text>)}
                                     </GridItem>
                                     <GridItem>
+                                    {/* Set edit state to edit */}
                                     <IconButton
                                         variant='outline'
                                         size={"sm"}
@@ -175,12 +177,14 @@ function EditDetailsTable({brands}) {
                                         onClick={() => switchState({type: "edit", payload: {index: index, item: item}})}
                                     /> 
                                     {
+                                        // Only allow disabling if quantity is zero for existing records
+                                        // If it is a new row, then it is possible to delete
                                         item.quantity == 0 || item._id == null ? (
                                             <IconButton
                                             variant='outline'
                                             size={"sm"}
                                             colorScheme='gray'
-                                            aria-label='Delete Detail Row'
+                                            aria-label='Delete Row'
                                             icon={<DeleteIcon />}
                                             onClick={() => dispatch({type: item._id  ? ("disable") : ("delete"), payload: index})}
                                             /> 
@@ -193,7 +197,7 @@ function EditDetailsTable({brands}) {
                             )
                     })
                 }
-                {
+                {   // Setting editState to adding will show a blank editable row
                     editState.mode == "isAdd" ? (<>{showInputTable()}</>) : (
                         <GridItem colStart={2}>
                             <AddButton title={"Add Row"} clickFunction={() => switchState({type: "add"})} />
@@ -202,22 +206,10 @@ function EditDetailsTable({brands}) {
             </>
         )
 
-    // Set Details function
-    function handleDetailsChange(e) {
-        const { name, value } = e.target;
-
-        setTemplate((prevState) => ({
-            ...prevState,
-            [name]: value,
-        }));
-
-    }
-
     function showInputTable() {
         return (
             <>
                 {/* DETAILS INPUT  */}
-
                 <GridItem colStart={2} w={"95%"} >
                     <Input 
                         name="partNumber"
@@ -289,17 +281,6 @@ function EditDetailsTable({brands}) {
                     </ButtonGroup>
     
                 </GridItem>
-                {
-                        !editArray ? (
-                            <GridItem colSpan={6}>
-                            {/* PAGINATION */}
-                                <ButtonGroup p={"1em"} width={"100%"} justifyContent={"right"} alignItems={"center"} gap={"0"}>
-                                    {/* {backButton()}
-                                    {nextButton()} */}
-                                </ButtonGroup>
-                            </GridItem>
-                        ) : (<></>) 
-                }
             </>
         )
     }
