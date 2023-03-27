@@ -12,7 +12,7 @@ import {
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import { EditPartContext } from "./context";
 import EditPartForm from "@/components/layouts/parts/editPartForm";
@@ -28,8 +28,7 @@ export default function EditPartsPage({categoryList}) {
   const router = useRouter();
   const { id } = router.query;
   const [submitForm, setSubmitForm] = useState()
-  const [initialData, setInitialData] = useState()
-  const initial = useRef()
+  const initial = useRef() // initial data
     // Fetch user data
     useEffect(() => {
       fetch("/api/spareparts/" + id, {
@@ -41,7 +40,6 @@ export default function EditPartsPage({categoryList}) {
       })
           .then((res) => res.json())
           .then((data) => {
-            setInitialData(data)
             initial.current = data
           })
           
@@ -56,7 +54,8 @@ export default function EditPartsPage({categoryList}) {
     router.back();
   }
 
-  function headerBreadcrumbs() {return (
+  function headerBreadcrumbs() {
+    return (
     <Breadcrumb pt={1}>
       <BreadcrumbItem  >
           <BreadcrumbLink href='/' color={"blue"} textDecor={"underline"} fontSize={"lg"}>Spare Parts</BreadcrumbLink>
@@ -102,9 +101,7 @@ export default function EditPartsPage({categoryList}) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          
-            <EditPartForm id={id} categoryList={categoryList} submitFunc={getSubmit} />
-
+            <EditPartForm categoryList={categoryList} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </EditPartContext.Provider>

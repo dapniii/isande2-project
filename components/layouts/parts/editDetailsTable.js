@@ -1,10 +1,8 @@
 import { useState, useEffect, useContext, useReducer, useCallback } from "react";
 import { 
-    Grid, 
     GridItem, 
     Text,
     ButtonGroup,
-    Button,
     IconButton,
     Input,
     Select,
@@ -13,11 +11,9 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
-    Link,
-    useDisclosure,
 } from "@chakra-ui/react";
-import { AddIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { AddButton, CancelButton, SaveButton } from "@/components/buttons";
+import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import { AddButton } from "@/components/buttons";
 import { MdOutlineCancel, MdAddCircleOutline } from "react-icons/md";
 import { EditPartContext } from "@/pages/parts/context";
 

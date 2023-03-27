@@ -4,9 +4,7 @@ import {
   Text, 
   Grid, 
   GridItem,
-  ButtonGroup,
   Button, 
-  IconButton,
   FormControl,
   FormLabel,
   FormErrorMessage,
@@ -32,9 +30,7 @@ import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import { EditPartContext } from "@/pages/parts/context";
 
-function EditPartForm({ id, categoryList, submitFunc}) {
-    const router = useRouter();
-
+function EditPartForm({ categoryList, submitFunc}) {
     const contextData = useContext(EditPartContext)
 
     const [itemNumber, setItemNumber] = useState("")
@@ -47,11 +43,6 @@ function EditPartForm({ id, categoryList, submitFunc}) {
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
-    const [detailsTableData, setDetailsTableData] = useState([]);
-    const [newDetails, setNewDetails] = useState({
-        additions: [],
-        edits: []
-    })
 
     const catModalOpen = useDisclosure();
     const unitModalOpen = useDisclosure();
@@ -67,7 +58,6 @@ function EditPartForm({ id, categoryList, submitFunc}) {
             setUnit(contextData.unitID.name)
             setDesc(contextData.description)
             setPreview(contextData.imageID.secure_url)
-            setDetailsTableData(contextData.details)
         }
     }, [contextData])
 
