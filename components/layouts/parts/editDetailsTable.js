@@ -18,7 +18,7 @@ import { MdOutlineCancel, MdAddCircleOutline } from "react-icons/md";
 import { EditPartContext } from "@/pages/parts/context";
 
 
-function EditDetailsTable({brands}) {
+function EditDetailsTable({brands, setSubmitArray}) {
     const initialData = useContext(EditPartContext)
     const [template, setTemplate] = useState({
         partNumber: "",
@@ -102,11 +102,16 @@ function EditDetailsTable({brands}) {
         } catch {}
     }, [editState])
 
-    // Clear template and editState when the editArray has been updated
+    /*
+        When the editArray has been updated,
+            - reset data template and edit state
+            - pass the data to parent component (editPartForm)
+    */    
     useEffect(() => {
         clearTemplate()
         switchState("reset")
         console.log(editArray)
+        setSubmitArray(editArray)
     }, [editArray])
 
 

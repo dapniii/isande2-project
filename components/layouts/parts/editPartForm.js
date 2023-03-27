@@ -42,12 +42,14 @@ function EditPartForm({ categoryList, submitFunc}) {
     const [desc, setDesc] = useState(""); // Description
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
+    const [details, setDetails] = useState([])
     const inputPhoto = useRef(null);
 
     const catModalOpen = useDisclosure();
     const unitModalOpen = useDisclosure();
     const brandModalOpen = useDisclosure();
     
+    // Initialize data
     useEffect(() => {
         try {
             setItemNumber(contextData.itemNumber)
@@ -59,7 +61,7 @@ function EditPartForm({ categoryList, submitFunc}) {
             setDesc(contextData.description)
             setPreview(contextData.imageID.secure_url)
         } catch{}
-    }, [contextData, itemNumber, category, name, model, rp, unit, desc, preview, photo])
+    }, [contextData])
 
     // Generate photo preview
     useEffect(() => {
@@ -76,7 +78,7 @@ function EditPartForm({ categoryList, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-    }, [itemNumber, category, name, model, rp, unit, desc])
+    }, [itemNumber, category, name, model, rp, unit, desc, details])
 
     function passSubmitFunc() {
         return submitForm
@@ -93,9 +95,7 @@ function EditPartForm({ categoryList, submitFunc}) {
         setPhoto(null);
         setPreview("");
         inputPhoto.current.value= null;
-        setAddArray([]);
-        setEditArray([]);
-        setDisabledArray([]);
+
     }
     async function submitForm() {
         let uploadConfig = {
@@ -109,25 +109,19 @@ function EditPartForm({ categoryList, submitFunc}) {
         let imageRes = await uploadImage(uploadConfig)
         // console.log(uploadConfig)
 
-        let detailsArray = {
-            additions: addArray,
-            edits: editArray,
-            disabled: disabledArray,
-        }
-
         let partsData = {
             itemNumber: itemNumber,
-            imageID: preview,
+            imageID: imageRes,
             categoryID: category,
             itemName: name,
             itemModel: model,
             reorderPoint: rp,
             unitID: unit,
             description: desc,
-            details: detailsArray,
-            creatorID: "00002", // CHANGE HARDCODE
+            details: details,
+            creatorID: "10000001", // CHANGE HARDCODE
         }
-        console.log(partsData)
+        // console.log(partsData)
         let result = await fetch(sparePartsAPI.edit_part, {
             method: "POST",
             headers: {
@@ -357,12 +351,9 @@ function EditPartForm({ categoryList, submitFunc}) {
                         <GridItem colStart={4}><Text fontWeight={"medium"}>Quantity</Text></GridItem>
                         <GridItem colStart={5}><Text fontWeight={"medium"}>Unit Price</Text></GridItem>
                         <GridItem colSpan={6} mb={"1em"}><hr /></GridItem>
-                        
-                        
-                        <EditDetailsTable brands={categoryList.brands} />
-                        
-                        
-                    
+            
+                        <EditDetailsTable brands={categoryList.brands} setSubmitArray={setDetails} />
+                                
                     </Grid>  {/* Details Table Grid */}
                 </GridItem>
                 </Grid> {/* Form Grid */}
