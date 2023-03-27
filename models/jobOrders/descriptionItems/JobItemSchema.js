@@ -19,9 +19,6 @@ const JobItemSchema = new mongoose.Schema({
         type: Number,
         default: 1,
     },
-    description: {
-        type: String,
-    }
 })
 
 const JobItem = mongoose.models.JobItem || mongoose.model("JobItem", JobItemSchema)

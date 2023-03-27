@@ -2,6 +2,7 @@ import Vehicle from "@/models/vehicles/VehicleSchema";
 import Mechanic from "@/models/users/MechanicSchema";
 import Item from "@/models/spareParts/ItemSchema";
 import JobItem from "@/models/jobOrders/descriptionItems/JobItemSchema";
+import Specialty from "@/models/users/SpecialtySchema";
 
 export default async (req, res) => {
 
@@ -26,11 +27,13 @@ export default async (req, res) => {
         .populate("jobID")
         .populate("itemID")
     let partItems = await Item.find({})
+    let specialties = await Specialty.find({})
 
     res.json({
         vehicles,
         mechanics,
         jobItems,
-        partItems
+        partItems,
+        specialties
     })
 }

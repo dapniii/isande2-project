@@ -100,7 +100,7 @@ export default function CreateJobOrderPartsList({
     }
 
     return (
-        <Card variant={"outline"}>
+        <Card variant={"outline"} h={"50em"}>
             <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
                 <Text fontSize={"xl"} fontWeight={"bold"}>Parts List</Text>
             </CardHeader>

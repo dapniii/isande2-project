@@ -7,7 +7,14 @@ import {
     ButtonGroup,
     Breadcrumb,
     BreadcrumbItem,
-    BreadcrumbLink
+    BreadcrumbLink,
+    Tabs,
+    Tab,
+    TabList,
+    TabPanels,
+    TabPanel,
+    useDisclosure,
+    Button
   } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
@@ -16,7 +23,7 @@ import { useRouter } from "next/router";
 import CreateJobOrderForm from "@/components/layouts/joborders/JobOrderForm/mainForm";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import { jobOrderAPI } from "@/lib/routes";
-// import { generateID } from "@/lib/dataHandler";
+import CreateJobModal from "@/components/layouts/joborders/JobList/createJobModal";
 
 export const getServerSideProps = withSessionSsr(
     async ({req, res}) => {
@@ -36,12 +43,8 @@ export const getServerSideProps = withSessionSsr(
           }
         }
   
-
-  
         const result = await fetch(jobOrderAPI.get_form_categories)
         const data = await result.json()
-  
-
   
         return {
             props: { 
@@ -63,7 +66,7 @@ export default function JobOrdersPage({ user, categoryList }) {
     const [submitForm, setSubmitForm] = useState();
     const [JONumber, setJONumber] = useState("")
     const [issueDate, setIssueDate] = useState(new Date())
-    
+    const tempModal = useDisclosure()
 
     // Do on render
     useEffect(() => {
@@ -125,15 +128,29 @@ export default function JobOrdersPage({ user, categoryList }) {
 
                 <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
                     <Header
-                    breadcrumb={headerBreadcrumbs()}
-                    main={headerMain()}
-                    withShadow={true}
+                        breadcrumb={headerBreadcrumbs()}
+                        main={headerMain()}
+                        withShadow={false}
                     />
                 </GridItem>
 
                 {/* Job Order */}
-                <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
-                    <CreateJobOrderForm data={categoryList} />
+                <GridItem colStart={2} bg={"blackAlpha.300"}>
+                    <Tabs>
+                        <TabList bg={"white"} top={"7.4em"} position={"sticky"} zIndex={3} boxShadow={"lg"} mt={-3}>
+                            <Tab>Form</Tab>
+                            <Tab>Job List</Tab>
+                        </TabList>
+                        <TabPanels p={2} >
+                            <TabPanel><CreateJobOrderForm data={categoryList} /></TabPanel>
+                            <TabPanel>
+                                <Button onClick={tempModal.onOpen}>Pre-defined jobs go here</Button>
+                                <CreateJobModal modalOpen={tempModal} options={categoryList} />
+                            </TabPanel>
+                        </TabPanels>
+                    </Tabs>
+
+                    
                 </GridItem>
             </Grid>
         </>

@@ -26,6 +26,9 @@ const JobNameSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "Specialty"
     },
+    description: {
+        type: String,
+    },
     disabled: {
         type: Boolean, 
         default: false,
