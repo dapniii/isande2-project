@@ -12,11 +12,9 @@ const nanoid = customAlphabet(alphanumeric, 10)
 const ItemSchema = new mongoose.Schema({
     itemNumber: {
         type: String,
-        minLength: 10,
         maxLength: 10,
         unique: true,
         required: true,
-        default: nanoid() // Generate random id if not specified
     },
     imageID: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +28,6 @@ const ItemSchema = new mongoose.Schema({
     itemName: {
         type: String,
         maxLength: 50,
-        unique: true,
         required: true,
     },
     itemModel: {
@@ -50,10 +47,6 @@ const ItemSchema = new mongoose.Schema({
     description: {
         type: String,
     },
-    // itemStatusID: {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "ItemStatus"
-    // },
     creatorID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"

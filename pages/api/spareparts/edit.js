@@ -12,70 +12,84 @@ export default async (req, res) => {
 
     const bodyData = req.body
     const bodyDetails = req.body.details
+    console.log(bodyData)
+    const originalItem = await Item.findOne({itemNumber: bodyData.itemNumber})
+    if (originalItem != null) {
+        // Get category id
+        let categoryID = await ItemCategory.findOne({name: bodyData.categoryID})
 
-    const itemInfo = await Item.findOne({itemNumber: bodyData.itemNumber})
-    // if (itemInfo != null) {
-    //     // Get category id
-    //     let catObjID = await ItemCategory.findOne({name: itemInfo.categoryID})
-    //     itemInfo.categoryID = catObjID._id
+        // Get measure id 
+        let unitID = await Measure.findOne({name: bodyData.unitID})
         
-    //     // Get measure id 
-    //     let measureObjId = await Measure.findOne({name: itemInfo.unitID})
-    //     itemInfo.unitID = measureObjId._id
-
-    //     // Add image details to image collection
-    //     if (bodyData.imageID != "") {
-    //         let imageResult = await Image.findByIdAndUpdate(userInfo.imageID,
-    //             {
-    //                 secure_url: bodyData.imageID.secure_url,
-    //                 disabled: false,
-    //             })
-    //             bodyData.imageID = imageResult._id
-    //     }
-
-        // let itemResult = await itemInfo.findByIdAndUpdate({
-            
-        // })
-        
-    // }
-
-    bodyDetails.additions.map(async element => {
-        let addResult = await ItemDetails.create({
-            itemID: itemInfo._id,
-            itemNumber: itemInfo.itemNumber,
-            partNumber: element.partNum,
-            itemBrandID: brandResult._id,
-            quantity: element.qty,
-            unitPrice: element.cost,
-        })
-
-        console.log(addResult)
-    })
-
-    bodyDetails.edits.map(async element => {
-        
-        if (element.itemNumber == null) {
-            let brandResult = await ItemBrand.findOne({name: element.brand})
-    
-            let detailsResult = await ItemDetails.findByIdAndUpdate(element._id, {
-                partNumber: element.partNum,
-                itemBrandID: brandResult._id,
-                // quantity: element.qty, 
-                unitPrice: element.cost
+        let imageResult 
+        try {
+            imageResult = await Image.findByIdAndUpdate(originalItem.imageID, {
+                secure_url: bodyData.imageID.secure_url,
+                disabled: false,
             })
-           
-            console.log(detailsResult)
+        } 
+        catch(e) {}
+        finally {
+            let newItem = {}
+            if (bodyData.itemName != originalItem.itemName)
+                newItem["itemName"] = bodyData.itemName
+            if (bodyData.itemModel != originalItem.itemModel)
+                newItem["itemModel"] = bodyData.itemModel
+            if (categoryID._id.toString() != originalItem.categoryID.toString())
+                newItem["categoryID"] = categoryID._id
+            if (bodyData.reorderPoint != originalItem.reorderPoint)
+                newItem["reorderPoint"] = bodyData.reorderPoint
+            if (unitID._id.toString() != originalItem.unitID.toString())
+                newItem["unitID"] = unitID._id
+            if (bodyData.description != originalItem.description)
+                newItem["description"] = bodyData.description
+            if (bodyData.disabled != null)
+                newItem["disabled"] == bodyData.disabled
+
+
+            try {
+                let itemResult = await Item.findByIdAndUpdate(originalItem._id, newItem)
+                console.log(itemResult)
+                bodyDetails.additions.map(async element => {
+                    let itemBrandID = await ItemBrand.findOne({name: element.brand})
+                    let addResult = await ItemDetails.create({
+                        itemID: originalItem._id,
+                        partNumber: element.partNum,
+                        itemBrandID: itemBrandID._id,
+                        quantity: element.qty,
+                        unitPrice: element.cost,
+                    })    
+                    console.log("Added detail")
+                })
+
+                bodyDetails.edits.map(async element => {
+                    if (element.itemNumber == null) {
+                        let brandResult = await ItemBrand.findOne({name: element.brand})
+                        
+                        try {
+                            let detailsResult = await ItemDetails.findByIdAndUpdate(element._id, {
+                                partNumber: element.partNum,
+                                itemBrandID: brandResult._id,
+                                // quantity: element.qty, 
+                                unitPrice: element.cost,
+                                disabled: element.disabled,
+                            })
+
+                            console.log("edited detail")
+                        } catch { console.log("do nothing")}
+
+                    }
+                })
+                res.status(200).json("success")     
+            } catch (e) {
+                res.status(400).json({error: "Failed to update item"})
+            }
+
+
+
         }
-
-        if (element.disabled == true) {
-            let disabledResult = await ItemDetails.findByIdAndUpdate(element._id, {
-                disabled: element.disabled
-            })
-
-            console.log()
-        }
-            
-    })
-    res.json("done")
-
+        
+    } else {
+        res.status(400).json("Cannot find item")
+    }
 }

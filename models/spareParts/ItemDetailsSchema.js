@@ -8,16 +8,9 @@ const ItemDetailsSchema = new mongoose.Schema({
         ref: "Item",
         required: true,
     },
-    itemNumber: {
-        type: String,
-        minLength: 10,
-        maxLength: 10,
-        required: true,
-    },
     partNumber: {
         type: String,
         required: true,
-        minLength: 10,
     },
     itemBrandID: {
         type: mongoose.Schema.Types.ObjectId,

@@ -15,23 +15,46 @@ import { useState, useEffect } from "react";
 import { Router, useRouter } from "next/router";
 import CreatePartForm from "@/components/layouts/parts/createPartForm";
 import { sparePartsAPI } from "@/lib/routes";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
-  const res = await fetch(sparePartsAPI.get_categories)
-  const data = await res.json()
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+      const user = req.session.user;
 
-  return { props: { data } }
-}
-  
-export default function CreatePartsPage({data}) {
+      if(user == null) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: "/login",
+            },
+            props: { user: {
+              isLoggedIn: false 
+              }, 
+            }
+        }
+      }
+
+      const partCategories = await fetch(sparePartsAPI.get_categories)
+      const catData = await partCategories.json()
+
+      const partsList = await fetch(sparePartsAPI.get_all_parts)
+      const partsData = await partsList.json()
+
+      return {
+          props: { 
+            user: {
+              data: user,
+              isLoggedIn: true 
+            }, 
+            categoryList: catData,
+            partsList: partsData
+          }
+      }
+});
+
+export default function CreatePartsPage({user, categoryList, partsList}) {
   const router = useRouter();
   const [submitForm, setSubmitForm] = useState();
-
-  // Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin"
-  };
 
   function cancel() {
       router.back();
@@ -75,15 +98,15 @@ function getSubmit(func) {
         templateRows={"0fr 1fr"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
         
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
           <Header breadcrumb={headerBreadcrumbs()} main={headerMain()} withShadow={true} />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          <CreatePartForm data={data} submitFunc={getSubmit} />
+        <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"} zIndex={1}>
+          <CreatePartForm creatorID={user.data.userID} categoryList={categoryList} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>

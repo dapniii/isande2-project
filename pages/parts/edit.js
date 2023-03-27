@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   Grid,
   GridItem, 
@@ -14,6 +14,7 @@ import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
+import { EditPartContext } from "./context";
 import EditPartForm from "@/components/layouts/parts/editPartForm";
 
 export async function getServerSideProps() {
@@ -27,7 +28,24 @@ export default function EditPartsPage({categoryList}) {
   const router = useRouter();
   const { id } = router.query;
   const [submitForm, setSubmitForm] = useState()
-
+  const [initialData, setInitialData] = useState()
+  const initial = useRef()
+    // Fetch user data
+    useEffect(() => {
+      fetch("/api/spareparts/" + id, {
+          method: "GET",
+          headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+          },
+      })
+          .then((res) => res.json())
+          .then((data) => {
+            setInitialData(data)
+            initial.current = data
+          })
+          
+    }, []);
   // Temp
   const user = {
     firstName: "FirstName",
@@ -69,7 +87,7 @@ export default function EditPartsPage({categoryList}) {
   
   // MAIN
   return (
-    <>
+    <EditPartContext.Provider value={initial.current}>
       <Grid
         minH="100vh"
         templateColumns={"1fr 7fr"}
@@ -84,10 +102,12 @@ export default function EditPartsPage({categoryList}) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          <EditPartForm id={id} categoryList={categoryList} submitFunc={getSubmit} />
+          
+            <EditPartForm id={id} categoryList={categoryList} submitFunc={getSubmit} />
+
         </GridItem>
       </Grid>
-    </>
+    </EditPartContext.Provider>
   )
 }
   

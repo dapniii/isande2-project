@@ -19,7 +19,7 @@ export default async (req, res) => {
     // Check duplicate userID
     let duplicateID = await User.findOne({userID: userInfo.userID})
     if (duplicateID != null) {
-        res.status(400).send({ error: "User ID already exists" })  
+        res.status(400).json({ error: "User ID already exists" })  
     } else {
         // Get creator Id
         let creatorID = await User.findOne({ userID: userInfo.creatorID })
@@ -41,7 +41,6 @@ export default async (req, res) => {
             if (isMechanic) 
                 specialtyID = await Specialty.findOne({name: userInfo.specialtyID})
             
-
             // Add image details to image collection
             let imageResult
             try {
@@ -50,9 +49,10 @@ export default async (req, res) => {
                     disabled: false,
                 })
             } catch(e) {
-                res.status(500).json({ error: "Failed to save image" })
+                res.status(400).json({ error: "Failed to save image" })
             }
             
+            console.log(userInfo)
             try {
                 // Create user
                 let userResult = await User.create({
@@ -69,11 +69,6 @@ export default async (req, res) => {
                     creatorID: creatorID._id, 
                 });
 
-                res.status(200).json({
-                    userResult,
-                    msg: `Successfully created user`
-                })
-                
                 try {
                     // If mechanic, get specialty id and insert to mechanic collection
                     let mechanicRes
@@ -88,10 +83,15 @@ export default async (req, res) => {
                     await User.findByIdAndDelete(userResult._id)
                     res.status(400).json({ error: "Failed to save mechanic"})
                 }
+
+                res.status(200).json({
+                    userResult,
+                    msg: `Successfully created user`
+                })
                 
             } catch(e) {
                 await Image.findByIdAndDelete(userInfo._id)
-                res.status(500).json({ error: "Failed to create user" })
+                res.status(400).json({ error: "Failed to create user" })
             }
         }
     }

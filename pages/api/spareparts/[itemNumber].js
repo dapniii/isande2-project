@@ -17,22 +17,25 @@ export default async (req, res) => {
 
     let detailsInfo = await ItemDetails.find({
         itemID: itemInfo._id,
-        itemNumber: req.query.itemNumber
     }, {__v: 0}).populate("itemBrandID", "pubId name disabled")
 
     let detailsArray = []
+    let inactiveDetails = []
     let quantity = 0
     let itemValue = 0
     detailsInfo.map(detail => {
-        
-        if (itemInfo._id.toString() == detail.itemID.toString() && !detail.disabled) {
+        if (detail.disabled == false) {
             detailsArray.push(detail)
             quantity += detail.quantity
             itemValue += parseFloat(detail.unitPrice)
         }
+        else if (detail.disabled == true){
+            inactiveDetails.push(detail)
+        }
     })
 
-    itemInfo.set("details", detailsInfo, {strict: false})
+    itemInfo.set("details", detailsArray, {strict: false})
+    itemInfo.set("inactiveDetails", inactiveDetails, {strict: false})
     itemInfo.set("quantity", quantity, {strict: false})
     itemInfo.set("itemValue", itemValue, {strict: false})
     itemInfo.set("status", calcQuantityStatus(quantity, itemInfo.reorderPoint), {strict: false})

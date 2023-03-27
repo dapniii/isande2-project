@@ -4,6 +4,7 @@ import {
     Flex,
     Text,
     useDisclosure,
+    Container
 } from "@chakra-ui/react"
 import { EditButton } from "@/components/buttons"
 import ItemAdjustmentModal from "./adjustModal"

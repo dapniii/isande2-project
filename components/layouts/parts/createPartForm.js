@@ -32,8 +32,9 @@ import alphanumeric from "nanoid-dictionary/numbers";
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import { CreateItemDetailsTable } from "./itemDetailsTable";
+import { generateID } from "@/lib/dataHandler";
 
-export default function CreatePartForm({data, submitFunc}) {
+export default function CreatePartForm({creatorID, categoryList, submitFunc}) {
     const nanoid = customAlphabet(alphanumeric, 10); // id generator
     const router = useRouter();
 
@@ -61,7 +62,8 @@ export default function CreatePartForm({data, submitFunc}) {
     // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
     useEffect(() => {
         submitFunc(passSubmitFunc)
-    }, [itemNumber, category, name, model, rp, unit, desc, detailsArray])
+    }, [itemNumber, category, name, model, rp, unit, desc, detailsArray, creatorID])
+
 
     // Generate photo preview
     useEffect(() => {
@@ -99,8 +101,8 @@ export default function CreatePartForm({data, submitFunc}) {
             }
         }
         let imageRes = await uploadImage(uploadConfig)
-        console.log(uploadConfig)
-
+        console.log(imageRes)
+        
         let partsData = {
             itemNumber: itemNumber,
             imageID: imageRes,
@@ -111,7 +113,7 @@ export default function CreatePartForm({data, submitFunc}) {
             unitID: unit,
             description: desc,
             details: detailsArray,
-            creatorID: "00002", // CHANGE HARDCODE
+            creatorID: creatorID
         }
         console.log(partsData)
         let result = await fetch(sparePartsAPI.create_part, {
@@ -120,8 +122,9 @@ export default function CreatePartForm({data, submitFunc}) {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(partsData),
-        }).then(result => {
-            console.log(result.json())
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
             clear()
             router.push("/parts")
         })
@@ -172,13 +175,13 @@ export default function CreatePartForm({data, submitFunc}) {
                       </FormControl>
                       <FormControl isRequired>
                           <FormLabel onClick={() => catModalOpen.onOpen()}><Link>Category</Link></FormLabel>
-                          <CategoryListModal modalOpen={catModalOpen} options={data.categories} title={"Spare Parts Categories"} apiPath={sparePartsAPI.modify_category}></CategoryListModal>
+                          <CategoryListModal modalOpen={catModalOpen} options={categoryList.categories} title={"Spare Parts Categories"} apiPath={sparePartsAPI.modify_category}></CategoryListModal>
                           <Select
                               placeholder="Select Category"
                               value={category}
                               onChange={(e) => setCategory(e.target.value)}
                           >
-                              {data.categories.map((category) => {
+                              {categoryList.categories.map((category) => {
                                   if (category.disabled == false) {
                                       return (
                                           <option
@@ -228,13 +231,13 @@ export default function CreatePartForm({data, submitFunc}) {
                       </FormControl>
                       <FormControl isRequired>
                           <FormLabel onClick={() => unitModalOpen.onOpen()}><Link>Unit of Measurement</Link></FormLabel>
-                          <MeasureListModal modalOpen={unitModalOpen} options={data.measures} title={"Unit of Measurement"} apiPath={sparePartsAPI.modify_measure}></MeasureListModal>
+                          <MeasureListModal modalOpen={unitModalOpen} options={categoryList.measures} title={"Unit of Measurement"} apiPath={sparePartsAPI.modify_measure}></MeasureListModal>
                           <Select
                               placeholder="Select Unit"
                               value={unit}
                               onChange={(e) => setUnit(e.target.value)}
                           >
-                              {data.measures.map((unit) => {
+                              {categoryList.measures.map((unit) => {
                                   if (unit.disabled == false) {
                                       return (
                                           <option
@@ -335,13 +338,13 @@ export default function CreatePartForm({data, submitFunc}) {
                       <GridItem colStart={1}><Text>{" "}</Text></GridItem>
                       <GridItem colStart={2}><Text fontWeight={"medium"}>Part Number</Text></GridItem>
                       <GridItem colStart={3}><Link><Text fontWeight={"medium"} onClick={brandModalOpen.onOpen}>Brand</Text></Link></GridItem>
-                      <CategoryListModal modalOpen={brandModalOpen} options={data.brands} title={"Spare Parts Brands"} apiPath={sparePartsAPI.modify_brand}></CategoryListModal>
+                      <CategoryListModal modalOpen={brandModalOpen} options={categoryList.brands} title={"Spare Parts Brands"} apiPath={sparePartsAPI.modify_brand}></CategoryListModal>
                       <GridItem colStart={4}><Text fontWeight={"medium"}>Quantity</Text></GridItem>
                       <GridItem colStart={5}><Text fontWeight={"medium"}>Unit Price</Text></GridItem>
                       <GridItem colSpan={6} mb={"1em"}><hr /></GridItem>
 
 
-                      <CreateItemDetailsTable detailsArray={detailsArray} setDetailsArray={setDetailsArray} brands={data.brands} />
+                      <CreateItemDetailsTable detailsArray={detailsArray} setDetailsArray={setDetailsArray} brands={categoryList.brands} />
                   </Grid>  {/* Details Table Grid */}
               </GridItem>
             </Grid> {/* Form Grid */}

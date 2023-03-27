@@ -25,6 +25,7 @@ import {
     NumberDecrementStepper,
     useDisclosure,
     Link,
+    Container
 } from '@chakra-ui/react';
 import { SaveButton } from '@/components/buttons';
 import { EditIcon } from '@chakra-ui/icons';
@@ -174,7 +175,7 @@ function ItemAdjustmentModal ({modalOpen, data, options}) {
                             <FormLabel><Link onClick={reasonModal.onOpen}>Reason</Link></FormLabel>
                             <CategoryListModal modalOpen={reasonModal} options={options.reasons} title={"Adjustment Reasons"} apiPath={sparePartsAPI.modify_reason} />
                             <Select value={reason} onChange={(e) => setReason(e.target.value)}>
-                                <option value="" hidden disabled>Select Reason</option>
+                                <option key="" value="" hidden disabled>Select Reason</option>
                                 {options.reasons.map((reasons) => {
                                     if (reasons.disabled == false) {
                                         return (

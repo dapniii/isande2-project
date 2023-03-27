@@ -6,12 +6,13 @@ import { getRandomInt, calcQuantityStatus } from "@/lib/dataHandler";
 export default async (req, res) => {
     await connectToDatabase();
 
-    let items = await Item.find({})
+    let items = await Item.find({disabled:false})
         .populate("imageID")
         .populate("categoryID")
         .populate("unitID")
 
-    let details = await ItemDetails.find({})
+    let disabledItems = await Item.find({disabled: true})
+    let details = await ItemDetails.find({disabled: false})
         .populate("itemBrandID")
     
     let totalValue = 0
@@ -47,6 +48,7 @@ export default async (req, res) => {
     
     res.json({
         parts: items,
+        disabledItems: disabledItems,
         count: count,
         totalValue: totalValue.toFixed(2)
     })

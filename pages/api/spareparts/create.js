@@ -11,72 +11,67 @@ export default async (req, res) => {
     await connectToDatabase();
 
     const itemInfo = req.body;
-
+    console.log(itemInfo)
     let duplicateID = await Item.findOne({itemNumber: itemInfo.itemNumber})
-
     if (duplicateID != null) {
-        console.log("Duplicate item ID")
+        res.status(400).json({ error: "Item ID already exists" })
     } else {
-
-        // Get creator id 
-        if (itemInfo.creatorID != "" || itemInfo.creatorID != null) {
-            let creatorObjID = await User.findOne({ userID: itemInfo.creatorID })
-            itemInfo.creatorID = creatorObjID._id
+        // Get creator Id
+        let creatorID = await User.findOne({ userID: itemInfo.creatorID })
+        if (creatorID == null || creatorID.disabled) {
+            res.status(401).json({ error: "Creator user ID not authorized" })
         }
+            
         else {
-            delete itemInfo.creatorID
-        }
+            // Get category id
+            let categoryID = await ItemCategory.findOne({name: itemInfo.categoryID})
+            // Get measure id 
+            let unitID = await Measure.findOne({name: itemInfo.unitID})
+            // Add image details to image collection
+            let imageResult
+            try {
+                imageResult = await Image.create({
+                    secure_url: itemInfo.imageID.secure_url,
+                    disabled: false,
+                })
+            } catch(e) {
+                res.status(500).json({ error: "Failed to save image" })
+            }
 
-        // Get category id
-        let catObjID = await ItemCategory.findOne({name: itemInfo.categoryID})
-        itemInfo.categoryID = catObjID._id
-        
-        // Get measure id 
-        let measureObjId = await Measure.findOne({name: itemInfo.unitID})
-        itemInfo.unitID = measureObjId._id
-
-        // // Add image details to image collection
-        let imageResult = await Image.create({
-            secure_url: itemInfo.imageID.secure_url,
-            disabled: false,
-        })
-        itemInfo.imageID = imageResult._id
-        
-        // Create Item
-        let itemResult = await Item.create({
-            itemNumber: itemInfo.itemNumber,
-            imageID: itemInfo.imageID,
-            categoryID: itemInfo.categoryID,
-            itemName: itemInfo.itemName,
-            itemModel: itemInfo.itemModel,
-            reorderPoint: itemInfo.reorderPoint,
-            unitID: itemInfo.unitID,
-            description: itemInfo.description,
-            creatorID: itemInfo.creatorID
-        });
-
-        // // Create item details
-        let detailsArray = []
-        itemInfo.details.map(async element => {
-            let brandObjId = await ItemBrand.findOne({name: element.brand})
-            element.brand = brandObjId._id
-
-            let detailsResult = await ItemDetails.create({
-                itemID: itemResult._id,
+            // Create Item
+            let itemResult = await Item.create({
                 itemNumber: itemInfo.itemNumber,
-                partNumber: element.partNum,
-                itemBrandID: element.brand,
-                quantity: element.qty,
-                unitPrice: element.cost
+                imageID: imageResult._id,
+                categoryID: categoryID._id,
+                itemName: itemInfo.itemName,
+                itemModel: itemInfo.itemModel,
+                reorderPoint: itemInfo.reorderPoint,
+                unitID: unitID._id,
+                description: itemInfo.description,
+                creatorID: creatorID._id,
+            });
+            
+            // Create item details
+            let detailsArray = []
+            itemInfo.details.map(async element => {
+                let brandID = await ItemBrand.findOne({name: element.brand})
+
+                let detailsResult = await ItemDetails.create({
+                    itemID: itemResult._id,
+                    partNumber: element.partNum,
+                    itemBrandID: brandID._id,
+                    quantity: element.qty,
+                    unitPrice: element.cost
+                })
+                detailsArray.push(detailsResult)
             })
 
-            detailsArray.push(detailsResult)
-        })
-        
-        res.json({
-            item: itemResult,
-            details: detailsArray,
-            msg: "success"
-        })
+            res.status(200).json({
+                item: itemResult,
+                details: detailsArray,
+                msg: "success"
+            })
+        }
+
     }
 }
