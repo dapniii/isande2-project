@@ -7,6 +7,9 @@ import Specialty from "@/models/users/SpecialtySchema";
 export default async (req, res) => {
 
     let vehicles = await Vehicle.find({})
+        .populate("vehicleTypeID")
+        .populate("brandID")
+        .populate("imageID")
     let mechanics = await Mechanic.find({})
         .populate({
             path: "userID",

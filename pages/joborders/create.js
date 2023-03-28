@@ -58,9 +58,7 @@ export const getServerSideProps = withSessionSsr(
   });
 
 export default function JobOrdersPage({ user, categoryList }) {
-    const joLength = 10
-    const countJOs = 11
-    const currentLength = countJOs.toString().length + 1
+    const countJOs = 0
 
     const router = useRouter();
     const [submitForm, setSubmitForm] = useState();
