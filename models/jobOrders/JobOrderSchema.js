@@ -1,13 +1,19 @@
+import mongoose from "mongoose";
+import User from "../users/UserSchema";
+import Vehicle from "../vehicles/VehicleSchema";
+import JobOrderStatus from "./categories/JobOrderStatusSchema";
+
 /*
     Identifcation data of a job order
 */
 
-import mongoose from "mongoose";
-import JobOrderStatus from "./JobOrderStatusSchema";
-import User from "../users/UserSchema";
-import Vehicle from "../vehicles/VehicleSchema";
-
 const JobOrderSchema = new mongoose.Schema({
+    jobOrderID: {
+        type: String,
+        minLength: 10, 
+        unique: true,
+        required: true,
+    },
     vehicleID: {
         type: mongoose.Types.ObjectId,
         ref: "Vehicle",
@@ -28,9 +34,9 @@ const JobOrderSchema = new mongoose.Schema({
         type: Date,
         default: new Date()
     },
-    isTemplate: {
-        type: Boolean,
-        default: false,
+    lastUpdatedDate: {
+        type: Date,
+        default: new Date()
     },
     disabled: {
         type: Boolean,

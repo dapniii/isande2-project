@@ -2,44 +2,73 @@ import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
-import { Grid, GridItem, Flex, Text } from "@chakra-ui/react";
+import { Grid, GridItem, Flex, Text, Button, Tabs,
+  Tab,
+  TabList,
+  TabPanels,
+  TabPanel,
+  useDisclosure 
+} from "@chakra-ui/react";
 import BasicTable from "@/components/table/basicTable";
 import { COLUMNS } from "@/components/layouts/joborders/jobordersColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
+import { withSessionSsr } from '@/lib/auth/withSession';
+import CreateJobModal from "@/components/layouts/joborders/JobList/createJobModal";
+import { jobOrderAPI } from "@/lib/routes";
 
-export async function getServerSideProps() {
-  const res = await fetch(
-    "https://my.api.mockaroo.com/joborders.json?key=12757c70"
-  );
-  const jobOrderData = await res.json();
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+      const user = req.session.user;
+      let allowedRoles = ["Inventory", "Driver", "Mechanic", "System Admin"]
 
-  const category = {
-    plateNumber: [{ name: 'PlateNumber' }],
-    status: [
-      { name: "Active" },
-      { name: "Inactive" },
-      { name: "Traveling" },
-      { name: "Repair" },
-    ],
-  };
+      if (user == null) {
+          return {
+            redirect: {
+              permanent: false,
+              destination: "/login",
+            },
+            props: { user: {
+              isLoggedIn: false 
+              }, 
+            }
+        }
+      }
+      
+      else if (allowedRoles.findIndex(role => role == user.role) == -1) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/",
+          },
+          props: { user: {
+            isLoggedIn: true 
+            }, 
+          }
+        }
+      }
 
-  let data = {
-    jobOrder: jobOrderData,
-    categories: category,
-  };
+      const catResult = await fetch(jobOrderAPI.get_form_categories)
+      const categoryData = await catResult.json()
 
-  return { props: { data } };
-}
+      const jobOrdersRes = await fetch("/api/joborders/getJobOrderList")
+      const jobOrders = await jobOrdersRes.json()
 
-export default function JobOrdersPage({ data }) {
+      return {
+          props: { 
+            user: {
+              data: user,
+              isLoggedIn: true 
+            }, 
+            categoryList: categoryData,
+            jobOrders: jobOrders
+          }
+      }
+});
+
+export default function JobOrdersPage({ user, categoryList }) {
   const router = useRouter();
-
-  //Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
+  const tempModal = useDisclosure();
 
   //Add vehicle entry button function
   function addNewJobOrder() {
@@ -56,6 +85,7 @@ export default function JobOrdersPage({ data }) {
         <Text fontSize={"3xl"} fontWeight={"bold"}>
           Job Orders
         </Text>
+        <AddButton title={"Create Job Order"} clickFunction={addNewJobOrder} />
       </Flex>
     );
   }
@@ -65,16 +95,16 @@ export default function JobOrdersPage({ data }) {
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
         <Dropdown
-          title="Plate #"
-          options={data.categories.plateNumber}
+          title="Plate Number"
+          options={categoryList.vehicles}
           id="plateNumber"
-          name="name"
+          name="plateNumber"
           filter={filter}
           setFilter={setFilter}
         />
         <Dropdown
           title="Status"
-          options={data.categories.status}
+          options={categoryList.jobOrderStatus}
           id="status"
           name="name"
           filter={filter}
@@ -88,7 +118,7 @@ export default function JobOrdersPage({ data }) {
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
@@ -100,13 +130,22 @@ export default function JobOrdersPage({ data }) {
         </GridItem>
 
         {/* Job Order */}
-        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
-          <BasicTable
-            COLUMNS={COLUMNS}
-            DATA={data.jobOrder}
-            FILTERS={filters}
-            HIDDEN={["refuelType"]}
-          />
+        <GridItem colStart={2} bg={"blackAlpha.300"} >
+          <Tabs>
+            <TabList bg={"white"} top={"1em"} position={"sticky"} zIndex={3} boxShadow={"lg"} mt={-3}>
+                <Tab>Active</Tab>
+                <Tab>Predefined Jobs</Tab>
+            </TabList>
+            <TabPanels p={2} >
+                <TabPanel>
+
+                </TabPanel>
+                <TabPanel>
+                    <Button onClick={tempModal.onOpen}>Pre-defined jobs go here</Button>
+                    <CreateJobModal modalOpen={tempModal} options={categoryList} />
+                </TabPanel>
+            </TabPanels>
+          </Tabs>
         </GridItem>
       </Grid>
     </>

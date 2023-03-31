@@ -3,7 +3,7 @@
 */
 
 import mongoose from "mongoose"
-import JobItem from "./descriptionItems/JobItemSchema"
+import JobName from "./descriptionItems/JobNameSchema"
 import JobOrder from "./JobOrderSchema"
 
 const JobOrderDetailsSchema = {
@@ -13,7 +13,7 @@ const JobOrderDetailsSchema = {
     },
     jobID: {
         type: mongoose.Types.ObjectId,
-        ref: "JobItem"
+        ref: "JobName"
     },
     recordDate: {
         type: Date,

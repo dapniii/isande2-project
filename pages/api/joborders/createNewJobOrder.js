@@ -30,21 +30,17 @@ import JobOrderRequest from "@/models/jobOrders/transactions/JobOrderRequestSche
 export default async (req, res) => {
     await connectToDatabase()
     const joInfo = req.body
-
+    console.log(joInfo)
     // Get vehicle
     let vehicleID = await Vehicle.findOne({
-        plateNumber: joInfo.plateNumber
+        plateNumber: joInfo.vehicleID
     })
-    if (vehicleID == null)
-        res.status(404).json({ error: "Vehicle not found" })
 
     // Get job order status
     let statusID = await JobOrderStatus.findOne({
-        name: joInfo.status
+        name: joInfo.statusID
     })
-    if (statusID == null)
-        res.status(404).json({ error: "Status type not found"})
-    
+
     // Get creator
     let creatorID = User.findOne({
         userID: joInfo.creatorID
@@ -52,90 +48,81 @@ export default async (req, res) => {
 
     // Store jo info in JobOrderSchema
     let joResult = await JobOrder.create({
+        jobOrderID: joInfo.jobOrderID,
         vehicleID: vehicleID._id,
         statusID: statusID._id,
         description: joInfo.description,
-        // creatorID: creatorID._id,
+        creatorID: creatorID._id,
         // isTemplate: joInfo.isTemplate,
     })
-    if (joResult == null)
-        res.status(500).json({ error: "Job order creation failed" })
+    console.log("Added to Job Order collection")
 
     let assignedMech = []
     joInfo.mechanics.map(async element => {
+        let name = element.split(" ")
         let userResult = await User.findOne({
-            userID: element.userID
+            firstName: name[0],
+            lastName: name[1]
         })
-        if (userResult == null) {
-            res.status(404).json({ error: "Cannot find mechanic user" })
-        }
+
         let mechResult = await Mechanic.findOne({
             userID: userResult._id
         })
-        if (mechResult == null) {
-            res.status(404).json({ error: "Cannot find mechanic user" })
-        }
         
         let joMech = await JobOrderMechanic.create({
             jobOrderID: joResult._id,
             mechanicID: mechResult._id
         })
+        console.log("Added to job order mechanics collection")
+
         assignedMech.push(joMech._id)
-        if (joMech == null) {
-            // throw new Error("Failed to assign mechanics")
-            res.status(500).json({ error: "Failed to assign mechanic" })
-        }
     })
 
     let assignedJobs = []
     joInfo.selectedJobs.map(async element => {
         let jobNameResult = await JobName.findOne({
-            name: element.name,
-        })
-        let jobItemResult = await JobItem.findOne({
-            jobID: jobNameResult._id
+            name: element,
         })
 
         let joDetailsResult = await JobOrderDetails.create({
             jobOrderID: joResult._id,
-            jobID: jobItemResult._id
+            jobID: jobNameResult._id
         })
+        console.log("Added to job order details collection")
+
     })
 
     let createdItems = []
     joInfo.partsList.map(async element => {
-        let itemResult = await Item.findOne({
-            itemNumber: joInfo.itemNumber
-        })
 
-        let itemStatusResult = await JobOrderItemStatus.findOne({
-            name: element.status
-        })
-        if (itemResult == null || itemStatusResult == null)
-            res.status(404).json({ error: "Cannot find item" })
-        
         let joItem = await JobOrderItem.create({
             jobOrderID: joResult._id,
-            itemID: itemResult._id,
-            itemStatusID: itemStatusResult._id,
-            requestQty: element.quantity,
+            itemID: element.itemID,
+            // itemStatusID: itemStatusResult._id,
+            requestQty: element.quantity + element.manualQty,
         })
+        console.log("Added to job order items collection")
+
         createdItems.push(joItem._id)
         if (joItem == null) {
             res.status(500).json("Failed to save parts list")
         } else {
 
-            // let requesterID = await User.findOne({
-            //     userID: joInfo.requesterID
-            // })
+            let requesterID = await User.findOne({
+                userID: joInfo.creatorID
+            })
 
             let requestResult = await JobOrderRequest.create({
                 jobOrderItemID: joItem._id,
                 requestedQty: element.quantity,
-                // requesterID: requesterID._id,
-                requestReason: "Job order created"
+                requesterID: creatorID._id,
+                requestReason: `Job Order #${joInfo.jobOrderID} newly created`
             }) 
+            console.log("Added to job order request collection")
+
         }
     })
+
+    res.status(200).json("done")
 
 }

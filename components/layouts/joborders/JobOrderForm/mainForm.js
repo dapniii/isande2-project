@@ -27,12 +27,48 @@ import {
 import CategoryListModal from "@/components/basicCategoryModal";
 import CreateJobOrderPartsList from "./partsList";
 
-function CreateJobOrderForm({data}) {
+function CreateJobOrderForm({user, JONumber, data, submitFunc}) {
     const [plateNumber, setPlateNumber] = useState("");
     const [mechanics, setMechanics] = useState([]);
     const [selectedJobs, setSelectedJobs] = useState([]);
     const [description, setDescription] = useState("");
     const [partsList, setPartsList] = useState([])
+
+
+    function passSubmitFunc() {
+        return submitForm
+    }
+
+    // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
+    useEffect(() => {
+        submitFunc(passSubmitFunc)
+    }, [plateNumber, mechanics, selectedJobs, description, partsList])
+
+    async function submitForm() {
+        let jobOrderData = {
+            jobOrderID: JONumber,
+            vehicleID: plateNumber,
+            statusID: "Open",
+            mechanics: mechanics,
+            description: description,
+            creatorID: user.userID,
+            selectedJobs: selectedJobs,
+            partsList: partsList,
+        }
+        await fetch("/api/joborders/createNewJobOrder", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jobOrderData),
+        }).then(result => result.json())
+        .then(data => {
+            if (data.error != null) 
+                console.log(data.error)
+            location.reload()
+        })
+
+    }
 
 
     return (

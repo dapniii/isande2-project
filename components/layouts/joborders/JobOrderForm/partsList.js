@@ -89,7 +89,7 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                 }
             })
         }
-
+        setSubmitArray(partsList)
         clearTemplate()
     }, [partsList])
 
@@ -170,7 +170,7 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
 
     if (partsList != null)
         return (
-            <Card variant={"outline"} h={"50em"}>
+            <Card variant={"outline"} >
                 <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
                     <Text fontSize={"xl"} fontWeight={"bold"}>Parts List</Text>
                 </CardHeader>

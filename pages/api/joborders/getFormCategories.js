@@ -3,6 +3,8 @@ import Mechanic from "@/models/users/MechanicSchema";
 import Item from "@/models/spareParts/ItemSchema";
 import JobItem from "@/models/jobOrders/descriptionItems/JobItemSchema";
 import Specialty from "@/models/users/SpecialtySchema";
+import JobOrderStatus from "@/models/jobOrders/categories/JobOrderStatusSchema";
+import JobOrder from "@/models/jobOrders/JobOrderSchema";
 
 export default async (req, res) => {
 
@@ -13,7 +15,7 @@ export default async (req, res) => {
     let mechanics = await Mechanic.find({})
         .populate({
             path: "userID",
-            select: "firstName lastName",
+            select: "firstName lastName userID",
             populate: [
                 {
                     path: "imageID",       
@@ -31,12 +33,16 @@ export default async (req, res) => {
         .populate("itemID")
     let partItems = await Item.find({})
     let specialties = await Specialty.find({})
+    let jobOrderStatus = await JobOrderStatus.find({})
+    let joCount = await JobOrder.find({})
 
     res.json({
         vehicles,
         mechanics,
         jobItems,
         partItems,
-        specialties
+        specialties,
+        jobOrderStatus,
+        count: joCount.length
     })
 }
