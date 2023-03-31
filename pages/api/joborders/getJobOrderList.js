@@ -27,9 +27,9 @@ export default async (req, res) => {
         .populate("itemID")
 
     jobOrders.map(JO => {
-        let mechanics = joMechanics.find(mech => mech.jobOrderID.toString() == JO._id.toString())
-        let details = joDetails.find(detail => detail.jobOrderID.toString() == JO._id.toString())
-        let partsList = joPartsList.find(list => list.jobOrderID.toString() == JO._id.toString())   
+        let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == JO._id.toString())
+        let details = joDetails.filter(detail => detail.jobOrderID.toString() == JO._id.toString())
+        let partsList = joPartsList.filter(list => list.jobOrderID.toString() == JO._id.toString())   
 
         JO.set("mechanics", mechanics, {strict: false})
         JO.set("details", details, {strict: false})

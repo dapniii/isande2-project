@@ -3,65 +3,82 @@ import { Grid, GridItem, Text, Flex } from "@chakra-ui/react";
 import GlobalFilter from "@/components/table/globalFilter";
 
 export const COLUMNS = [
+  // {
+  //   Header: "",
+  //   id: "index",
+  //   accessor: (/** @type {any} */ _row, /** @type {number} */ i) => i + 1,
+  //   Cell: (props) => {
+  //     return (
+  //       <>
+  //         <Text fontWeight={"bold"} float={"left"}>
+  //           {props.value}
+  //         </Text>
+  //       </>
+  //     )
+  //   },
+  //   width: 10,
+  // },
   {
-    Header: " ",
-    id: "rowNumber",
-    accessor: "rowNumber",
+    Header: "",
+    id: "joNumber",
+    accessor: "jobOrderID",
     filter: GlobalFilter,
-    Cell: (props) => {
-      return <Flex alignItems={"left"}>{props.row.original.rowNumber}</Flex>;
-    },
-  },
-  {
-    Header: "Number",
-    id: "number",
-    accessor: "number",
-    filter: GlobalFilter,
-    Cell: (props) => {
-        return <Flex alignItems={"center"}>{props.row.original.number}</Flex>;
-      },
-  },
-  {
-    Header: "Issue Date",
-    id: "issueDate",
-    accessor: "issueDate",
-    Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.issueDate}</Flex>;
-    },
+    width: 70,
   },
   {
     Header: "Plate Number",
     id: "plateNumber",
-    accessor: "plateNumber",
-    filter: GlobalFilter,
-    Cell: (props) => {
-      return (
-        <Flex alignItems={"center"}>{props.row.original.plateNumber}</Flex>
+    accessor: "vehicleID.plateNumber",
+    filter: (rows, id, filterValue) => {
+      return rows.filter(
+        (row) =>
+          filterValue.length <= 0 ||
+          !filterValue ||
+          filterValue.includes(row.values[id])
       );
+    },
+  },
+  {
+    Header: "Issue Date",
+    id: "issueDate",
+    accessor: "creationDate",
+    Cell: (props) => {
+      return <Flex alignItems={"center"}>{new Date(props.value).toDateString()}</Flex>;
     },
   },
   {
     Header: "Status",
     id: "status",
-    accessor: "status",
-    filter: GlobalFilter,
-    Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.status}</Flex>;
+    accessor: "statusID.name",
+    filter: (rows, id, filterValue) => {
+      return rows.filter(
+        (row) =>
+          filterValue.length <= 0 ||
+          !filterValue ||
+          filterValue.includes(row.values[id])
+      );
     },
   },
   {
     Header: "Assigned To",
     id: "assignedTo",
-    accessor: "assignedTo",
-    filter: GlobalFilter,
+    accessor: "mechanics",
     Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.assignedTo}</Flex>;
+        return (
+          <Flex flexDirection={"column"} gap={2}>
+            {
+              props.value.map(value => {
+                return <Text>{value.mechanicID.userID.firstName + " " + value.mechanicID.userID.lastName}</Text>
+              }) 
+            }
+          </Flex>
+
+        )     
     },
   },
   {
     Header: "Job Description",
     id: "jobDescription",
-    accessor: "jobDescription",
-    filter: GlobalFilter,
+    accessor: "description",
   },
 ];

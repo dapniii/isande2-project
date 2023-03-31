@@ -51,7 +51,7 @@ export const getServerSideProps = withSessionSsr(
       const catResult = await fetch(jobOrderAPI.get_form_categories)
       const categoryData = await catResult.json()
 
-      const jobOrdersRes = await fetch("/api/joborders/getJobOrderList")
+      const jobOrdersRes = await fetch("http://localhost:3000/api/joborders/getJobOrderList")
       const jobOrders = await jobOrdersRes.json()
 
       return {
@@ -66,7 +66,7 @@ export const getServerSideProps = withSessionSsr(
       }
 });
 
-export default function JobOrdersPage({ user, categoryList }) {
+export default function JobOrdersPage({ user, categoryList, jobOrders }) {
   const router = useRouter();
   const tempModal = useDisclosure();
 
@@ -138,7 +138,13 @@ export default function JobOrdersPage({ user, categoryList }) {
             </TabList>
             <TabPanels p={2} >
                 <TabPanel>
-
+                  <BasicTable 
+                    COLUMNS={COLUMNS}
+                    DATA={jobOrders}
+                    FILTERS={filters}
+                    HIDDEN={[]}
+                    
+                  />
                 </TabPanel>
                 <TabPanel>
                     <Button onClick={tempModal.onOpen}>Pre-defined jobs go here</Button>
