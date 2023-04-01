@@ -15,24 +15,59 @@ import { SaveButton, CancelButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import { vehicleAPI } from "@/lib/routes";
 import EditVehicleForm from "@/components/layouts/vehicles/editVehicleForm";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
-    const res = await fetch(vehicleAPI.get_categories)
-    const categoryList = await res.json()
+export const getServerSideProps = withSessionSsr(
+    async ({req, res}) => {
+    const user = req.session.user;
+    const allowedRoles = ["Mechanic", "System Admin"]
+    const allowedUserType = ["Manager", "Admin"]
+
+    if(user == null) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/login",
+          },
+          props: { user: {
+            isLoggedIn: false 
+            }, 
+          }
+        }
+      }
+    
+    else if (allowedUserType.findIndex(type => type == user.userType) == -1 
+    && allowedRoles.findIndex(role => role == user.role) == -1) {
+        return {
+            redirect: {
+                permanent: false,
+                destination: "/",
+            },
+            props: { 
+                user: {
+                    isLoggedIn: true 
+                }, 
+            }
+        }}
+
+    const result = await fetch(vehicleAPI.get_categories)
+    const categoryList = await result.json()
   
-    return { props: { categoryList } }
-}
+    return { 
+        props: { 
+            categoryList, 
+            user: {
+                data: user,
+                isLoggedIn: true 
+            }, 
+        } 
+    }
+});
 
-function EditVehiclesPage({categoryList}) {
+function EditVehiclesPage({user, categoryList}) {
     const router = useRouter();
     const { plate } = router.query
     const [submitForm, setSubmitForm] = useState()
-
-    // Temp
-    const user = {
-    firstName: "FirstName",
-    role: "Admin"
-    };
 
     function cancel() {
     router.back();
@@ -78,7 +113,7 @@ function EditVehiclesPage({categoryList}) {
             templateRows={"0fr 1fr"}
         >
             <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-                <Navbar user={user} />
+                <Navbar user={user.data} />
             </GridItem>
             
             <GridItem colStart={2} top={0} position={"sticky"} zIndex={3}>

@@ -8,27 +8,21 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
-    Tabs,
-    Tab,
-    TabList,
-    TabPanels,
-    TabPanel,
-    useDisclosure,
-    Button
   } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
-import { SaveButton, CancelButton, AddButton } from "@/components/buttons";
+import { CancelButton, AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import CreateJobOrderForm from "@/components/layouts/joborders/JobOrderForm/mainForm";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import { jobOrderAPI } from "@/lib/routes";
-import CreateJobModal from "@/components/layouts/joborders/JobList/createJobModal";
+import { generateID } from "@/lib/dataHandler";
 
 export const getServerSideProps = withSessionSsr(
     async ({req, res}) => {
         const user = req.session.user;
-  
+        let allowedRoles = ["Mechanic", "System Admin"]
+
         if (user == null) {
           return {
             redirect: {
@@ -42,7 +36,20 @@ export const getServerSideProps = withSessionSsr(
             }
           }
         }
-  
+        
+        else if (allowedRoles.findIndex(role => role == user.role) == -1) {
+            return {
+              redirect: {
+                permanent: false,
+                destination: "/",
+              },
+              props: { user: {
+                isLoggedIn: true 
+                }, 
+              }
+            }
+        }
+
         const result = await fetch(jobOrderAPI.get_form_categories)
         const data = await result.json()
   
@@ -58,23 +65,22 @@ export const getServerSideProps = withSessionSsr(
   });
 
 export default function JobOrdersPage({ user, categoryList }) {
-    const joLength = 10
-    const countJOs = 11
-    const currentLength = countJOs.toString().length + 1
-
     const router = useRouter();
     const [submitForm, setSubmitForm] = useState();
-    const [JONumber, setJONumber] = useState("")
+    const [JONumber, setJONumber] = useState()
     const [issueDate, setIssueDate] = useState(new Date())
-    const tempModal = useDisclosure()
 
     // Do on render
     useEffect(() => {
-        setJONumber(String(countJOs).padStart(9, "0").padStart(10,"1"))
+        setJONumber(generateID(categoryList.count, 10))
     }, [])
 
     function cancel() {
         router.back()
+    }
+
+    function getSubmit(submitFunc) {
+        setSubmitForm(submitFunc)
     }
 
     function headerBreadcrumbs() {
@@ -135,22 +141,9 @@ export default function JobOrdersPage({ user, categoryList }) {
                 </GridItem>
 
                 {/* Job Order */}
-                <GridItem colStart={2} bg={"blackAlpha.300"}>
-                    <Tabs>
-                        <TabList bg={"white"} top={"7.4em"} position={"sticky"} zIndex={3} boxShadow={"lg"} mt={-3}>
-                            <Tab>Form</Tab>
-                            <Tab>Job List</Tab>
-                        </TabList>
-                        <TabPanels p={2} >
-                            <TabPanel><CreateJobOrderForm data={categoryList} /></TabPanel>
-                            <TabPanel>
-                                <Button onClick={tempModal.onOpen}>Pre-defined jobs go here</Button>
-                                <CreateJobModal modalOpen={tempModal} options={categoryList} />
-                            </TabPanel>
-                        </TabPanels>
-                    </Tabs>
-
-                    
+                <GridItem colStart={2} bg={"blackAlpha.300"} p={3} overflowY={"auto"}>
+                    {/* Chief Mechanic form (create job order) */}
+                    <CreateJobOrderForm user={user.data} JONumber={JONumber} data={categoryList} submitFunc={getSubmit} />
                 </GridItem>
             </Grid>
         </>

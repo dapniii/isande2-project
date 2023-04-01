@@ -12,11 +12,50 @@ import {
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
-import { Router, useRouter } from "next/router";
+import { useRouter } from "next/router";
 import PartsHomeTab from "@/components/layouts/parts/homeTab";
 import { sparePartsAPI } from "@/lib/routes";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+  const user = req.session.user;
+
+  const allowedUsers = [
+    { role: "Mechanic", userType: "Manager"}, 
+    { role: "Inventory", userType: "Manager"},
+    { role: "Inventory", userType: "Employee"},
+    { role: "System Admin", userType: "Admin"}
+  ]
+
+  if(user == null) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: { user: {
+        isLoggedIn: false 
+        }, 
+      }
+    }
+  }
+
+  else if (allowedUsers.findIndex(option => 
+    option.role == user.role 
+    && option.userType == user.userType) == -1) 
+  {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { user: {
+        isLoggedIn: true 
+        }, 
+      }
+  }}
+
   const resParts = await fetch(sparePartsAPI.get_all_parts)
   const partsData = await resParts.json()
   
@@ -38,17 +77,17 @@ export async function getServerSideProps() {
     categories: categoryList,
   }
   
-  return { props: { data }}
-}
+  return { props: { 
+    data,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    },  
+  }}
+});
 
-export default function PartsPage({data}) {
+export default function PartsPage({user, data}) {
   const router = useRouter();
-
-  // Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin"
-  };
 
   // Header Functions
   function navToCreate() {
@@ -76,7 +115,7 @@ export default function PartsPage({data}) {
         overflowY={"auto"}
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
         
         <GridItem colStart={2} top={"0"} position={"sticky"} bg={"white"} zIndex={2}>

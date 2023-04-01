@@ -20,6 +20,11 @@ import { withSessionSsr } from "@/lib/auth/withSession";
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
       const user = req.session.user;
+      const allowedUsers = [
+        { role: "Inventory", userType: "Manager"},
+        { role: "Inventory", userType: "Employee"},
+        { role: "System Admin", userType: "Admin"}
+      ]
 
       if(user == null) {
           return {
@@ -33,6 +38,21 @@ export const getServerSideProps = withSessionSsr(
             }
         }
       }
+
+      else if (allowedUsers.findIndex(option => 
+        option.role == user.role 
+        && option.userType == user.userType) == -1) 
+      {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/parts",
+          },
+          props: { user: {
+            isLoggedIn: true 
+            }, 
+          }
+      }}
 
       const partCategories = await fetch(sparePartsAPI.get_categories)
       const catData = await partCategories.json()
