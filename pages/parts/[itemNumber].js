@@ -21,8 +21,47 @@ import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import ViewPartLayout from "@/components/layouts/parts/viewPartLayout";
 import { qtyStatusIndicator } from "@/components/statusIndicators";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+  const user = req.session.user;
+
+  const allowedUsers = [
+    { role: "Mechanic", userType: "Manager"}, 
+    { role: "Inventory", userType: "Manager"},
+    { role: "Inventory", userType: "Employee"},
+    { role: "System Admin", userType: "Admin"}
+  ]
+
+  if(user == null) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: { user: {
+        isLoggedIn: false 
+        }, 
+      }
+    }
+  }
+
+  else if (allowedUsers.findIndex(option => 
+    option.role == user.role 
+    && option.userType == user.userType) == -1) 
+  {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { user: {
+        isLoggedIn: true 
+        }, 
+      }
+  }}
+
   const categoryList = {
     brands: [],
     categories: [],
@@ -31,8 +70,8 @@ export async function getServerSideProps() {
     reasons: [],
   }
   
-  const res = await fetch(sparePartsAPI.get_categories)
-  const data = await res.json()
+  const result = await fetch(sparePartsAPI.get_categories)
+  const data = await result.json()
   
   categoryList.brands = data.brands
   categoryList.categories = data.categories
@@ -40,10 +79,16 @@ export async function getServerSideProps() {
   categoryList.status = data.status
   categoryList.reasons = data.reasons
   
-  return { props: { categoryList }}
-}
+  return { props: { 
+    categoryList,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    }, 
+  }}
+});
 
-export default function ItemDetails({categoryList}) {
+export default function ItemDetails({user, categoryList}) {
   const router = useRouter();
   const { itemNumber, itemName, itemModel } = router.query;
 
@@ -60,18 +105,6 @@ export default function ItemDetails({categoryList}) {
     disabled: false,
     detailsArray : [],
   })
-
-  // Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
-
-  const tempUserData = {
-    firstName: "FirstName",
-    lastName: "LastName",
-    role: "Role",
-  };
 
   // Fetch user data
   useEffect(() => {
@@ -189,7 +222,7 @@ export default function ItemDetails({categoryList}) {
         
       >
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={"0"} position={"sticky"} bg={"white"} zIndex={2}>

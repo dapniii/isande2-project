@@ -22,6 +22,7 @@ import { withSessionSsr } from "@/lib/auth/withSession";
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
       const user = req.session.user;
+      const allowedUserType = ["Admin"]
 
       if(user == null) {
           return {
@@ -35,6 +36,19 @@ export const getServerSideProps = withSessionSsr(
             }
         }
       }
+
+      else if (allowedUserType.findIndex(type => type == user.userType) == -1) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/",
+          },
+          props: { user: {
+            isLoggedIn: true 
+            }, 
+          }
+      }}
+
       const categoryList = {
         department: [],
         roles: [],

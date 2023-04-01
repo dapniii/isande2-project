@@ -8,8 +8,38 @@ import { COLUMNS } from "@/components/layouts/vehicles/vehicleColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 import { vehicleAPI } from "@/lib/routes";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+  const user = req.session.user;
+  const allowedRoles = ["Mechanic", "System Admin"]
+  
+  if(user == null) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: { user: {
+        isLoggedIn: false 
+        }, 
+      }
+    }
+  }
+
+  else if (allowedRoles.findIndex(role => role == user.role) == -1) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { user: {
+        isLoggedIn: true 
+        }, 
+      }
+  }}
+
   const vehicleRes = await fetch(vehicleAPI.get_all);
   const vehicleData = await vehicleRes.json();
 
@@ -43,17 +73,17 @@ export async function getServerSideProps() {
     categories: categoryList,
   };
 
-  return { props: { data } };
-}
+  return { props: { 
+    data,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    },
+  } };
+});
 
-export default function VehiclesPage({ data }) {
+export default function VehiclesPage({ user, data }) {
   const router = useRouter();
-
-  //Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
 
   //Add vehicle entry button function
   function addNewVehicle() {
@@ -126,7 +156,7 @@ export default function VehiclesPage({ data }) {
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>

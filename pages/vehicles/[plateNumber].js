@@ -21,10 +21,39 @@ import { vehicleStatusIndicator } from "@/components/statusIndicators";
 import { Router, useRouter } from "next/router";
 import { vehicleAPI } from "@/lib/routes";
 import { addCommasToNum } from "@/lib/dataHandler";
-
 import ViewVehicleLayout from "@/components/layouts/vehicles/viewVehicleLayout";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+    const user = req.session.user;
+    const allowedRoles = ["Mechanic", "Driver", "System Admin"]
+
+    if(user == null) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/login",
+          },
+          props: { user: {
+            isLoggedIn: false 
+            }, 
+          }
+      }
+    }
+
+    else if (allowedRoles.findIndex(role => role == user.role) == -1) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/",
+        },
+        props: { user: {
+          isLoggedIn: true 
+          }, 
+        }
+    }}
+
     const categoryList = {
         brands: [],
         chassis: [],
@@ -50,19 +79,18 @@ export async function getServerSideProps() {
     categoryList.transmission = catData.transmission
     categoryList.vehicleTypes = catData.vehicleType
 
-    return { props: { categoryList }}
+    return { props: { 
+      categoryList,
+      user: {
+        data: user,
+        isLoggedIn: true 
+      }, 
+    }}
+});
 
-}
-
-export default function VehicleDetails({categoryList}) {
+export default function VehicleDetails({user, categoryList}) {
     const router = useRouter();
     const { plateNumber } = router.query
-
-      // Temp
-    const user = {
-        firstName: "FirstName",
-        role: "Admin",
-    };
 
     const [vehicleInfo, setVehicleInfo] = useState({
         plateNumber: plateNumber,
@@ -181,7 +209,7 @@ export default function VehicleDetails({categoryList}) {
             
           >
             <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-              <Navbar user={user} />
+              <Navbar user={user.data} />
             </GridItem>
     
             <GridItem colStart={2} top={"0"} position={"sticky"} bg={"white"} zIndex={2}>

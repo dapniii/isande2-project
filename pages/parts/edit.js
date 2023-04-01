@@ -16,13 +16,56 @@ import { useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
 import { EditPartContext } from "./context";
 import EditPartForm from "@/components/layouts/parts/editPartForm";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
-  const res = await fetch(sparePartsAPI.get_categories)
-  const categoryList = await res.json()
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+      const user = req.session.user;
+      const allowedUsers = [
+        { role: "Inventory", userType: "Manager"},
+        { role: "System Admin", userType: "Admin"}
+      ]
 
-  return { props: { categoryList } }
-}
+      if(user == null) {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/login",
+          },
+          props: { user: {
+            isLoggedIn: false 
+            }, 
+          }
+      }
+    }
+
+    else if (allowedUsers.findIndex(option => 
+      option.role == user.role 
+      && option.userType == user.userType) == -1) 
+    {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/parts",
+        },
+        props: { user: {
+          isLoggedIn: true 
+          }, 
+        }
+    }}
+
+  const result = await fetch(sparePartsAPI.get_categories)
+  const categoryList = await result.json()
+
+  return { props: { 
+    categoryList,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    }, 
+  }}
+  
+});
   
 export default function EditPartsPage({categoryList}) {
   const router = useRouter();

@@ -35,7 +35,6 @@ export const getServerSideProps = withSessionSsr(
         }
       }
 
-
       const categoryList = {
         department: [],
         roles: [],

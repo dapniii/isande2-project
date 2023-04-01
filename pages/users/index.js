@@ -18,8 +18,38 @@ import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
 import { userAPI } from "@/lib/routes";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+  const user = req.session.user;
+  const allowedUserType = ["Admin"]
+
+  if(user == null) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login",
+        },
+        props: { user: {
+          isLoggedIn: false 
+          }, 
+        }
+    }
+  }
+
+  else if (allowedUserType.findIndex(type => type == user.userType) == -1) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { user: {
+        isLoggedIn: true 
+        }, 
+      }
+  }}
+
   const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
   
@@ -42,17 +72,17 @@ export async function getServerSideProps() {
     categories: categoryList,
   }
 
-  return { props: { data }}
-}
+  return { props: { 
+    data,             
+    user: {
+      data: user,
+      isLoggedIn: true 
+    },  
+  }}
+});
 
-export default function UsersPage({data}) {
+export default function UsersPage({user, data}) {
   const router = useRouter();  
-
-  // Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin"
-  };
 
   // Header Functions
   function navToCreate() {
@@ -130,7 +160,7 @@ export default function UsersPage({data}) {
       >
         {/* Navbar */}
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
         
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>

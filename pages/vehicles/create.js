@@ -15,8 +15,40 @@ import { useState } from "react";
 import { Router, useRouter } from "next/router";
 import { vehicleAPI } from "@/lib/routes";
 import CreateVehicleForm from "@/components/layouts/vehicles/createVehicleForm";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
-export async function getServerSideProps() {
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+  const user = req.session.user;
+  const allowedRoles = ["Mechanic", "System Admin"]
+  const allowedUserType = ["Manager", "Admin"]
+
+  if(user == null) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+      props: { user: {
+        isLoggedIn: false 
+        }, 
+      }
+    }
+  }
+
+  else if (allowedUserType.findIndex(type => type == user.userType) == -1 
+  && allowedRoles.findIndex(role => role == user.role) == -1) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+      props: { user: {
+        isLoggedIn: true 
+        }, 
+      }
+  }}
+
   const categoryList = {
     brands: [],
     chassis: [],
@@ -29,8 +61,8 @@ export async function getServerSideProps() {
     vehicleTypes: []
   };
 
-  const res = await fetch(vehicleAPI.get_categories)
-  const data = await res.json()
+  const result = await fetch(vehicleAPI.get_categories)
+  const data = await result.json()
 
   categoryList.brands = data.brands
   categoryList.chassis = data.chassis
@@ -42,17 +74,18 @@ export async function getServerSideProps() {
   categoryList.transmission = data.transmission
   categoryList.vehicleTypes = data.vehicleType
 
-  return { props: { categoryList } };
-}
+  return { props: { 
+    categoryList,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    }, 
+   } };
+});
 
-export default function AddVehiclesPage({categoryList}) {
+export default function AddVehiclesPage({user, categoryList}) {
   const router = useRouter();
   const [submitForm, setSubmitForm] = useState();
-
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
 
   function cancel() {
     router.back();
@@ -105,7 +138,7 @@ export default function AddVehiclesPage({categoryList}) {
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
