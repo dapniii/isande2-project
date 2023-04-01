@@ -40,19 +40,19 @@ export const COLUMNS = [
       )
   }
   },
-  {
-    Header: "Fuel(%)",
-    id: "fuelPercent",
-    accessor: "fuelPercent",
-    filter: GlobalFilter,
-    Cell: (props) => {
-      return (
-          <Flex alignItems={"center"}>
-              {props.row.original.fuelPercent}
-          </Flex>
-      )
-  }
-  },
+  // {
+  //   Header: "Fuel(%)",
+  //   id: "fuelPercent",
+  //   accessor: "fuelPercent",
+  //   filter: GlobalFilter,
+  //   Cell: (props) => {
+  //     return (
+  //         <Flex alignItems={"center"}>
+  //             {props.row.original.fuelPercent}
+  //         </Flex>
+  //     )
+  // }
+  // },
   {
     Header: "Recorded by",
     id: "recordedBy",
