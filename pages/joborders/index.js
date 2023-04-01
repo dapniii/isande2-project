@@ -71,8 +71,12 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
   const tempModal = useDisclosure();
 
   //Add vehicle entry button function
-  function addNewJobOrder() {
+  function navToCreate() {
     router.push("/joborders/create");
+  }
+
+  function navToDetails(query) {
+    router.push(`/joborders/${query.id}`)
   }
 
   function headerBreadcrumbs() {
@@ -85,9 +89,17 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
         <Text fontSize={"3xl"} fontWeight={"bold"}>
           Job Orders
         </Text>
-        <AddButton title={"Create Job Order"} clickFunction={addNewJobOrder} />
+        <AddButton title={"Create Job Order"} clickFunction={navToCreate} />
       </Flex>
     );
+  }
+
+  // Table Functions
+  function getRowData(rowData) {
+    let query = {
+      id: rowData.jobOrderID
+    }
+    return query
   }
 
   function filters(filter, setFilter, globalFilter, setGlobalFilter) {
@@ -143,7 +155,8 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
                     DATA={jobOrders}
                     FILTERS={filters}
                     HIDDEN={[]}
-                    
+                    getRowData={getRowData}
+                    clickRowFunction={navToDetails}
                   />
                 </TabPanel>
                 <TabPanel>
