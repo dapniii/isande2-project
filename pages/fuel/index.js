@@ -11,12 +11,53 @@ import { useDisclosure } from "@chakra-ui/hooks";
 import AddFuelEntryForm from "@/components/layouts/fuel/addFuelEntryForm";
 import { MdAddCircle } from "react-icons/md";
 import { useState } from "react";
+import { withSessionSsr } from "@/lib/auth/withSession";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
-export async function getServerSideProps() {
-  const res = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
-  const fuelData = await res.json();
+export const getServerSideProps = withSessionSsr(
+  async ({req, res}) => {
+    const user = req.session.user;
+
+    // TODO: Add allowed users here
+    const allowedUsers = [
+      { role: "System Admin", userType: "Admin"}
+    ]
+
+    // If not logged in
+    if (user == null) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/login",
+        },
+        props: { user: {
+          data: user,
+          isLoggedIn: false 
+          }, 
+        }
+      }
+    }
+
+    // If user role and user type not allowed
+    else if (allowedUsers.findIndex(option => 
+      option.role == user.role 
+      && option.userType == user.userType) == -1)  
+      {
+        return {
+          redirect: {
+            permanent: false,
+            destination: "/",
+          },
+          props: { user: {
+            isLoggedIn: true 
+            }, 
+          }
+        }
+      }
+
+  const result = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
+  const fuelData = await result.json();
 
   const category = {
     refuelType: [{ name: "Refuel Truck" }],
@@ -27,20 +68,19 @@ export async function getServerSideProps() {
     categories: category,
   };
   console.log(data.categories.refuelType[0]);
-  return { props: { data } };
-}
+  return { props: { 
+    data,
+    user: {
+      data: user,
+      isLoggedIn: true 
+    }, 
+  } };
+});
 //***************************************************************************************/
 
-export default function FuelPage({ data }) {
+export default function FuelPage({ user, data }) {
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  //Temp
-  const user = {
-    firstName: "FirstName",
-    role: "Admin",
-  };
-
 
   //Add fuel entry button function -OPEN CLOSE FORMS
   const [isFormOpen, setIsFormOpen] = useState(false)
@@ -89,7 +129,7 @@ export default function FuelPage({ data }) {
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
         <GridItem colStart={1} rowSpan={2} bg={"#222222"}>
-          <Navbar user={user} />
+          <Navbar user={user.data} />
         </GridItem>
 
         <GridItem colStart={2} top={0} position={"sticky"} zIndex={2}>
