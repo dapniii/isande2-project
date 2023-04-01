@@ -39,7 +39,7 @@ function JobOrderMainLayout({user, initialData}) {
             </CardHeader>
             <CardBody px={0}>
                 <Grid
-                    templateColumns={"0.5fr 2fr 3fr 2fr 3fr 2fr 2fr 2fr"}
+                    templateColumns={"0.5fr 2fr 3fr 2fr 3fr 2fr 2fr 2fr 1fr"}
                     autoFlow={"row"}
                     gap={2}
                 >

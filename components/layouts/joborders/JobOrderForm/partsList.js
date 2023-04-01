@@ -111,12 +111,15 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                             manualQty: 0,
                         }})
                     }
-                    else {
+                    else if (itemIndex != -1 && partsList[itemIndex].quantity >= object.recommendedQty) {
                         dispatch({type: "add quantity based on job select", payload: {
                             index: itemIndex,
                             itemNumber: object.itemID.itemNumber,
                             addedQuantity: object.recommendedQty
                         }})
+                    }
+                    else if (partsList[itemIndex].quantity < object.recommendedQty) {
+                        console.log("Not enough of this item available")
                     }
                 })
             } 
