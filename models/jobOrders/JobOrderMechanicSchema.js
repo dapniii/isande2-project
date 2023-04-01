@@ -11,11 +11,7 @@ const JobOrderMechanicSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "Mechanic",
     },
-    recordDate: {
-        type: Date,
-        default: new Date()
-    }
-})
+}, { timestamps: true })
 
 const JobOrderMechanic = mongoose.models.JobOrderMechanic || mongoose.model("JobOrderMechanic", JobOrderMechanicSchema)
 

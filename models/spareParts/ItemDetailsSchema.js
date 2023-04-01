@@ -33,7 +33,7 @@ const ItemDetailsSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     }
-})
+}, { timestamps: true })
 
 const ItemDetails = mongoose.models.ItemDetails || mongoose.model("ItemDetails", ItemDetailsSchema) 
 

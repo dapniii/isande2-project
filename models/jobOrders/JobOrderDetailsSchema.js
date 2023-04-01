@@ -6,7 +6,7 @@ import mongoose from "mongoose"
 import JobName from "./descriptionItems/JobNameSchema"
 import JobOrder from "./JobOrderSchema"
 
-const JobOrderDetailsSchema = {
+const JobOrderDetailsSchema = new mongoose.Schema({
     jobOrderID: {
         type: mongoose.Types.ObjectId,
         ref: "JobOrder"
@@ -15,11 +15,8 @@ const JobOrderDetailsSchema = {
         type: mongoose.Types.ObjectId,
         ref: "JobName"
     },
-    recordDate: {
-        type: Date,
-        default: new Date()
-    }
-}
+
+}, { timestamps: true })
 
 const JobOrderDetails = mongoose.models.JobOrderDetails || mongoose.model("JobOrderDetails", JobOrderDetailsSchema)
 

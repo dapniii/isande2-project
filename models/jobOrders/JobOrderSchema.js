@@ -1,11 +1,12 @@
+/*
+    Identifcation data of a job order
+*/
+
 import mongoose from "mongoose";
 import User from "../users/UserSchema";
 import Vehicle from "../vehicles/VehicleSchema";
 import JobOrderStatus from "./categories/JobOrderStatusSchema";
 
-/*
-    Identifcation data of a job order
-*/
 
 const JobOrderSchema = new mongoose.Schema({
     jobOrderID: {
@@ -30,19 +31,11 @@ const JobOrderSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "User"
     },
-    creationDate: {
-        type: Date,
-        default: new Date()
-    },
-    lastUpdatedDate: {
-        type: Date,
-        default: new Date()
-    },
     disabled: {
         type: Boolean,
         default: false,
     }
-})
+}, { timestamps: true })
 
 const JobOrder = mongoose.models.JobOrder || mongoose.model("JobOrder", JobOrderSchema)
 

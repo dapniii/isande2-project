@@ -81,16 +81,12 @@ const VehicleSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: "User"
     },
-    creationDate: {
-        type: Date,
-        default: new Date()
-    },
     disabled: {
         type: Boolean,
         default: false
     }
 
-})
+}, { timestamps: true })
 
 const Vehicle = mongoose.models.Vehicle || mongoose.model("Vehicle", VehicleSchema)
 

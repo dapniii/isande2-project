@@ -4,10 +4,6 @@ import ItemCategory from "./ItemCategorySchema";
 import ItemStatus from "./ItemStatusSchema";
 import Measure from "../MeasureSchema";
 import User from "../users/UserSchema";
-import { customAlphabet } from "nanoid";
-import alphanumeric from "nanoid-dictionary/alphanumeric";
-
-const nanoid = customAlphabet(alphanumeric, 10)
 
 const ItemSchema = new mongoose.Schema({
     itemNumber: {
@@ -39,6 +35,11 @@ const ItemSchema = new mongoose.Schema({
         min: 0,
         default: 0,
     },
+    eoq: {
+        type: Number,
+        min: 0,
+        default: 0,
+    },
     unitID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Measure",
@@ -51,15 +52,11 @@ const ItemSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     },
-    creationDate: {
-        type: Date,
-        default: new Date()
-    },
     disabled: {
         type: Boolean,
         default: false,
     }
-})
+}, { timestamps: true })
 
 const Item = mongoose.models.Item || mongoose.model("Item", ItemSchema);
 

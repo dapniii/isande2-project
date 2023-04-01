@@ -61,15 +61,11 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
     },
-    creationDate: {
-        type: Date,
-        default: new Date(),
-    },
     disabled: {
         type: Boolean,
         default: false,
     }
-})
+}, { timestamps: true })
 
 const User = mongoose.models.User || mongoose.model("User", UserSchema)
 

@@ -28,16 +28,12 @@ const ItemAdjustmentSchema = new mongoose.Schema({
     discrepancy: {
         type: Number,
     },
-    recordDate: {
-        type: Date,
-        default: new Date()
-    },
     creatorID: {
         type: mongoose.Types.ObjectId,
         ref: "User",
         required: true,
-    }
-})
+    },
+}, { timestamps: true })
 
 const ItemAdjustment = mongoose.models.ItemAdjustment || mongoose.model("ItemAdjustment", ItemAdjustmentSchema)
 

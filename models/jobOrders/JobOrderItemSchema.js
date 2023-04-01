@@ -45,7 +45,7 @@ const JobOrderItemSchema = new mongoose.Schema({
     cost: {
         type: mongoose.Types.Decimal128
     },
-})
+}, { timestamps: true })
 
 const JobOrderItem = mongoose.models.JobOrderItem || mongoose.model("JobOrderItem", JobOrderItemSchema)
 
