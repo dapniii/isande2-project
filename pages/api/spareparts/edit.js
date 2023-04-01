@@ -60,42 +60,13 @@ export default async (req, res) => {
                         itemID: originalItem._id,
                         partNumber: element.partNumber,
                         itemBrandID: itemBrandID._id,
-                        quantity: element.quantity,
+                        // quantity: element.quantity,
                         unitPrice: element.unitPrice,
                         disabled: element.disabled,
                     })
                     console.log(updateResult)
                 })
-                // bodyDetails.additions.map(async element => {
-                //     let itemBrandID = await ItemBrand.findOne({name: element.brand})
-                //     let addResult = await ItemDetails.create({
-                //         itemID: originalItem._id,
-                //         partNumber: element.partNum,
-                //         itemBrandID: itemBrandID._id,
-                //         quantity: element.qty,
-                //         unitPrice: element.cost,
-                //     })    
-                //     console.log("Added detail")
-                // })
 
-                // bodyDetails.edits.map(async element => {
-                //     if (element.itemNumber == null) {
-                //         let brandResult = await ItemBrand.findOne({name: element.brand})
-                        
-                //         try {
-                //             let detailsResult = await ItemDetails.findByIdAndUpdate(element._id, {
-                //                 partNumber: element.partNum,
-                //                 itemBrandID: brandResult._id,
-                //                 // quantity: element.qty, 
-                //                 unitPrice: element.cost,
-                //                 disabled: element.disabled,
-                //             })
-
-                //             console.log("edited detail")
-                //         } catch { console.log("do nothing")}
-
-                //     }
-                // })
                 res.status(200).json("success")     
             } catch (e) {
                 res.status(400).json({error: "Failed to update item"})
