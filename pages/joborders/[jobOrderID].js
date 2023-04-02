@@ -14,6 +14,7 @@ import Header from '@/components/header';
 import { useRouter } from 'next/router';
 import JobOrderMainLayout from '@/components/layouts/joborders/JobOrderLayout/mainLayout';
 import { JobOrderContext } from '../../components/layouts/joborders/context';
+import { jobOrderAPI } from '@/lib/routes';
 
 export const getServerSideProps = withSessionSsr(
     async ({req, res}) => {
@@ -54,18 +55,21 @@ export const getServerSideProps = withSessionSsr(
               }
           }}
 
+          const result = await fetch(jobOrderAPI.get_form_categories)
+          const data = await result.json()
+
           return {
             props: { 
               user: {
                 data: user,
                 isLoggedIn: true 
               }, 
-
+              categoryList: data
             }
         }
 });
 
-function JobOrderDetailsPage({user}) {
+function JobOrderDetailsPage({user, categoryList}) {
     const router = useRouter();
     const { jobOrderID } = router.query
     const [initialData, setInitialData] = React.useState("")
@@ -120,7 +124,7 @@ function JobOrderDetailsPage({user}) {
                     <Flex gap={10}>
                         <Flex gap={1}>
                             <Text fontWeight={"bold"}>Issue Date: </Text>
-                            <Text>{ initialData.jobOrder != null ? (new Date(initialData.jobOrder.creationDate).toLocaleDateString()) : ("")}</Text>
+                            <Text>{ initialData.jobOrder != null ? (new Date(initialData.jobOrder.createdAt).toLocaleDateString()) : ("")}</Text>
                         </Flex>
                         <Flex gap={1}>
                             <Text fontWeight={"bold"}>Plate #: </Text>
@@ -151,7 +155,7 @@ function JobOrderDetailsPage({user}) {
                 </GridItem>
 
                 <GridItem colStart={2} bg={"blackAlpha.300"} >
-                    <JobOrderMainLayout user={user.data} initialData={initialData} />
+                    <JobOrderMainLayout user={user.data} initialData={initialData} categoryList={categoryList} />
                 </GridItem>
             </Grid>            
         </>

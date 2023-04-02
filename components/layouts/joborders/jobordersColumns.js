@@ -41,7 +41,7 @@ export const COLUMNS = [
   {
     Header: "Issue Date",
     id: "issueDate",
-    accessor: "creationDate",
+    accessor: "updatedAt",
     Cell: (props) => {
       return <Flex alignItems={"center"}>{new Date(props.value).toDateString()}</Flex>;
     },

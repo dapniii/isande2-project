@@ -62,6 +62,7 @@ export default async (req, res) => {
             if (bodyData.disabled != null)
                 newUser["disabled"] = bodyData.disabled 
             
+        
             try {
                 let specialtyID = await Specialty.findOne({name: bodyData.specialtyID})
                 let originalMechanic = await Mechanic.findOne({
@@ -97,7 +98,7 @@ export default async (req, res) => {
                     console.log("Mechanic was disabled")
                 }
             } catch(e) {
-                res.status(400).json({ error: "Cannot update mechanic" })
+                
             }
 
             console.log(newUser)

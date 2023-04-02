@@ -34,7 +34,7 @@ export default async (req, res) => {
 
         res.json("success")
     } 
-    else res.status.json({ error: "Job name already exists" })
+    else res.status(200).json({ error: "Job name already in use" })
 
     
 }

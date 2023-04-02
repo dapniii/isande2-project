@@ -32,13 +32,34 @@ export default async (req, res) => {
         .populate("specialtyID", "name")
     let jobItems = await JobItem.find({})
         .populate("jobID")
-        .populate("itemID")
+        .populate({
+            path: "itemID",
+            populate: [
+                {
+                    path: "imageID",       
+                    model: "Image", 
+                    select: "secure_url"
+                }, 
+                {
+                    path: "unitID",
+                    model: "Measure",
+                },
+                {
+                    path: "categoryID",
+                    model: "ItemCategory",
+                }
+            ]})
     let partItems = await Item.find({})
+        .populate("unitID")
+        .populate("categoryID")
     let itemDetails = await ItemDetails.find({})
+        .populate("itemID")
+        .populate("itemBrandID")
     let specialties = await Specialty.find({})
     let jobOrderStatus = await JobOrderStatus.find({})
     let joCount = await JobOrder.find({})
 
+    let totalValue = 0
     partItems.map(item => {
         let detailsArray = []
         let quantity = 0

@@ -227,7 +227,6 @@ function CreateJobModal({modalOpen, options}) {
                                                             <Text fontWeight={"bold"}>{item.itemNumber}</Text>
                                                             <Text fontSize={"sm"}>{item.itemName} {item.itemModel}</Text>
                                                         </Flex>
-                                                        
                                                     </AutoCompleteItem>
                                                 ))}
                                             </AutoCompleteList>
