@@ -150,7 +150,7 @@ export default function AddVehiclesPage({user, categoryList}) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
-          <CreateVehicleForm data={categoryList} submitFunc={getSubmit} />
+          <CreateVehicleForm data={categoryList} submitFunc={getSubmit} creatorID={user.data.userID} />
         </GridItem>
       </Grid>
     </>

@@ -14,7 +14,7 @@ import Header from "@/components/header";
 import { SaveButton, CancelButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
-import { EditPartContext } from "./context";
+import { EditPartContext } from "../../components/layouts/parts/context";
 import EditPartForm from "@/components/layouts/parts/editPartForm";
 import { withSessionSsr } from "@/lib/auth/withSession";
 

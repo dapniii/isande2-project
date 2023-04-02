@@ -35,7 +35,7 @@ import { uploadImage } from "@/lib/images/imageHandler";
 import { vehicleAPI } from "@/lib/routes";
 import { Router, useRouter } from "next/router";
 
-function CreateVehicleForm({data, submitFunc}) {
+function CreateVehicleForm({data, submitFunc, creatorID}) {
     const router = useRouter()
     
     const [plateNumber, setPlateNumber] = useState("")
@@ -113,7 +113,7 @@ function CreateVehicleForm({data, submitFunc}) {
             gpsID: gps,
             fuelSensorID: fuelSensor,
             vehicleStatusID: "Active", 
-            creatorID: "00002", // CHANGE HARDCODE
+            creatorID: creatorID,
         }
         console.log(vehicleData)
         let result = await fetch(vehicleAPI.create_vehicle, {
@@ -229,22 +229,6 @@ function CreateVehicleForm({data, submitFunc}) {
                                 <FormControl isRequired>
                                     <FormLabel><Link>Model</Link></FormLabel>
                                     <Input value={model} onChange={(e) => setModel(e.target.value)} />
-                                    {/* <CategoryListModal modalOpen={userModalOpen} options={data.userTypes} title={"User Types"} apiPath={userAPI.modify_user_type} /> */}
-                                    {/* <Select>
-                                        <option value="" hidden disabled>Select Model</option>
-                                        {data.userTypes.map((type) => {
-                                            if (type.disabled == false) {
-                                                return (
-                                                    <option
-                                                        key={type._id}
-                                                        value={type.name}
-                                                    >
-                                                        {type.name}
-                                                    </option>
-                                                );
-                                            }
-                                        })}
-                                    </Select> */}
                                 </FormControl>
                             </Flex>
                         </Stack>

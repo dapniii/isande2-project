@@ -28,7 +28,7 @@ import EditDetailsTable from "./editDetailsTable";
 import { uploadImage } from "@/lib/images/imageHandler";
 import { Router, useRouter } from "next/router";
 import { sparePartsAPI } from "@/lib/routes";
-import { EditPartContext } from "@/pages/parts/context";
+import { EditPartContext } from "@/components/layouts/parts/context";
 
 function EditPartForm({ categoryList, submitFunc}) {
     const contextData = useContext(EditPartContext)

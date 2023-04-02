@@ -13,7 +13,7 @@ import Navbar from '@/components/navbar';
 import Header from '@/components/header';
 import { useRouter } from 'next/router';
 import JobOrderMainLayout from '@/components/layouts/joborders/JobOrderLayout/mainLayout';
-import { JobOrderContext } from './context';
+import { JobOrderContext } from '../../components/layouts/joborders/context';
 
 export const getServerSideProps = withSessionSsr(
     async ({req, res}) => {

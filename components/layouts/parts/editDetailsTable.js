@@ -15,7 +15,7 @@ import {
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import { AddButton } from "@/components/buttons";
 import { MdOutlineCancel, MdAddCircleOutline } from "react-icons/md";
-import { EditPartContext } from "@/pages/parts/context";
+import { EditPartContext } from "@/components/layouts/parts/context";
 
 
 function EditDetailsTable({brands, setSubmitArray}) {
