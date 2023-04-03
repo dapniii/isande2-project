@@ -27,6 +27,16 @@ const JobOrderSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    completedDate: {
+        type: Date,
+    },
+    approvedDate: {
+        type: Date,
+    },
+    approverID: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+    },
     creatorID: {
         type: mongoose.Types.ObjectId,
         ref: "User"

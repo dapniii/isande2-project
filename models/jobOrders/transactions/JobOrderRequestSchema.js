@@ -28,20 +28,6 @@ const JobOrderRequestSchema = new mongoose.Schema({
         type: String,
         maxLength: 50,
     },
-    approved: {
-        type: Boolean,
-    },
-    approverID: {
-        type: mongoose.Types.ObjectId,
-        ref: "User"
-    },
-    approvedDate: {
-        type: Date,
-    },
-    rejectionReason: {
-        type: String,
-        default: "",
-    }
 })
 
 const JobOrderRequest = mongoose.models.JobOrderRequest || mongoose.model("JobOrderRequest", JobOrderRequestSchema)

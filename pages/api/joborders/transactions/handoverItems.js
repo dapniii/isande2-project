@@ -6,7 +6,6 @@ import JobOrderActivity from "@/models/jobOrders/transactions/JobOrderActivitySc
 import JobOrderStatus from "@/models/jobOrders/categories/JobOrderStatusSchema";
 import ItemDetails from "@/models/spareParts/ItemDetailsSchema";
 import ItemBrand from "@/models/spareParts/ItemBrandSchema";
-import Item from "@/models/spareParts/ItemSchema";
 
 export default async (req, res) => {
     await connectToDatabase()
@@ -31,6 +30,6 @@ export default async (req, res) => {
             receivedQty: item.receivedQty
         })
     }) 
-
+    
     res.json("success")
 }

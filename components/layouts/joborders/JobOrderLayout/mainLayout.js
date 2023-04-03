@@ -197,7 +197,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
 
                                             <GridItem colStart={8}>
                                                 <NumberInput 
-                                                    min={0} max={row.requestQty} precision={0} 
+                                                    min={row.receivedQty} max={row.requestQty} precision={0} 
                                                     value={detailTemplate.quantity} 
                                                     onChange={(value) => setDetailTemplate((prevState) => ({
                                                         ...prevState,

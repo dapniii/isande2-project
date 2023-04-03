@@ -110,11 +110,11 @@ export function joStatusIndicator(status) {
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
-                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"}>{status}</Text>
+                <Text color={"rgba(37, 198, 133, 1)"} fontWeight={"bold"}>{status}</Text>
             </Flex> 
         )
     }
-    else if (status == "Completed") {
+    else if (status == "Complete") {
         return (
             <Flex 
                 gap={1} 
@@ -127,7 +127,7 @@ export function joStatusIndicator(status) {
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
-                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"}>{status}</Text>
+                <Text color={"rgba(37, 198, 133, 1)"} fontWeight={"bold"}>{status}</Text>
             </Flex> 
         )
     }

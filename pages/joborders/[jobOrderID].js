@@ -7,7 +7,8 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     BreadcrumbLink,
-    Text
+    Text,
+    ButtonGroup
 } from '@chakra-ui/react';
 import Navbar from '@/components/navbar';
 import Header from '@/components/header';
@@ -15,7 +16,7 @@ import { useRouter } from 'next/router';
 import JobOrderMainLayout from '@/components/layouts/joborders/JobOrderLayout/mainLayout';
 import { JobOrderContext } from '../../components/layouts/joborders/context';
 import { jobOrderAPI } from '@/lib/routes';
-import { BackButton, SaveButton, CancelButton } from '@/components/buttons';
+import { BackButton, SaveButton, RequestReviewButton, RejectButton } from '@/components/buttons';
 import { joStatusIndicator } from '@/components/statusIndicators';
 
 export const getServerSideProps = withSessionSsr(
@@ -123,6 +124,44 @@ function JobOrderDetailsPage({user, categoryList}) {
         })
     }
 
+    async function requestForReview() {
+        let jobOrderData = {
+            jobOrderID: jobOrderID,
+            mechanicID: user.data.userID,
+        }
+        await fetch("/api/joborders/transactions/requestReview", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jobOrderData),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+        })
+    }
+
+    async function approve() {
+        let jobOrderData = {
+            jobOrderID: jobOrderID,
+            mechanicID: user.data.userID,
+        }
+        await fetch("/api/joborders/transactions/approve", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jobOrderData),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+        })
+    }
+
     function headerBreadcrumbs() {
         return (<>
             <Flex justifyContent={"space-between"}>
@@ -178,7 +217,35 @@ function JobOrderDetailsPage({user, categoryList}) {
                         </Flex>
                     </Flex>
                     <Flex alignItems={"end"}>
-                        {user.data.role == "Inventory" ? (<SaveButton title={"Save"} clickFunction={submitInvForm} />) : (<></>)}
+                        {
+                            initialData.jobOrder != null ? (
+                                <>
+                                {
+                                    user.data.role == "Inventory" 
+                                    && ["Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
+                                    ? (<SaveButton title={"Save"} clickFunction={submitInvForm} />) : (<></>)
+                                }
+                                {
+                                    user.data.role == "Mechanic"
+                                    && ["Pending Parts", "For Review", "Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
+                                    ? (<RequestReviewButton title={"Request Review"} clickFunction={requestForReview} />) : (<></>)
+                                }
+
+                                {
+                                    user.data.role == "Mechanic" && user.data.userType == "Manager"
+                                    && ["Pending Parts", "Open", "Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
+                                    ? (
+                                        <ButtonGroup>
+                                            <RejectButton title={"Reject"} clickFunction={() => console.log("reject")} />
+                                            <SaveButton title={"Approve"} clickFunction={approve} />
+                                        </ButtonGroup>
+                                        
+                                    ) : (<></>)
+                                }
+                                </>
+                            ) : (<></>)
+                        }
+
                     </Flex>
                 </Flex>
             </>)

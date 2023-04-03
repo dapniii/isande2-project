@@ -99,3 +99,35 @@ export function DeleteButton({title, clickFunction}) {
     )
 }
 
+export function RejectButton({title, clickFunction}) {
+    return (
+        <Button
+            bg={"#FF575F"}
+            color={"white"}
+            px={"0.7em"}
+            size={"sm"}
+            borderRadius={"0.4em"}
+            leftIcon={<Icon as={MdCancel} boxSize={"1.3em"} />}
+            onClick={() => clickFunction()}
+        >
+            {title}
+        </Button>
+    )
+}
+
+export function RequestReviewButton({title, clickFunction}) {
+    return (
+        <Button
+            bg={"#005DF2"}
+            color={"white"}
+            px={"0.7em"}
+            size={"sm"}
+            borderRadius={"0.4em"}
+            leftIcon={<Icon as={MdCheckCircle} boxSize={"1.3em"} />}
+            onClick={() => clickFunction()}
+        >
+            {title}
+        </Button>
+    )
+}
+
