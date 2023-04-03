@@ -24,7 +24,7 @@ import {
     AutoCompleteItem
 } from "@choc-ui/chakra-autocomplete";
 
-function JobOrderMainLayout({user, initialData, categoryList}) {
+function JobOrderMainLayout({user, initialData, categoryList, setFormState, setSubmitArray}) {
     const [detailTemplate, setDetailTemplate] = React.useState({
         itemBrandID: {
             name: ""
@@ -67,15 +67,7 @@ function JobOrderMainLayout({user, initialData, categoryList}) {
                     receivedQty: action.payload.detail.quantity
                 } : row)
             }
-            case "specify received qty": {
-                return state.map((row, i) => i == action.payload.index ? {...row, 
-                    
-                } : row)
-            }
         }
-    })
-    React.useEffect(() => {
-        console.log(partsList)
     })
 
     // Initialize data
@@ -87,7 +79,21 @@ function JobOrderMainLayout({user, initialData, categoryList}) {
     }, [initialData])
 
     React.useEffect(() => {
+        if (editState != null) {
+            setFormState(editState.mode)
+
+        }
+    }, [editState])
+
+    React.useEffect(() => {
         switchState("reset")
+        clearDetailTemplate()
+        setSubmitArray((prevState) => ({
+            ...prevState,
+            partsList: partsList
+        }))
+
+
     }, [partsList])
 
     function handleDetailSelect(row, value) {
@@ -100,6 +106,16 @@ function JobOrderMainLayout({user, initialData, categoryList}) {
             },
             partNumber: detail.partNumber,
         }))
+    }
+
+    function clearDetailTemplate() {
+        setDetailTemplate({
+            itemBrandID: {
+                name: ""
+            },
+            partNumber: "",
+            quantity: 0,
+        })
     }
 
     return (
@@ -134,7 +150,7 @@ function JobOrderMainLayout({user, initialData, categoryList}) {
                     gap={5}
                 >
                         {/* DETAILS HEADERS */}
-                        <GridItem colStart={1} ><Text>{" "}</Text></GridItem>
+                        <GridItem colStart={1}><Text>{" "}</Text></GridItem>
                         <GridItem colStart={2}><Text fontWeight={"medium"}>Item Number</Text></GridItem>
                         <GridItem colStart={3}><Text fontWeight={"medium"}>Item</Text></GridItem>
                         <GridItem colStart={4}><Text fontWeight={"medium"}>Status</Text></GridItem>
@@ -185,7 +201,7 @@ function JobOrderMainLayout({user, initialData, categoryList}) {
                                                     value={detailTemplate.quantity} 
                                                     onChange={(value) => setDetailTemplate((prevState) => ({
                                                         ...prevState,
-                                                        quantity: value
+                                                        quantity: parseInt(value)
                                                     }))}
                                                 >
                                                     <NumberInputField  />

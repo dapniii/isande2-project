@@ -48,7 +48,7 @@ function CreateJobOrderForm({user, JONumber, data, submitFunc}) {
         let jobOrderData = {
             jobOrderID: JONumber,
             vehicleID: plateNumber,
-            statusID: "Open",
+            statusID: "Pending Parts",
             mechanics: mechanics,
             description: description,
             creatorID: user.userID,

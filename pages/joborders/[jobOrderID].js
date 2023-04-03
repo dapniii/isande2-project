@@ -15,6 +15,8 @@ import { useRouter } from 'next/router';
 import JobOrderMainLayout from '@/components/layouts/joborders/JobOrderLayout/mainLayout';
 import { JobOrderContext } from '../../components/layouts/joborders/context';
 import { jobOrderAPI } from '@/lib/routes';
+import { BackButton, SaveButton, CancelButton } from '@/components/buttons';
+import { joStatusIndicator } from '@/components/statusIndicators';
 
 export const getServerSideProps = withSessionSsr(
     async ({req, res}) => {
@@ -73,6 +75,15 @@ function JobOrderDetailsPage({user, categoryList}) {
     const router = useRouter();
     const { jobOrderID } = router.query
     const [initialData, setInitialData] = React.useState("")
+    const [editState, setEditState] = React.useState("")
+    const [partsList, setPartsList] = React.useState({
+        partsList: [],
+        returnList: []
+    })
+
+    React.useEffect(() => {
+        console.log(partsList)
+    })
 
     React.useEffect(() => {
         fetch("/api/joborders/" + jobOrderID, {
@@ -88,51 +99,88 @@ function JobOrderDetailsPage({user, categoryList}) {
         });
     },[jobOrderID])
 
+    function cancel() {
+        router.back()
+    }
+
+    async function submitInvForm() {
+        let jobOrderData = {
+            jobOrderID: jobOrderID,
+            details: partsList,
+            inventoryStaffID: user.data.userID
+        } 
+        await fetch("/api/joborders/transactions/handoverItems", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jobOrderData),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+        })
+    }
+
     function headerBreadcrumbs() {
         return (<>
-            <Breadcrumb pt={1}>
-                <BreadcrumbItem  >
-                    <BreadcrumbLink href='/joborders' color={"blue"} textDecor={"underline"} fontSize={"lg"}>Job Orders</BreadcrumbLink>
-                </BreadcrumbItem>
+            <Flex justifyContent={"space-between"}>
+                <Breadcrumb pt={1}>
+                    <BreadcrumbItem  >
+                        <BreadcrumbLink href='/joborders' color={"blue"} textDecor={"underline"} fontSize={"lg"}>Job Orders</BreadcrumbLink>
+                    </BreadcrumbItem>
 
-                <BreadcrumbItem isCurrentPage>
-                    <BreadcrumbLink fontSize={"lg"}>#{jobOrderID}</BreadcrumbLink>
-                </BreadcrumbItem>
-            </Breadcrumb>
+                    <BreadcrumbItem isCurrentPage>
+                        <BreadcrumbLink fontSize={"lg"}>#{jobOrderID}</BreadcrumbLink>
+                    </BreadcrumbItem>
+                </Breadcrumb>
+                <Flex>
+                    <BackButton title={"Back"} clickFunction={cancel} />
+                </Flex>
+            </Flex>
+
+
         </>)
     }
 
     function headerMain() {
         if (initialData != null) {
             return (<>
-
-                <Flex flexDirection={"column"}>
-                    <Flex gap={1}>
-                        <Text fontSize={"3xl"} fontWeight={"bold"}>Job Order:</Text>
-                        <Text fontSize={"3xl"}>#{jobOrderID}</Text>
-                    </Flex>
-                    <Flex gap={1}>
-                        <Text fontWeight={"bold"}>Handled by: </Text>
-                        {   initialData.mechanics != null ? (
-                            initialData.mechanics.map(mech => {
-                                return (
-                                    <Text>{mech.mechanicID.userID.firstName + " " + mech.mechanicID.userID.lastName}</Text>
-                                )
-                            })
-                        ) : (<></>)}
-                    </Flex>
-                    <Flex gap={10}>
+                <Flex justifyContent={"space-between"}>
+                    <Flex flexDirection={"column"}>
+                            <Flex gap={1} alignItems={"center"}>
+                                <Text fontSize={"3xl"} fontWeight={"bold"}>Job Order:</Text>
+                                <Text fontSize={"3xl"} mr={5}>#{jobOrderID}</Text>
+                                { initialData.jobOrder != null ? (joStatusIndicator(initialData.jobOrder.statusID.name)) : (<></>)}
+                            </Flex>
+                            
+                            
                         <Flex gap={1}>
-                            <Text fontWeight={"bold"}>Issue Date: </Text>
-                            <Text>{ initialData.jobOrder != null ? (new Date(initialData.jobOrder.createdAt).toLocaleDateString()) : ("")}</Text>
+                            <Text fontWeight={"bold"}>Handled by: </Text>
+                            {   initialData.mechanics != null ? (
+                                initialData.mechanics.map(mech => {
+                                    return (
+                                        <Text>{mech.mechanicID.userID.firstName + " " + mech.mechanicID.userID.lastName}</Text>
+                                    )
+                                })
+                            ) : (<></>)}
                         </Flex>
-                        <Flex gap={1}>
-                            <Text fontWeight={"bold"}>Plate #: </Text>
-                            <Text>{ initialData.jobOrder != null ? (initialData.jobOrder.vehicleID.plateNumber) : ("")}</Text>
+                        <Flex gap={10}>
+                            <Flex gap={1}>
+                                <Text fontWeight={"bold"}>Issue Date: </Text>
+                                <Text>{ initialData.jobOrder != null ? (new Date(initialData.jobOrder.createdAt).toLocaleDateString()) : ("")}</Text>
+                            </Flex>
+                            <Flex gap={1}>
+                                <Text fontWeight={"bold"}>Plate #: </Text>
+                                <Text>{ initialData.jobOrder != null ? (initialData.jobOrder.vehicleID.plateNumber) : ("")}</Text>
+                            </Flex>
                         </Flex>
+                    </Flex>
+                    <Flex alignItems={"end"}>
+                        {user.data.role == "Inventory" ? (<SaveButton title={"Save"} clickFunction={submitInvForm} />) : (<></>)}
                     </Flex>
                 </Flex>
-
             </>)
         }
 
@@ -155,7 +203,13 @@ function JobOrderDetailsPage({user, categoryList}) {
                 </GridItem>
 
                 <GridItem colStart={2} bg={"blackAlpha.300"} >
-                    <JobOrderMainLayout user={user.data} initialData={initialData} categoryList={categoryList} />
+                    <JobOrderMainLayout 
+                        user={user.data} 
+                        initialData={initialData} 
+                        categoryList={categoryList} 
+                        setFormState={setEditState}
+                        setSubmitArray={setPartsList}
+                    />
                 </GridItem>
             </Grid>            
         </>

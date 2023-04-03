@@ -60,4 +60,77 @@ export function vehicleStatusIndicator(status) {
     else return <Text>{status}</Text>
 }
 
+export function joStatusIndicator(status) {
+    if (status == "Pending Parts") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(248, 58, 58, 0.2)"} 
+                borderRadius={"30em"} 
+                px={3} 
+                py={0.3} 
+                w={"10em"} 
+                h={"2em"}
+                justifyContent={"center"} 
+                alignItems={"center"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"} >{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Open") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(248, 58, 58, 0.2)"} 
+                border={"2px solid rgba(248, 58, 58, 0.7)"} 
+                borderRadius={"30em"} 
+                px={3} 
+                py={0.3} 
+                w={"10em"} 
+                h={"2em"}
+                justifyContent={"center"} 
+                alignItems={"center"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "For Review") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(37, 198, 133, 0.2)"} 
+                border={"2px solid rgba(37, 198, 133, 0.7)"} 
+                borderRadius={"30em"} 
+                px={3} 
+                py={0.3} 
+                w={"10em"} 
+                h={"2em"}
+                justifyContent={"center"} 
+                alignItems={"center"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Completed") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(37, 198, 133, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3} 
+                py={0.3} 
+                w={"10em"} 
+                h={"2em"}
+                justifyContent={"center"} 
+                alignItems={"center"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"}>{status}</Text>
+            </Flex> 
+        )
+    }
+}
+
 

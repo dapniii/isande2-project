@@ -1,6 +1,7 @@
 import React from "react";
 import { Grid, GridItem, Text, Flex } from "@chakra-ui/react";
 import GlobalFilter from "@/components/table/globalFilter";
+import { joStatusIndicator } from "@/components/statusIndicators";
 
 export const COLUMNS = [
   // {
@@ -58,6 +59,9 @@ export const COLUMNS = [
           filterValue.includes(row.values[id])
       );
     },
+    Cell: (props) => {
+      return joStatusIndicator(props.value)
+    }
   },
   {
     Header: "Assigned To",

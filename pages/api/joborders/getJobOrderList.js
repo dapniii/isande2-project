@@ -7,7 +7,7 @@ import JobOrderItem from "@/models/jobOrders/JobOrderItemSchema";
 export default async (req, res) => {
     await connectToDatabase()
 
-    let jobOrders = await JobOrder.find({}).sort([["lastUpdatedDate", -1]])
+    let jobOrders = await JobOrder.find({}).sort([["updatedAt", -1]])
         .populate("vehicleID")
         .populate("statusID")
 
@@ -25,6 +25,15 @@ export default async (req, res) => {
 
     let joPartsList = await JobOrderItem.find({})
         .populate("itemID")
+        .populate({
+            path: "detailID",
+            populate: [
+                {
+                    path: "itemBrandID",       
+                    model: "ItemBrand", 
+                }, 
+            ]
+        })
 
     jobOrders.map(JO => {
         let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == JO._id.toString())

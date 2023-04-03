@@ -31,7 +31,17 @@ export default async (req, res) => {
 
     let partsList = await JobOrderItem.find({
         jobOrderID: jobOrder._id,
-    }).populate("itemID")
+    })
+    .populate("itemID")
+    .populate({
+        path: "detailID",
+        populate: [
+            {
+                path: "itemBrandID",       
+                model: "ItemBrand", 
+            }, 
+        ]
+    })
 
     res.json({
         jobOrder,
