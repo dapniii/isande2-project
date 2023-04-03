@@ -121,6 +121,7 @@ function JobOrderDetailsPage({user, categoryList}) {
             console.log(data)
             if (data.error != null) 
                 console.log(data.error)
+            location.reload()
         })
     }
 
@@ -140,6 +141,7 @@ function JobOrderDetailsPage({user, categoryList}) {
             console.log(data)
             if (data.error != null) 
                 console.log(data.error)
+            location.reload()
         })
     }
 
@@ -159,6 +161,7 @@ function JobOrderDetailsPage({user, categoryList}) {
             console.log(data)
             if (data.error != null) 
                 console.log(data.error)
+            location.reload()
         })
     }
 
