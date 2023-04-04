@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { Grid, GridItem, Flex, Text, Button, Tabs,
@@ -62,10 +63,15 @@ export const getServerSideProps = withSessionSsr(
 });
 
 export default function PurchaseOrdersPage({user}) {
+  const [tabIndex, setTabIndex] = useState(0)
   const router = useRouter()
 
   function navToCreate() {
     router.push("/purchaseorders/create")
+  }
+
+  function navToCreateSupplier() {
+    router.push("/purchaseorders/createSupplier")
   }
   
   function headerBreadcrumbs() {
@@ -78,7 +84,12 @@ export default function PurchaseOrdersPage({user}) {
       <Text fontSize={"3xl"} fontWeight={"bold"}>
         Purchase Orders
       </Text>
-      <AddButton title={"Add Purchase Order"} clickFunction={navToCreate} />
+      {
+        tabIndex == 0 
+          ? (<AddButton title={"Add Purchase Order"} clickFunction={navToCreate} />) 
+          : (<AddButton title={"Add Supplier"} clickFunction={navToCreateSupplier} />)
+      }
+      
     </Flex>)
   }
 
@@ -98,7 +109,7 @@ export default function PurchaseOrdersPage({user}) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.300"} >
-          <Tabs>
+          <Tabs onChange={(index) => setTabIndex(index)}>
             <TabList bg={"white"} top={"1em"} position={"sticky"} zIndex={3} boxShadow={"lg"} mt={-3}>
                 <Tab>Home</Tab>
                 <Tab>Suppliers</Tab>

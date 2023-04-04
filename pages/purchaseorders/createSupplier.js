@@ -69,6 +69,10 @@ export const getServerSideProps = withSessionSsr(
 function CreateSupplierPage({user}) {
     const router = useRouter()
 
+    async function submitForm() {
+      console.log("submit form")
+    }
+
     function headerBreadcrumbs() {
         return (
             <Breadcrumb pt={1}>
@@ -81,21 +85,20 @@ function CreateSupplierPage({user}) {
                 </BreadcrumbItem>
             </Breadcrumb>
         )
-
       }
     
       function headerMain() {
         return (      
-        <Flex alignItems={"center"} justifyContent={"space-between"}>
-          <Text fontSize={"3xl"} fontWeight={"bold"}>
-            New Supplier
-          </Text>
-          <ButtonGroup>
-            <CancelButton title={"Cancel"} />
-            <SaveButton title={"Save"} />
-          </ButtonGroup>
-          
-        </Flex>)
+          <Flex alignItems={"center"} justifyContent={"space-between"}>
+            <Text fontSize={"3xl"} fontWeight={"bold"}>
+              New Supplier
+            </Text>
+            <ButtonGroup>
+              <CancelButton title={"Cancel"} clickFunction={() => router.back()}/>
+              <SaveButton title={"Save"} clickFunction={submitForm} />
+            </ButtonGroup>
+          </Flex>
+        )
       }
     
       return (
