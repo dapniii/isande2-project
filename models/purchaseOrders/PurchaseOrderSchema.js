@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import Supplier from "./SupplierSchema";
+import Supplier from "./categories/SupplierSchema";
 import User from "../users/UserSchema";
-import PurchaseOrderStatus from "./PurchaseOrderStatusSchema";
+import PurchaseOrderStatus from "./categories/PurchaseOrderStatusSchema";
 
 const PurchaseOrderSchema = new mongoose.Schema({
     poNumber: {
