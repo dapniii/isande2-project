@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { 
@@ -14,6 +15,7 @@ import { CancelButton, SaveButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import CreateSupplierForm from "@/components/layouts/purchaseorders/createSupplierForm";
+import { purchaseOrderAPI } from "@/lib/routes";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -55,22 +57,27 @@ export const getServerSideProps = withSessionSsr(
         }
       }
 
+      const catRes = await fetch(purchaseOrderAPI.get_supplier_categories)
+      const catData = await catRes.json()
+
       return {
           props: { 
             user: {
               data: user,
               isLoggedIn: true 
             }, 
+            categoryList: catData
           }
       }
 });
 
 
-function CreateSupplierPage({user}) {
+function CreateSupplierPage({user, categoryList}) {
     const router = useRouter()
+    const [submitForm, setSubmitForm] = useState()
 
-    async function submitForm() {
-      console.log("submit form")
+    function getSubmit(submitFunc) {
+      setSubmitForm(submitFunc)
     }
 
     function headerBreadcrumbs() {
@@ -117,7 +124,7 @@ function CreateSupplierPage({user}) {
             </GridItem>
     
             <GridItem colStart={2} bg={"blackAlpha.300"} >
-                <CreateSupplierForm />
+                <CreateSupplierForm creatorID={user.data.userID} categoryList={categoryList} submitFunc={getSubmit} />
             </GridItem>
           </Grid>
         </>

@@ -1,6 +1,8 @@
 import mongoose from "mongoose";
 import User from "@/models/users/UserSchema";
 import Image from "@/models/ImageSchema";
+import City from "./CitySchema";
+import Province from "./ProvinceSchema";
 
 const SupplierSchema = new mongoose.Schema({
     imageID: {
@@ -16,11 +18,13 @@ const SupplierSchema = new mongoose.Schema({
     streetAddress: {
         type: String,
     },
-    city: {
-        type: String,
+    cityID: {
+        type: mongoose.Types.ObjectId,
+        ref: "City"
     },
-    province: {
-        type: String,
+    provinceID: {
+        type: mongoose.Types.ObjectId,
+        ref: "Province"
     },
     email: {
         type: String,
@@ -31,6 +35,10 @@ const SupplierSchema = new mongoose.Schema({
     creatorID: {
         type: mongoose.Types.ObjectId,
         ref: "User"
+    },
+    disabled: {
+        type: Boolean,
+        default: false,
     }
 }, {timestamps: true})
 

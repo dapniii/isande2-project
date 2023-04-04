@@ -11,6 +11,11 @@ import { Grid, GridItem, Flex, Text, Button, Tabs,
 import { AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@/lib/auth/withSession";
+import { purchaseOrderAPI } from "@/lib/routes";
+import BasicTable from "@/components/table/basicTable";
+import { COLUMNS } from "@/components/layouts/purchaseorders/supplierColumns";
+import Dropdown from "@/components/table/dropdown";
+import GlobalFilter from "@/components/table/globalFilter";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -52,17 +57,22 @@ export const getServerSideProps = withSessionSsr(
         }
       }
 
+      const catRes = await fetch(purchaseOrderAPI.get_form_categories)
+      const catData = await catRes.json()
+
       return {
           props: { 
             user: {
               data: user,
               isLoggedIn: true 
             }, 
-          }
+            categoryList: catData,
+          },
+          
       }
 });
 
-export default function PurchaseOrdersPage({user}) {
+export default function PurchaseOrdersPage({user, categoryList}) {
   const [tabIndex, setTabIndex] = useState(0)
   const router = useRouter()
 
@@ -93,6 +103,33 @@ export default function PurchaseOrdersPage({user}) {
     </Flex>)
   }
 
+  function filters(filter, setFilter, globalFilter, setGlobalFilter) {
+    return (
+      <>
+        <GlobalFilter
+          filter={globalFilter}
+          setFilter={setGlobalFilter} 
+        ></GlobalFilter>
+        <Dropdown 
+          title="Cities"
+          options={categoryList.cities}
+          id="city"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        ></Dropdown>
+          <Dropdown 
+          title="Provinces"
+          options={categoryList.provinces}
+          id="province"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        ></Dropdown>
+      </>
+    )
+}
+
   return (
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
@@ -119,7 +156,12 @@ export default function PurchaseOrdersPage({user}) {
                   Home
                 </TabPanel>
                 <TabPanel>
-                  Suppliers
+                  <BasicTable 
+                    DATA={categoryList.suppliers}
+                    COLUMNS={COLUMNS}
+                    FILTERS={filters}
+                    HIDDEN={["supplierName", "streetAddress", "city", "province"]}
+                  />
                 </TabPanel>
             </TabPanels>
           </Tabs>

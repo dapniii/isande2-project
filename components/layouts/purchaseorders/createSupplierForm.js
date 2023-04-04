@@ -2,29 +2,27 @@ import { useState, useRef, useEffect } from "react";
 import { 
     Image,
     Text, 
-    Grid, 
-    GridItem,
-    ButtonGroup,
     Button, 
-    IconButton,
     FormControl,
     FormLabel,
     FormErrorMessage,
     FormHelperText,
     Input, 
     Select,
-    Textarea,
     Flex,
     Card,
     CardHeader,
     CardBody,
     CardFooter,
+    useDisclosure,
 } from "@chakra-ui/react";
 import { generateID } from "@/lib/dataHandler";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import CategoryListModal from "@/components/basicCategoryModal";
+import { purchaseOrderAPI } from "@/lib/routes";
+import { uploadImage } from "@/lib/images/imageHandler";
 
-
-function CreateSupplierForm({creatorID}) {
+function CreateSupplierForm({creatorID, categoryList, submitFunc}) {
     const [name, setName] = useState("")
     const [streetAddress, setStreetAddress] = useState("")
     const [city, setCity] = useState("")
@@ -34,6 +32,15 @@ function CreateSupplierForm({creatorID}) {
     const [photo, setPhoto] = useState(null);
     const [preview, setPreview] = useState("")
     const inputPhoto = useRef(null);
+
+    const cityModal = useDisclosure();
+    const provModal = useDisclosure();
+
+
+    // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
+    useEffect(() => {
+        submitFunc(passSubmitFunc)
+    }, [name, streetAddress, city, province, email, phone, photo, inputPhoto])
 
     // Generate photo preview
     useEffect(() => {
@@ -46,6 +53,47 @@ function CreateSupplierForm({creatorID}) {
         // free memory when ever this component is unmounted
         return () => URL.revokeObjectURL(objectUrl)
     }, [photo])
+
+    function passSubmitFunc() {
+        return submitForm
+    }
+
+    async function submitForm() {
+        let uploadConfig = {
+            file: inputPhoto.current.files[0],
+            params: {
+                public_id: name,
+                folder: "suppliers",
+                // type: "private",
+            }
+        }
+        let imageRes = await uploadImage(uploadConfig)
+        console.log(imageRes)
+
+        let supplierData = {
+            name: name,
+            imageID: imageRes,
+            streetAddress: streetAddress,
+            cityID: city,
+            provinceID: province,
+            email: email,
+            phone: phone,
+            creatorID: creatorID,
+        }
+        console.log(supplierData)
+        
+        let result = await fetch(purchaseOrderAPI.create_supplier, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(supplierData),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            location.reload()
+        })
+    }
 
     return (
         <Flex justifyContent={"space-around"} p={5} gap={5}>
@@ -112,21 +160,50 @@ function CreateSupplierForm({creatorID}) {
 
                     <Flex gap={5}>
                         <FormControl isRequired>
-                            <FormLabel>City</FormLabel>
+                            <FormLabel onClick={() => cityModal.onOpen()}>City</FormLabel>
+                            <CategoryListModal modalOpen={cityModal} title={"Cities"} options={categoryList.cities} apiPath={purchaseOrderAPI.modify_city}/>
                                 <Select
                                     placeholder="Select City"
                                     value={city}
                                     onChange={(e) => setCity(e.target.value)}
                                 >
+                                    
+                                    {categoryList.cities.map((category) => {
+                                        if (category.disabled == false) {
+                                            return (
+                                                <option
+                                                    key={category.pubId}
+                                                    value={category.name}
+                                                >
+                                                    {category.name}
+                                                </option>
+                                            );
+                                        }
+                                    })}
+                                    
                                 </Select>
                         </FormControl> 
                         <FormControl isRequired>
-                            <FormLabel>Province</FormLabel>
+                            <FormLabel onClick={() => provModal.onOpen()}>Province</FormLabel>
+                            <CategoryListModal modalOpen={provModal} title={"Provinces"} options={categoryList.provinces} apiPath={purchaseOrderAPI.modify_status}/>
+
                                 <Select
                                     placeholder="Select Province"
                                     value={province}
                                     onChange={(e) => setProvince(e.target.value)}
                                 >
+                                    {categoryList.provinces.map((category) => {
+                                        if (category.disabled == false) {
+                                            return (
+                                                <option
+                                                    key={category.pubId}
+                                                    value={category.name}
+                                                >
+                                                    {category.name}
+                                                </option>
+                                            );
+                                        }
+                                    })}
                                 </Select>
                         </FormControl> 
                     </Flex>
