@@ -1,6 +1,12 @@
 import mongoose from "mongoose";
+import User from "@/models/users/UserSchema";
+import Image from "@/models/ImageSchema";
 
 const SupplierSchema = new mongoose.Schema({
+    imageID: {
+        type: mongoose.Types.ObjectId,
+        ref: "Image"
+    },
     name: {
         type: String,
         required: true,
