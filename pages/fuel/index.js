@@ -1,28 +1,39 @@
-import Navbar from "@/components/navbar";
-import Header from "@/components/header";
-import { AddButton } from "@/components/buttons";
+import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
+import { AddButton } from "@/components/Buttons";
 import { useRouter } from "next/router";
-import { Grid, GridItem, Flex, Text, Button, Icon } from "@chakra-ui/react";
+import {
+  Grid,
+  GridItem,
+  Flex,
+  Text,
+  StatGroup,
+  Stat,
+  StatLabel,
+  StatNumber,
+  Select
+} from "@chakra-ui/react";
 import BasicTable from "@/components/table/basicTable";
-import { COLUMNS } from "@/components/layouts/fuel/fuelColumns";
+import {
+  COLUMNS,
+  FUEL_OUT_COLUMNS,
+} from "@/components/layouts/fuel/fuelColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 import { useDisclosure } from "@chakra-ui/hooks";
 import AddFuelEntryForm from "@/components/layouts/fuel/addFuelEntryForm";
-import { MdAddCircle } from "react-icons/md";
 import { useState } from "react";
 import { withSessionSsr } from "@/lib/auth/withSession";
+import { fuelAPI } from "@/lib/routes";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
 export const getServerSideProps = withSessionSsr(
-  async ({req, res}) => {
+  async ({ req, res, context }) => {
     const user = req.session.user;
 
     // TODO: Add allowed users here
-    const allowedUsers = [
-      { role: "System Admin", userType: "Admin"}
-    ]
+    const allowedUsers = [{ role: "System Admin", userType: "Admin" }];
 
     // If not logged in
     if (user == null) {
@@ -31,66 +42,80 @@ export const getServerSideProps = withSessionSsr(
           permanent: false,
           destination: "/login",
         },
-        props: { user: {
-          data: user,
-          isLoggedIn: false 
-          }, 
-        }
-      }
+        props: {
+          user: {
+            data: user,
+            isLoggedIn: false,
+          },
+        },
+      };
     }
 
     // If user role and user type not allowed
-    else if (allowedUsers.findIndex(option => 
-      option.role == user.role 
-      && option.userType == user.userType) == -1)  
-      {
-        return {
-          redirect: {
-            permanent: false,
-            destination: "/",
+    else if (
+      allowedUsers.findIndex(
+        (option) => option.role == user.role && option.userType == user.userType
+      ) == -1
+    ) {
+      return {
+        redirect: {
+          permanent: false,
+          destination: "/",
+        },
+        props: {
+          user: {
+            isLoggedIn: true,
           },
-          props: { user: {
-            isLoggedIn: true 
-            }, 
-          }
-        }
-      }
+        },
+      };
+    }
 
-  const result = await fetch("https://my.api.mockaroo.com/fuel.json?key=98539730");
-  const fuelData = await result.json();
+    const [fuelIn, fuelOut] = await Promise.all([
+      fetch(fuelAPI.get_fuelIn)
+        .then((res) => res.json())
+        .then((res) => res.data),
+      fetch(fuelAPI.get_fuelOut)
+        .then((res) => res.json())
+        .then((res) => res.data),
+    ]);
 
-  const category = {
-    refuelType: [{ name: "Refuel Truck" }],
-  };
+    const categories = {
+      refuelType: [{ name: "Refuel Truck" }],
+    };
 
-  let data = {
-    fuel: fuelData,
-    categories: category,
-  };
-  console.log(data.categories.refuelType[0]);
-  return { props: { 
-    data,
-    user: {
-      data: user,
-      isLoggedIn: true 
-    }, 
-  } };
-});
+    let data = {
+      fuelIn,
+      fuelOut,
+      categories,
+    };
+
+    return {
+      props: {
+        data,
+        user: {
+          data: user,
+          isLoggedIn: true,
+        },
+      },
+    };
+  }
+);
 //***************************************************************************************/
 
 export default function FuelPage({ user, data }) {
-  const router = useRouter();
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [refuelType, setRefuelType] = useState("");
 
+  console.log(refuelType)
   //Add fuel entry button function -OPEN CLOSE FORMS
-  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
-  
   function addFuelEntry() {
-    setIsFormOpen(true)
+    setIsFormOpen(true);
   }
   function closeFuelEntryForm() {
-    setIsFormOpen(false)
+    setIsFormOpen(false);
   }
 
   function headerBreadcrumbs() {
@@ -104,23 +129,37 @@ export default function FuelPage({ user, data }) {
           Fuel
         </Text>
         <AddButton title={"Add Fuel Entry"} clickFunction={addFuelEntry} />
-        <AddFuelEntryForm isOpen={isFormOpen} onClose={closeFuelEntryForm} />
+        <AddFuelEntryForm
+          creatorID={user.data.userID}
+          isOpen={isFormOpen}
+          onClose={closeFuelEntryForm}
+          fuelInCount={data.fuelIn.length}
+          fuelOutCount={data.fuelOut.length}
+        />
       </Flex>
     );
   }
 
+  
+
   function filters(filter, setFilter, globalFilter, setGlobalFilter) {
+  
+
     return (
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-        <Dropdown
-          title="Refuel Tank"
-          options={data.categories.refuelType}
-          id="refuelType"
-          name="name"
-          filter={filter}
-          setFilter={setFilter}
-        />
+        
+        <Select
+                w={"25%"}
+                value={refuelType} 
+                name={refuelType}
+                onChange={e => setRefuelType(e.target.value)}
+                border={"1px solid #9F9F9F"}
+            >
+                <option key="00000" value="" defaultValue> Refuel Tank </option>
+                <option key="00001" value="Refuel Truck" defaultValue> Refuel Truck </option>
+            </Select>
+
       </>
     );
   }
@@ -140,18 +179,32 @@ export default function FuelPage({ user, data }) {
           />
         </GridItem>
 
-        {/* ADD GRAPH */}
-
-        {/* Fuel Data Table */}
-        <GridItem colStart={2} bg={"blackAlpha.300"} p={2} overflowY={"auto"}>
-          <BasicTable
-            COLUMNS={COLUMNS}
-            DATA={data.fuel}
-            FILTERS={filters}
-            HIDDEN={["refuelType"]}
-          />
+        <GridItem colStart={2} bg={"blackAlpha.300"} gap={2} p={4}>
+          <Flex flexDirection={"column"} gap={5} height={100}>
+            <StatGroup bg={"white"} p={5} boxShadow={"xl"} borderRadius={5}>
+              <Stat>
+                <StatLabel>Total Fuel Tank Liters</StatLabel>
+                <StatNumber>11,000L out of 64,000L</StatNumber> //to update
+              </Stat>
+            </StatGroup>
+            { refuelType == "" && 
+               <BasicTable
+               COLUMNS={COLUMNS}
+               DATA={data.fuelIn}
+               FILTERS={filters}
+               HIDDEN={["refuelType"]}
+             />}
+            { refuelType == "Refuel Truck" && 
+             <BasicTable
+             COLUMNS={FUEL_OUT_COLUMNS}
+             DATA={data.fuelOut}
+             FILTERS={filters}
+             HIDDEN={["refuelType"]}
+           />}
+          </Flex>
         </GridItem>
       </Grid>
     </>
   );
 }
+

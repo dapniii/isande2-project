@@ -11,52 +11,79 @@ export const COLUMNS = [
   },
   {
     Header: "Date & Time",
-    id: "dateTime",
-    accessor: "dateTime",
+    accessor: "fRecordDateTime",
     filter: GlobalFilter,
   },
   {
     Header: "Quantity",
-    id: "quantity",
-    accessor: "quantity",
+    accessor: "fLiters",
     Cell: (props) => {
-        return (
-            <Flex alignItems={"center"}>
-                {props.row.original.quantity}
-            </Flex>
-        )
-    }
+      return <Flex alignItems={"center"}>{props.row.original.fLiters}</Flex>;
+    },
   },
   {
     Header: "Unit Price",
-    id: "unitPrice",
-    accessor: "unitPrice",
+    accessor: "fUnitCost",
     filter: GlobalFilter,
     Cell: (props) => {
-      return (
-          <Flex alignItems={"center"}>
-              {props.row.original.unitPrice}
-          </Flex>
-      )
-  }
+      return <Flex alignItems={"center"}>{props.row.original.fUnitCost}</Flex>;
+    },
   },
-  // {
-  //   Header: "Fuel(%)",
-  //   id: "fuelPercent",
-  //   accessor: "fuelPercent",
-  //   filter: GlobalFilter,
-  //   Cell: (props) => {
-  //     return (
-  //         <Flex alignItems={"center"}>
-  //             {props.row.original.fuelPercent}
-  //         </Flex>
-  //     )
-  // }
-  // },
   {
     Header: "Recorded by",
-    id: "recordedBy",
-    accessor: "recordedBy",
+    id: "recordedby",
+    Cell(props) {
+      const { user } = props.row.original;
+      return `${user.firstName} ${user.lastName}`;
+    },
+    filter: GlobalFilter,
+  },
+];
+
+export const FUEL_OUT_COLUMNS = [
+  {
+    Header: "Refuel Type",
+    id: "refuelType",
+    accessor: "refuelType",
+    filter: GlobalFilter,
+  },
+  {
+    Header: "Date & Time",
+    accessor: "oRecordDateTime",
+    filter: GlobalFilter,
+  },
+  {
+    Header: "Driver",
+    accessor: "oDriver",
+    Cell: (props) => {
+      return <Flex alignItems={"center"}>{props.row.original.oDriver}</Flex>;
+    },
+  },
+  {
+    Header: "Plate Number",
+    accessor: "oPlateNumber",
+    Cell: (props) => {
+      return <Flex alignItems={"center"}>{props.row.original.oPlateNumber}</Flex>;
+    },
+  },
+  {
+    Header: "Previous Route",
+    accessor: "oPreviousRoute",
+    Cell: (props) => {
+      return <Flex alignItems={"center"}>{props.row.original.oPreviousRoute}</Flex>;
+    },
+  },
+  {
+    Header: "Quantity",
+    accessor: "ofLiters",
+    Cell: (props) => {
+      return <Flex alignItems={"center"}>{props.row.original.ofLiters}</Flex>;
+    },
+  },
+  {
+    Header: "Recorded by",
+    id: "recordedby",
+
     filter: GlobalFilter,
   },
 ];

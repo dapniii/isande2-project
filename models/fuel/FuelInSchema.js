@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { customAlphabet } from "nanoid";
 import alphanumeric from "nanoid-dictionary/alphanumeric";
+import '../users/UserSchema'
 
-const nanoid = customAlphabet(alphanumeric, 8);
+const nanoid = customAlphabet(alphanumeric, 15);
 
 const FuelInSchema = new mongoose.Schema({
     fuelInID: {
@@ -25,17 +26,8 @@ const FuelInSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    fFuelIn: {
-        type: Boolean,
-        required: true,
-        default: true
-    },
-    // fFuelInPercent: { //FUEL(%)
-    //     type: Number,
-    //     required: true
-    // },
     creatorID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "User",
     },
     creationDate: {
@@ -48,6 +40,6 @@ const FuelInSchema = new mongoose.Schema({
     }
 });
 
-const FuelIn = mongoose.models.FuelInSchema || mongoose.model("FuelIn", FuelInSchema)
+const FuelIn = mongoose.models.FuelIn || mongoose.model("FuelIn", FuelInSchema)
 
 export default FuelIn;

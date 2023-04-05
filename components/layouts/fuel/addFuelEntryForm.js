@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Button,
   Modal,
@@ -15,110 +15,113 @@ import {
   Flex,
   HStack,
   Center,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
-import { SaveButton, BackButton, CancelButton } from "@/components/buttons";
+import { SaveButton, BackButton, CancelButton } from "@/components/Buttons";
 import { MdCheckCircle } from "react-icons/md";
 import { generateID } from "@/lib/dataHandler";
 import { fuelAPI } from "@/lib/routes";
+import { useRouter } from "next/router";
 
-const AddFuelEntry = ({ creatorID, submitFunc, isOpen, onClose }) => {
-  //insert fuelInCount
+const AddFuelEntry = ({
+  creatorID, fuelInCount, fuelOutCount, isOpen,
+  onClose,
+}) => {
+  const { reload } = useRouter()
 
   const [refuelType, setRefuelType] = useState("");
   const [showRefuelDetails, setShowRefuelDetails] = useState(false);
 
   const [fuelInID, setFuelInID] = useState(generateID(fuelInCount, 15));
   const [fRecordDateTime, setFRecordDateTime] = useState("");
-  const [fUnitCost, setFUnitCost] = useState("");
-  const [fLiters, setFLiters] = useState("");
-  const [fFuelIn, setFFuelIn] = useState("");
-  //const [fFuelInPercent, setFFuelInPercent] = useState("");
+  const [fUnitCost, setFUnitCost] = useState(0);
+  const [fLiters, setFLiters] = useState(0);
+ 
 
-  const [fuelOutID, setFuelOutID] = useState(generateID(fuelInCount, 15));
+  const [fuelOutID, setFuelOutID] = useState(generateID(fuelOutCount, 15));
   const [oRecordDateTime, setORecordDateTime] = useState("");
-  const [oDriverID, setODriverID] = useState("");
-  const [oUserID, setOUserID] = useState("");
+  const [oDriver, setODriver] = useState("");
+  //const [oUserID, setOUserID] = useState("");
   const [oPlateNumber, setOPlateNumber] = useState("");
-  const [ofLiters, setOLiters] = useState("");
-  const [oFuelOut, setOFuelOut] = useState("");
+  const [ofLiters, setOLiters] = useState(0);
   const [oPreviousRoute, setOPreviousRoute] = useState("");
-  // const [fuelOutPercent, setFuelOutPercent] = useState("");
+
 
   //CONTINUE HERE
-  useEffect(() => {
-    submitFunc(passSubmitFunc);
-  }, []);
 
-  function passSubmitFunc() {
-    return submitForm;
-  }
+  // useEffect(() => {
+  //   submitFunc(passSubmitFunc);
+  // }, []);
+
+  // function passSubmitFunc() {
+  //   return submitForm;
+  // }
 
   function clear() {
     setFuelInID("");
     setFRecordDateTime("");
     setFUnitCost("");
     setFLiters("");
-    setFFuelIn("");
     setFuelOutID("");
     setORecordDateTime("");
-    setODriverID("");
-    setOUserID("");
+    setODriver("");
+   // setOUserID("");
     setOPlateNumber("");
     setOLiters("");
-    setOFuelOut("");
     setOPreviousRoute("");
   }
 
   async function submitForm() {
     if (refuelType == "tank") {
-      let fuelInData = {
+      const fuelInData = {
         fuelInID: fuelInID,
         fRecordDateTime: fRecordDateTime,
         fUnitCost: fUnitCost,
         fLiters: fLiters,
-        fFuelIn: fFuelIn,
-        creatorID: creatorID
-      }
-      console.log(fuelInData)
+        creatorID: creatorID,
+      };
+      console.log(fuelInData);
       //EDIT FUELINAPI
-      await fetch(fuelAPI.create_fuelIn,{
+      await fetch(fuelAPI.create_fuelIn, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(fuelInData),
-      }).then(result => result.json())
-      .then(data => {
-          if(data.error != null)
-            console.log(data.error)
-          clear()
       })
-    }
-    else {
+        .then((result) => result.json())
+        .then((data) => {
+          if (data.error != null) console.error(data.error);
+          reload()
+        });
+    } else {
       let fuelOutData = {
         fuelOutID: fuelOutID,
         oRecordDateTime: oRecordDateTime,
-        oDriverID: oDriverID,
-        oUserID: oUserID,
-        oPlateNumber:oPlateNumber,
-        oLiters: ofLiters,
+        oDriver: oDriver,
+        //oUserID: oUserID,
+        oPlateNumber: oPlateNumber,
+        ofLiters: ofLiters,
         oPreviousRoute: oPreviousRoute,
-        oFuelOut: oFuelOut,
-        creatorID: creatorID
-      }
-      console.log(fuelOutData)
+        creatorID: creatorID,
+      };
+      console.log(fuelOutData);
       await fetch(fuelAPI.create_fuelOut, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(fuelOutData),
-      }).then(result => result.json())
-      .then(data => {
-          if(data.error != null)
-            console.log(data.error)
-          clear()
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(fuelOutData),
       })
+        .then((result) => result.json())
+        .then((data) => {
+          if (data.error != null) console.log(data.error);
+          reload()
+        });
     }
   }
 
@@ -130,9 +133,6 @@ const AddFuelEntry = ({ creatorID, submitFunc, isOpen, onClose }) => {
     setShowRefuelDetails(true);
   };
 
-  const handleConfirmRefuelDetails = () => {
-    console.log("Refuel details confirmed!");
-  };
 
   const handleCancel = () => {
     setShowRefuelDetails(false);
@@ -143,13 +143,13 @@ const AddFuelEntry = ({ creatorID, submitFunc, isOpen, onClose }) => {
     <Modal isOpen={isOpen} onClose={handleCancel}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select Refuel Type</ModalHeader>
+        <ModalHeader fontWeight="bold" textAlign="center">Add Fuel Entry</ModalHeader>
         <ModalBody>
           {!showRefuelDetails && (
             <FormControl>
               <FormLabel>Select Refuel Type</FormLabel>
               <Select
-                placeholder="Select refuel type"
+                placeholder="Select Refuel Type"
                 onChange={handleRefuelTypeChange}
               >
                 <option value="tank">Refuel Tank</option>
@@ -161,49 +161,82 @@ const AddFuelEntry = ({ creatorID, submitFunc, isOpen, onClose }) => {
             <>
               {refuelType === "tank" && (
                 <>
+                 <ModalHeader fontWeight="bold">Fuel Entry Details (Refuel Tank)</ModalHeader>
                   <FormControl mt={4}>
                     <FormLabel>Date and Time</FormLabel>
-                    <Input type="datetime-local" value={fRecordDateTime} onChange={(e) =>
-                    setFRecordDateTime(e.target.value)}/>
+                    <Input
+                      type="datetime-local"
+                      value={fRecordDateTime}
+                      onChange={(e) => setFRecordDateTime(e.target.value)}
+                    />
                   </FormControl>
-                  <FormControl mt={4}>
+                  <FormControl mt={4} >
                     <FormLabel>Quantity</FormLabel>
-                    <Input value={fLiters} onChange={(e) =>
-                    setFLiters(e.target.value)}/>
+                    <NumberInput step={0.01} min={1} value={fLiters} onChange={(_, value) => setFLiters(value)}>
+                      <NumberInputField  />
+                      <NumberInputStepper >
+                        <NumberIncrementStepper  />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
                   </FormControl>
                   <FormControl mt={4}>
                     <FormLabel>Cost</FormLabel>
-                    <Input value={fUnitCost} onChange={(e) =>
-                    setFUnitCost(e.target.value)}/>
+                    <NumberInput step={0.01} min={1} value={fUnitCost} onChange={(_, value) => setFUnitCost(value)}>
+                      <NumberInputField  />
+                      <NumberInputStepper  >
+                        <NumberIncrementStepper  />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
                   </FormControl>
                 </>
               )}
               {refuelType === "truck" && (
                 <>
+                 <ModalHeader fontWeight="bold">Fuel Entry Details (Refuel Truck)</ModalHeader>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Date and Time</FormLabel>
-                    <Input type="datetime-local" value={oRecordDateTime} onChange={(e) =>
-                    setORecordDateTime(e.target.value)}/>
+                    <Input
+                      type="datetime-local"
+                      value={oRecordDateTime}
+                      onChange={(e) => setORecordDateTime(e.target.value)}
+                    />
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Driver Name</FormLabel>
-                    <Input  value={oDriverID} onChange={(e) =>
-                    setODriverID(e.target.value)}/>
+                    <Input
+                      value={oDriver}
+                      onChange={(e) => setODriver(e.target.value)}
+                    />
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Plate Number</FormLabel>
-                    <Input value={oPlateNumber} onChange={(e) =>
-                    setOPlateNumber(e.target.value)}/>
+                    <Input
+                      value={oPlateNumber}
+                      onChange={(e) => setOPlateNumber(e.target.value)}
+                    />
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Quantity</FormLabel>
-                    <Input value={ofLiters} onChange={(e) => 
-                    setOLiters(e.target.value)}/>
+                    <NumberInput step={0.01} min={1} value={ofLiters} onChange={(_, value) => setOLiters(value)}>
+                      <NumberInputField  />
+                      <NumberInputStepper >
+                        <NumberIncrementStepper  />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+                    {/* <Input
+                      value={ofLiters}
+                      onChange={(e) => setOLiters(e.target.value)}
+                    /> */}
                   </FormControl>
                   <FormControl mt={4}>
                     <FormLabel>Previous Route</FormLabel>
-                    <Input value={oPreviousRoute} onChange={(e) =>
-                    setOPreviousRoute(e.target.value)}/>
+                    <Input
+                      value={oPreviousRoute}
+                      onChange={(e) => setOPreviousRoute(e.target.value)}
+                    />
                   </FormControl>
                 </>
               )}
@@ -216,8 +249,8 @@ const AddFuelEntry = ({ creatorID, submitFunc, isOpen, onClose }) => {
             showRefuelDetails ? (
               <HStack spacing={4}>
                 <SaveButton
-                  title={"Confirm Fuel Entry"}
-                  clickFunction={handleConfirmRefuelDetails}
+                  title={"Save Fuel Entry"}
+                  clickFunction={submitForm}
                 />
                 <CancelButton title={"Cancel"} clickFunction={handleCancel} />
               </HStack>

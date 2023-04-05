@@ -2,23 +2,20 @@ import { connectToDatabase } from "@/lib/db";
 import FuelIn from "@/models/fuel/FuelInSchema";
 
 export default async (req, res) => {
-    await connectToDatabase();
-    const fuelInInfo = req.body;
-
-    fuelInInfo.additions.forEach(async e => {
-        let duplicates = await FuelIn.find({
-            $or: [ {'fuelInId': fuelInInfo.id}, {'name': fuelInInfo.name}]
-        })
+    try {
+        await connectToDatabase();
+        const e = req.body;
+            
         await FuelIn.create({//CHECK FUEL IN - add here
-            fuelInId: e.id,
-            recordDateTime: e.date,
-            userId: e.userId,
-            liters: e.liters,
-            fuelIn: e.fuelIn,
-            fuelInPercent: e.fuelInPercent,
-            creatorID: e.userId,
+            fuelInID: e.fuelInID,
+            fRecordDateTime: e.fRecordDateTime,
+            fLiters: e.fLiters,
+            creatorID: e.creatorID,
+            fUnitCost: e.fUnitCost,
         })
-    })
-
-    res.json("success");
+    
+        res.json("success");
+    } catch (err) {
+        console.error(err)
+    }
 }

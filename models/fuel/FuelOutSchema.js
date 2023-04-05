@@ -17,40 +17,31 @@ const FuelOutSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
-    oDriverID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+    oDriver: {
+        type: String,
+       // ref: "User",
         required: true,
     },
-    oUserID: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: true,
-    },
+    // oUserID: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "User",
+    //     required: true,
+    // },
     oPlateNumber: { //TO EDIT IF VEHICLES PART IS CREATED
         type: String,
         required: true
     },
-    oLiters: {
+    ofLiters: {
         type: Number,
         required: true
-    },
-    oFuelOut: {
-        type: String,
-        required: true,
-        default: "Refuel Truck"
     },
     oPreviousRoute: {
         type: String,
         required: true,
         maxLength: 50
     },
-    // fuelOutPercent: { //FUEL (%)
-    //     type: Number,
-    //     required: true
-    // },
     creatorID: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: "User",
     },
     creationDate: {

@@ -3,7 +3,7 @@ import { InputGroup, Input, InputRightElement, Icon } from '@chakra-ui/react';
 import { MdSearch } from 'react-icons/md';
 
 export const GlobalFilter = ({filter, setFilter}) => {
-    const [value, setValue] = useState(filter);
+    // const [value, setValue] = useState(filter);
 
     return (
         <InputGroup maxW={"30%"}>
