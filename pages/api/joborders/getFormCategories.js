@@ -65,7 +65,7 @@ export default async (req, res) => {
         let quantity = 0
         let itemValue = 0
         itemDetails.map(detail => {
-            if (item._id.toString() == detail.itemID.toString() && !detail.disabled) {
+            if (item._id.toString() == detail.itemID._id.toString() && !detail.disabled) {
                 detailsArray.push(detail)
                 quantity += detail.quantity
                 itemValue += parseFloat(detail.unitPrice) * detail.quantity
