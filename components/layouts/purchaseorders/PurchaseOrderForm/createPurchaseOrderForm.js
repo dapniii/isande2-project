@@ -1,4 +1,4 @@
-import React from 'react'
+import { useState } from 'react'
 import { 
   Flex ,
   Text,
@@ -26,10 +26,14 @@ import {
 import OrderHistoryLayout from './orderHistory';
 import PurchaseOrderPartsList from './partsList';
 
-function CreatePurchaseOrderForm() {
+function CreatePurchaseOrderForm({options}) {
   // Temp values
   const poNumber = "1000000001"
   const tempStatus = "Draft"
+
+  const [supplier, setSupplier] = useState("");
+  const [requestedBy, setRequestedBy] = useState("")
+  const [description, setDescription] = useState("")
 
   return (
     <Flex p={5} gap={5}>
@@ -53,22 +57,18 @@ function CreatePurchaseOrderForm() {
                     suggestWhenEmpty
                     restoreOnBlurIfEmpty={false} 
                     mx={2} 
-                    // onChange={(value) => handleItemSelect(value)}
+                    onChange={(value) => setSupplier(value)}
                 >
                     <AutoCompleteInput variant="outline" />
                     <AutoCompleteList>
-                        {/* {options.partItems.map((item) => (
+                        {options.suppliers.map((item) => (
                             <AutoCompleteItem
-                                key={item.itemNumber}
-                                value={item.itemNumber}
+                                key={item._id}
+                                value={item.name}
                             >
-                                <Flex flexDirection={"column"}>
-                                    <Text fontWeight={"bold"}>{item.itemNumber}</Text>
-                                    <Text fontSize={"sm"}>{item.itemName} {item.itemModel}</Text>
-                                </Flex>
-                                
+                              <Text>{item.name}</Text>  
                             </AutoCompleteItem>
-                        ))} */}
+                        ))}
                     </AutoCompleteList>
                 </AutoComplete>
               </FormControl>
@@ -80,33 +80,35 @@ function CreatePurchaseOrderForm() {
                     suggestWhenEmpty
                     restoreOnBlurIfEmpty={false} 
                     mx={2} 
-                    // onChange={(value) => handleItemSelect(value)}
+                    onChange={(value) => setRequestedBy(value)}
                 >
                     <AutoCompleteInput variant="outline" />
                     <AutoCompleteList>
-                        {/* {options.partItems.map((item) => (
+                        {options.users.map((user) => (
                             <AutoCompleteItem
-                                key={item.itemNumber}
-                                value={item.itemNumber}
+                                key={user.userID}
+                                value={user.firstName + " " + user.lastName}
                             >
                                 <Flex flexDirection={"column"}>
-                                    <Text fontWeight={"bold"}>{item.itemNumber}</Text>
-                                    <Text fontSize={"sm"}>{item.itemName} {item.itemModel}</Text>
-                                </Flex>
-                                
+                                    <Text>{user.firstName + " " + user.lastName}</Text>
+                                </Flex>      
                             </AutoCompleteItem>
-                        ))} */}
+                        ))}
                     </AutoCompleteList>
                 </AutoComplete>
               </FormControl>
             </Flex>
             <FormControl>
               <FormLabel>Description</FormLabel>
-              <Textarea h={"87%"} />
+              <Textarea 
+                h={"87%"} 
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
             </FormControl>
           </CardBody>
         </Card>
-        <PurchaseOrderPartsList />
+        <PurchaseOrderPartsList options={options} />
       </Flex>
 
       {/* Order History */}

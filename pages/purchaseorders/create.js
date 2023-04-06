@@ -71,7 +71,7 @@ export const getServerSideProps = withSessionSsr(
       }
 });
 
-function CreatePurchaseOrderPage({user}) {
+function CreatePurchaseOrderPage({user, categoryList}) {
   const [issueDate, setIssueDate] = useState(new Date())
 
   function headerBreadcrumbs() {
@@ -125,8 +125,8 @@ function CreatePurchaseOrderPage({user}) {
           />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.300"} >
-          <CreatePurchaseOrderForm />
+        <GridItem colStart={2} bg={"blackAlpha.300"} overflowY={"auto"}>
+          <CreatePurchaseOrderForm options={categoryList} />
         </GridItem>
       </Grid>
     </>
