@@ -1,5 +1,5 @@
 import { connectToDatabase } from "@/lib/db";
-import FuelOut from "@/models/fuel/FuelInSchema";
+import FuelOut from "@/models/fuel/FuelOutSchema";
 
 export default async (req, res) => {
   try {
@@ -8,11 +8,11 @@ export default async (req, res) => {
 
     await FuelOut.create({
       fuelOutID: e.fuelOutID,
-      recordDateTime: e.oRecordDateTime,
-      driverID: e.oDriver,
-      plateNumber: e.oPlateNumber,
-      liters: e.ofLiters,
-      previousRoute: e.oPreviousRoute,
+      oRecordDateTime: e.oRecordDateTime,
+      oDriver: e.oDriver,
+      oPlateNumber: e.oPlateNumber,
+      ofLiters: e.ofLiters,
+      oPreviousRoute: e.oPreviousRoute,
       creatorID: e.creatorID,
     });
 

@@ -16,8 +16,10 @@ export default async (req, res) => {
               .project({
                 'fuelOutID': 1, 
                 'oRecordDateTime': 1, 
-                'oUnitCost': 1, 
+                'oDriver': 1,
+                'oPlateNumber': 1,
                 'ofLiters': 1, 
+                'oPreviousRoute': 1,
                 'creationDate': 1, 
                 'disabled': 1, 
                 'user.firstName': 1,

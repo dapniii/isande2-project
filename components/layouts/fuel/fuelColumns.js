@@ -22,7 +22,7 @@ export const COLUMNS = [
     },
   },
   {
-    Header: "Unit Price",
+    Header: "Unit Cost",
     accessor: "fUnitCost",
     filter: GlobalFilter,
     Cell: (props) => {
@@ -61,6 +61,7 @@ export const FUEL_OUT_COLUMNS = [
   },
   {
     Header: "Plate Number",
+    id:"oPlateNumber",
     accessor: "oPlateNumber",
     Cell: (props) => {
       return <Flex alignItems={"center"}>{props.row.original.oPlateNumber}</Flex>;
@@ -83,7 +84,10 @@ export const FUEL_OUT_COLUMNS = [
   {
     Header: "Recorded by",
     id: "recordedby",
-
+    Cell(props) {
+      const { user } = props.row.original;
+      return `${user.firstName} ${user.lastName}`;
+    },
     filter: GlobalFilter,
   },
 ];
