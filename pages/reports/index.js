@@ -19,7 +19,6 @@ import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
 import { userAPI } from "@/lib/routes";
 import { withSessionSsr } from "@/lib/auth/withSession";
-import User from "@/models/users/UserSchema";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -82,7 +81,7 @@ export const getServerSideProps = withSessionSsr(
   }}
 });
 
-export default function ReportsPage() {
+export default function ReportsPage({user, data}) {
   const router = useRouter();  
 
   // Header Functions
