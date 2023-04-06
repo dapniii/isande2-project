@@ -13,9 +13,10 @@ import { useRouter } from "next/router";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import { purchaseOrderAPI } from "@/lib/routes";
 import BasicTable from "@/components/table/basicTable";
-import { COLUMNS } from "@/components/layouts/purchaseorders/supplierColumns";
+import { COLUMNS } from "@/components/layouts/purchaseorders/Suppliers/supplierColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
+import PurchaseOrderHomeTab from "@/components/layouts/purchaseorders/HomeTab/purchaseOrderHomeTab";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -60,6 +61,9 @@ export const getServerSideProps = withSessionSsr(
       const catRes = await fetch(purchaseOrderAPI.get_form_categories)
       const catData = await catRes.json()
 
+      const poRes = await fetch(purchaseOrderAPI.get_purchase_orders)
+      const poData = await poRes.json()
+
       return {
           props: { 
             user: {
@@ -67,12 +71,13 @@ export const getServerSideProps = withSessionSsr(
               isLoggedIn: true 
             }, 
             categoryList: catData,
+            purchaseOrders: poData,
           },
           
       }
 });
 
-export default function PurchaseOrdersPage({user, categoryList}) {
+export default function PurchaseOrdersPage({user, categoryList, purchaseOrders}) {
   const [tabIndex, setTabIndex] = useState(0)
   const router = useRouter()
 
@@ -128,7 +133,7 @@ export default function PurchaseOrdersPage({user, categoryList}) {
         ></Dropdown>
       </>
     )
-}
+  }
 
   return (
     <>
@@ -153,7 +158,10 @@ export default function PurchaseOrdersPage({user, categoryList}) {
             </TabList>
             <TabPanels p={2} >
                 <TabPanel>
-                  Home
+                  <PurchaseOrderHomeTab 
+                    categoryList={categoryList}
+                    poData={purchaseOrders}
+                  />
                 </TabPanel>
                 <TabPanel>
                   <BasicTable 

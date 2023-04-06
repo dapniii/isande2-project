@@ -14,7 +14,7 @@ import {
 import { CancelButton, SaveButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import { withSessionSsr } from "@/lib/auth/withSession";
-import CreateSupplierForm from "@/components/layouts/purchaseorders/createSupplierForm";
+import CreateSupplierForm from "@/components/layouts/purchaseorders/Suppliers/createSupplierForm";
 import { purchaseOrderAPI } from "@/lib/routes";
 
 export const getServerSideProps = withSessionSsr(
