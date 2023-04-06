@@ -11,7 +11,6 @@ import {
 } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
-import { AddButton } from "@/components/buttons";
 import { Router, useRouter } from "next/router";
 import { COLUMNS } from "@/components/layouts/users/usersColumns";
 import BasicTable from "@/components/table/basicTable";
@@ -96,9 +95,7 @@ export default function ReportsPage({user, data}) {
       //Header Content
       <Flex alignItems={"center"} justifyContent={"space-between"}>
         {/* Page Title */}
-        <Text fontSize={"3xl"} fontWeight={"bold"}>Users</Text>
-        {/* Add New User Button */}
-        <AddButton title={"Add New User"} clickFunction={navToCreate} />
+        <Text fontSize={"3xl"} fontWeight={"bold"}>Reports</Text>
       </Flex>
     )
   }
@@ -170,8 +167,12 @@ export default function ReportsPage({user, data}) {
         <GridItem colStart={2} bg={"blackAlpha.300"} >
           <Tabs>
             <TabList bg={"white"} top={"1em"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}>
-              <Tab>Active</Tab>
-              <Tab>Inactive</Tab>
+              <Tab>Users</Tab>
+              <Tab>Vehicles</Tab>
+              <Tab>Spare Parts</Tab>
+              <Tab>Fuel</Tab>
+              <Tab>Job Orders</Tab>
+              <Tab>Purhcase Orders</Tab>
             </TabList>
             <TabPanels p={2} overflowY={"auto"}>
               <TabPanel>
@@ -179,7 +180,7 @@ export default function ReportsPage({user, data}) {
                   COLUMNS={COLUMNS}
                   DATA={data.users.active}
                   FILTERS={filters}
-                  HIDDEN={["firstName", "lastName", "department", "specialty"]}
+                  HIDDEN={["tableName", "firstName", "lastName", "specialty"]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
