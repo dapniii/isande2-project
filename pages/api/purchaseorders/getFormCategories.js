@@ -6,6 +6,7 @@ import Province from "@/models/purchaseOrders/categories/ProvinceSchema";
 import Item from "@/models/spareParts/ItemSchema";
 import ItemDetails from "@/models/spareParts/ItemDetailsSchema";
 import User from "@/models/users/UserSchema";
+import PurchaseOrder from "@/models/purchaseOrders/PurchaseOrderSchema";
 import { calcQuantityStatus } from "@/lib/dataHandler";
 
 export default async (req, res) => {
@@ -46,6 +47,9 @@ export default async (req, res) => {
         totalValue += itemValue
     })
 
+    let poCount = await PurchaseOrder.find({})
+
+
     res.json({
         poStatus,
         suppliers,
@@ -53,5 +57,6 @@ export default async (req, res) => {
         provinces,
         partsList,
         users,
+        poCount: poCount.length,
     })
 }

@@ -24,4 +24,8 @@ const PurchaseOrderPartsListSchema = new mongoose.Schema({
         min: 0,
     },
     
-})
+}, {timestamps: true})
+
+const PurchaseOrderPartsList = mongoose.models.PurchaseOrderPartsList || mongoose.model("PurchaseOrderPartsList", PurchaseOrderPartsListSchema)
+
+export default PurchaseOrderPartsList;

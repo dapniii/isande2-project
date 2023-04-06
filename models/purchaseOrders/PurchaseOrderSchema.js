@@ -25,6 +25,10 @@ const PurchaseOrderSchema = new mongoose.Schema({
     description: {
         type: String,
     },
+    creatorID: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+    }
 }, {timestamps: true})
 
 const PurchaseOrder = mongoose.models.PurchaseOrder || mongoose.model("PurchaseOrder", PurchaseOrderSchema)

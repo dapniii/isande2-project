@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Flex ,
   Text,
@@ -25,16 +25,49 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 import OrderHistoryLayout from './orderHistory';
 import PurchaseOrderPartsList from './partsList';
+import { purchaseOrderAPI } from '@/lib/routes';
+import { generateID } from '@/lib/dataHandler';
 
-function CreatePurchaseOrderForm({options}) {
-  // Temp values
-  const poNumber = "1000000001"
-  const tempStatus = "Draft"
-
+function CreatePurchaseOrderForm({options, creatorID, submitFunc}) {
+  const poNumber = generateID(options.poCount, 10)
   const [supplier, setSupplier] = useState("");
   const [requestedBy, setRequestedBy] = useState("")
   const [description, setDescription] = useState("")
+  const [partsList, setPartsList] = useState([])
 
+  function passSubmitFunc() {
+    return submitForm
+  }
+    // TODO: Convert to UseContext (basta prevent it from re-rendering all the time huhu)
+    useEffect(() => {
+      submitFunc(passSubmitFunc)
+    }, [supplier, requestedBy, description, partsList])
+
+  async function submitForm() {
+    let poData = {
+        poNumber: poNumber,
+        statusID: "Posted",
+        supplierID: supplier,
+        requestedBy: requestedBy,
+        description: description,
+        creatorID: creatorID,
+        partsList: partsList,
+    }
+    await fetch(purchaseOrderAPI.create_purchase_order, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(poData),
+    }).then(result => result.json())
+    .then(data => {
+        if (data.error != null) 
+            console.log(data.error)
+        location.reload()
+    })
+
+}
+  
   return (
     <Flex p={5} gap={5}>
         {/* Order Details */}
@@ -108,12 +141,12 @@ function CreatePurchaseOrderForm({options}) {
             </FormControl>
           </CardBody>
         </Card>
-        <PurchaseOrderPartsList options={options} />
+        <PurchaseOrderPartsList options={options} setSubmitArray={setPartsList} />
       </Flex>
 
       {/* Order History */}
       <Flex flexDir={"column"} w={"30%"} gap={3}>
-        <OrderHistoryLayout status={tempStatus} />
+        <OrderHistoryLayout />
       </Flex>
       
     </Flex>

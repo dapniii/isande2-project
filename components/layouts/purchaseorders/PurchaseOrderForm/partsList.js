@@ -24,13 +24,14 @@ import {
 import { AddButton } from "@/components/buttons";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 
-export default function PurchaseOrderPartsList({options}) {
+export default function PurchaseOrderPartsList({options, setSubmitArray}) {
     const [editState, setEditState] = useState(false)
     const [partTemplate, setPartTemplate] = useState({
         itemID: "",
         itemNumber: "",
         itemName: "",
         itemModel: "",
+        detailID: "",
         partNumber: "",
         brand: "",
         unitCost: 0.00,
@@ -66,6 +67,7 @@ export default function PurchaseOrderPartsList({options}) {
 
         if (partsList != null) {
             clearTemplate()
+            setSubmitArray(partsList)
         }
     }, [partsList])
     
@@ -167,9 +169,13 @@ export default function PurchaseOrderPartsList({options}) {
 
     function handleDetailSelect(value) {
         let select = value.split("/")
-
+        let detail = options
+            .partsList.find(option => option.itemNumber == partTemplate.itemNumber)
+            .details.find(option => option.partNumber == select[0] && option.itemBrandID.name == select[1])
+        
         setPartTemplate((prevState) => ({
             ...prevState,
+            detailID: detail._id,
             partNumber: select[0],
             brand: select[1]
         }))

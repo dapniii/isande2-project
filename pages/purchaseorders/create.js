@@ -1,4 +1,5 @@
-import {useState} from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router';
 import { withSessionSsr } from '@/lib/auth/withSession';
 import Navbar from '@/components/navbar';
 import Header from '@/components/header';
@@ -72,7 +73,13 @@ export const getServerSideProps = withSessionSsr(
 });
 
 function CreatePurchaseOrderPage({user, categoryList}) {
-  const [issueDate, setIssueDate] = useState(new Date())
+  const router = useRouter();
+  const [issueDate, setIssueDate] = useState(new Date());
+  const [submitForm, setSubmitForm] = useState();
+
+  function getSubmit(submitFunc) {
+    setSubmitForm(submitFunc)
+  }
 
   function headerBreadcrumbs() {
     return (
@@ -102,8 +109,8 @@ function CreatePurchaseOrderPage({user, categoryList}) {
         </Flex>
         {/* Right side */}
         <ButtonGroup gap={2}>
-          <CancelButton title={"Cancel"} />
-          <SaveButton title={"Save"} />
+          <CancelButton title={"Cancel"} clickFunction={() => router.back()} />
+          <SaveButton title={"Save"} clickFunction={submitForm} />
         </ButtonGroup>
       </Flex> 
     )
@@ -126,7 +133,7 @@ function CreatePurchaseOrderPage({user, categoryList}) {
         </GridItem>
 
         <GridItem colStart={2} bg={"blackAlpha.300"} overflowY={"auto"}>
-          <CreatePurchaseOrderForm options={categoryList} />
+          <CreatePurchaseOrderForm options={categoryList} creatorID={user.data.userID} submitFunc={getSubmit} />
         </GridItem>
       </Grid>
     </>
