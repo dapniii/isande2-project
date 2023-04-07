@@ -28,7 +28,30 @@ const PurchaseOrderSchema = new mongoose.Schema({
     creatorID: {
         type: mongoose.Types.ObjectId,
         ref: "User"
-    }
+    },
+    // Most recent approval date
+    approvedDate: {
+        type: Date,
+        default: null
+    },
+    // Only one purchased date
+    purchasedDate: {
+        type: Date,
+        default: null
+    },
+    purchasedBy: {
+        type: mongoose.Types.ObjectId,
+        ref: "User"
+    },
+    // Most recent delivered date
+    deliveredDate: {
+        type: Date,
+        default: null,
+    },
+    completedDate: {
+        type: Date,
+        default: null,
+    },
 }, {timestamps: true})
 
 const PurchaseOrder = mongoose.models.PurchaseOrder || mongoose.model("PurchaseOrder", PurchaseOrderSchema)

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { 
     Flex ,
     Text,
@@ -26,14 +26,57 @@ import {
 import OrderHistoryLayout from '../orderHistory';
 import EditablePurchaseOrderPartsList from './layoutPartsList';
 import PurchaseOrderCommentSection from './commentSection';
+import PurchaseOrderFileSection from './fileSection';
+import { uploadPoFile } from '@/lib/images/imageHandler';
 import { purchaseOrderAPI } from '@/lib/routes';
 import { generateID } from '@/lib/dataHandler';
 
-function PurchaseOrderLayout({user, initialData}) {
+
+function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
     const [supplier, setSupplier] = useState(initialData.supplierID);
     const [requestedBy, setRequestedBy] = useState(initialData.requestedBy)
     const [description, setDescription] = useState("")
     const [partsList, setPartsList] = useState([])
+    const [files, setFiles] = useState([])
+
+    async function confirmPurchase() {
+      let uploadConfig = {
+        poNumber: initialData.poNumber,
+      }
+      let fileRes = await Promise.all(files.map(file => uploadPoFile(file, uploadConfig)))
+  
+      console.log(fileRes)
+      let bodyData = {
+        poNumber: initialData.poNumber,
+        purchasedData: new Date(),
+        purchasedBy: user.userID,
+        uploadedFiles: fileRes
+      }
+      
+      await fetch(purchaseOrderAPI.confirm_purchase, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(bodyData),
+      })
+      .then(result => result.json())
+      .then(data => {
+          console.log(data)
+          if (data.error != null) 
+              console.log(data.error)
+          // location.reload()
+      })
+
+  }
+
+    function passConfirmPurchaseFunc() {
+      return confirmPurchase
+    }
+
+    useEffect(() => {
+      confirmPurchaseFunc(passConfirmPurchaseFunc)
+    }, [files])
 
     return (
         <Flex p={5} gap={5}>
@@ -126,6 +169,7 @@ function PurchaseOrderLayout({user, initialData}) {
         {/* Order History */}
         <Flex flexDir={"column"} w={"30%"} gap={3}>
           <OrderHistoryLayout data={initialData} />
+          <PurchaseOrderFileSection data={initialData} setSubmitArray={setFiles} />
         </Flex>
         
       </Flex>
