@@ -21,7 +21,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from "@chakra-ui/react";
-import { SaveButton, BackButton, CancelButton } from "@/components/Buttons";
+import { SaveButton, BackButton, CancelButton } from "@/components/buttons";
 import { MdCheckCircle } from "react-icons/md";
 import { generateID } from "@/lib/dataHandler";
 import { fuelAPI } from "@/lib/routes";

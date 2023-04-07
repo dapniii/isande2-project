@@ -11,8 +11,23 @@ import { COLUMNS } from './poColumns'
 import BasicTable from '@/components/table/basicTable'
 import GlobalFilter from '@/components/table/globalFilter'
 import Dropdown from '@/components/table/dropdown'
+import { useRouter } from 'next/router'
+
 
 function PurchaseOrderHomeTab({poData, categoryList}) {
+    const router = useRouter();
+
+    // Table Functions
+    function getRowData(rowData) {
+        let query = {
+        id: rowData.poNumber
+        }
+        return query
+    }
+
+    function navToDetails(query) {
+        router.push(`/purchaseorders/${query.id}`)
+    }
 
     function filters(filter, setFilter, globalFilter, setGlobalFilter) {
         return (
@@ -123,6 +138,8 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                 COLUMNS={COLUMNS}
                 FILTERS={filters}
                 HIDDEN={[]}
+                getRowData={getRowData}
+                clickRowFunction={navToDetails}
             />
         </Flex>
     )
