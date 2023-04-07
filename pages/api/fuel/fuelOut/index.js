@@ -16,6 +16,7 @@ export default async (req, res) => {
               .project({
                 'fuelOutID': 1, 
                 'oRecordDateTime': 1, 
+                formattedDate: { $dateToString: { format: "%d %m %Y, %H:%M ", date: "$oRecordDateTime" } },
                 'oDriver': 1,
                 'oPlateNumber': 1,
                 'ofLiters': 1, 
