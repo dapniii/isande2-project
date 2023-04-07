@@ -16,6 +16,7 @@ export default async (req, res) => {
                   .project({
                     'fuelInID': 1, 
                     'fRecordDateTime': 1, 
+                    formattedDate: { $dateToString: { format: "%d %m %Y, %H:%M ", date: "$fRecordDateTime" } },
                     'fUnitCost': 1, 
                     'fLiters': 1, 
                     'creationDate': 1, 

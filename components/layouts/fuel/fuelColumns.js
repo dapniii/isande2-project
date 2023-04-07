@@ -12,6 +12,9 @@ export const COLUMNS = [
   {
     Header: "Date & Time",
     accessor: "fRecordDateTime",
+    Cell(props) {
+      return `${props.row.original.formattedDate}`;
+    },
     filter: GlobalFilter,
   },
   {
@@ -50,6 +53,9 @@ export const FUEL_OUT_COLUMNS = [
   {
     Header: "Date & Time",
     accessor: "oRecordDateTime",
+    Cell(props) {
+      return `${props.row.original.formattedDate}`;
+    },
     filter: GlobalFilter,
   },
   {
