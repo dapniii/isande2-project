@@ -8,6 +8,7 @@ import {
   TabPanels, 
   TabPanel,
   Tab,
+  Select,
 } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
@@ -15,7 +16,7 @@ import { Router, useRouter } from "next/router";
 import { COLUMNS as USERS_COLUMNS } from "@/components/layouts/users/usersColumns";
 import { COLUMNS as VEHICLE_COLUMNS } from "@/components/layouts/vehicles/vehicleColumns";
 import { COLUMNS as PARTS_COLUMNS } from "@/components/layouts/parts/partsColumns";
-import { COLUMNS as FUEL_COLUMNS } from "@/components/layouts/fuel/fuelColumns";
+import { COLUMNS as FUEL_IN_COLUMNS, FUEL_OUT_COLUMNS } from "@/components/layouts/fuel/fuelColumns";
 import { COLUMNS as JO_COLUMNS} from "@/components/layouts/joborders/jobordersColumns";
 import { COLUMNS as PO_COLUMNS } from "@/components/layouts/purchaseorders/HomeTab/poColumns";
 import BasicTable from "@/components/table/basicTable";
@@ -119,6 +120,20 @@ export const getServerSideProps = withSessionSsr(
   categoryList_Parts.itemCategories = catPart.categories
   categoryList_Parts.measures = catPart.measures
   categoryList_Parts.status = catPart.status
+
+  //GET FUEL IN & OUT DATA
+  const [fuelIn, fuelOut] = await Promise.all([
+    fetch(fuelAPI.get_fuelIn)
+      .then((res) => res.json())
+      .then((res) => res.data),
+    fetch(fuelAPI.get_fuelOut)
+      .then((res) => res.json())
+      .then((res) => res.data),
+  ]);
+
+  const categoryList_Fuel = {
+    refuelType: [{ name: "Refuel Truck" }],
+  };
   
   //STORE DATA
   let data = {
@@ -128,6 +143,9 @@ export const getServerSideProps = withSessionSsr(
     vehicleCategories: categoryList_Vehicle,
     parts: partsData,
     partsCategories: categoryList_Parts,
+    fuelIn,
+    fuelOut,
+    fuelCategories: categoryList_Fuel,
   }
   console.log("After store:" + data.vehicle)
 
@@ -260,6 +278,10 @@ export default function ReportsPage({user, data}) {
       </>
     )
 }
+
+function fuelFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+  return
+}
   
   // MAIN
   return (
@@ -284,7 +306,8 @@ export default function ReportsPage({user, data}) {
               <Tab>Users</Tab>
               <Tab>Vehicles</Tab>
               <Tab>Spare Parts</Tab>
-              <Tab>Fuel</Tab>
+              <Tab>Fuel In</Tab>
+              <Tab>Fuel Out</Tab>
               <Tab>Job Orders</Tab>
               <Tab>Purhcase Orders</Tab>
             </TabList>
@@ -322,17 +345,24 @@ export default function ReportsPage({user, data}) {
                   clickRowFunction={navToDetails}
                 />
               </TabPanel>
-              {/* Fuel */}
-              {/* <TabPanel>
+              {/* Fuel In */}
+              <TabPanel>
                 <BasicTable 
-                  COLUMNS={FUEL_COLUMNS}
-                  DATA={data.vehicle}
-                  FILTERS={vehicleFilters}
-                  HIDDEN={["photo", "status"]}
-                  getRowData={getRowData}
-                  clickRowFunction={navToDetails}
+                  COLUMNS={FUEL_IN_COLUMNS}
+                  DATA={data.fuelIn}
+                  FILTERS={fuelFilters}
+                  HIDDEN={["refuelType"]}
                 />
-              </TabPanel> */}
+              </TabPanel>
+              {/* Fuel Out */}
+              <TabPanel>
+                <BasicTable 
+                  COLUMNS={FUEL_OUT_COLUMNS}
+                  DATA={data.fuelOut}
+                  FILTERS={fuelFilters}
+                  HIDDEN={["refuelType"]}
+                />
+              </TabPanel>
               {/* Job Orders */}
               {/* <TabPanel>
                 <BasicTable 
