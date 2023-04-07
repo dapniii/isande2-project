@@ -68,16 +68,18 @@ export const COLUMNS = [
       width: 200,
     },
     {
-      Header: "",
-      id: "firstName",
-      accessor: "firstName",
-      filter: GlobalFilter,
-    },
-    {
-      Header: "",
+      Header: "Last Name",
       id: "lastName",
       accessor: "lastName",
       filter: GlobalFilter,
+      width: 100,
+    },
+    {
+      Header: "First Name",
+      id: "firstName",
+      accessor: "firstName",
+      filter: GlobalFilter,
+      width: 100,
     },
     {
       Header: "Email",
@@ -88,7 +90,8 @@ export const COLUMNS = [
         return (
           <Link>{props.row.original.email}</Link>
         )
-      }
+      },
+      width: 250,
     },
     {
       Header: "Phone Number",
