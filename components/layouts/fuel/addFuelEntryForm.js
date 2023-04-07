@@ -181,7 +181,7 @@ const AddFuelEntry = ({
                     </NumberInput>
                   </FormControl>
                   <FormControl mt={4}>
-                    <FormLabel>Cost</FormLabel>
+                    <FormLabel>Unit Cost</FormLabel>
                     <NumberInput step={0.01} min={1} value={fUnitCost} onChange={(_, value) => setFUnitCost(value)}>
                       <NumberInputField  />
                       <NumberInputStepper  >
