@@ -155,3 +155,19 @@ export function AddCommentButton({title, clickFunction}) {
     )
 }
 
+export function AddFileButton({title, clickFunction}) {
+    return (
+        <Button
+            bg={"#005DF2"}
+            color={"white"}
+            px={"0.5em"}
+            size={"sm"}
+            borderRadius={"0.4em"}
+            leftIcon={<Icon as={MdAddCircle} boxSize={"1.2em"} />}
+            onClick={() => clickFunction()}
+        >
+            {title}
+        </Button>
+    )
+}
+

@@ -7,7 +7,7 @@ import {
     Text,
     Textarea,
     Stack
-} from "@chakra-ui/react"
+} from "@chakra-ui/react";
 import { AddCommentButton } from "@/components/buttons";
 import { formatDistance } from 'date-fns';
 import { purchaseOrderAPI } from "@/lib/routes";
