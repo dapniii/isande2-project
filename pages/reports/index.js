@@ -134,6 +134,20 @@ export const getServerSideProps = withSessionSsr(
   const categoryList_Fuel = {
     refuelType: [{ name: "Refuel Truck" }],
   };
+
+  //GET JO DATA
+  const catJobOrder = await fetch(jobOrderAPI.get_form_categories)
+  const categoryList_JobOrder = await catJobOrder.json()
+
+  const jobOrdersRes = await fetch("http://localhost:3000/api/joborders/getJobOrderList")
+  const jobOrderData = await jobOrdersRes.json()
+
+  //GET PO DATA
+  const catPurchaseOrder = await fetch(purchaseOrderAPI.get_form_categories)
+  const categoryList_PurchaseOrder = await catPurchaseOrder.json()
+
+  const purchaseOrderRes = await fetch(purchaseOrderAPI.get_purchase_orders)
+  const purchaseOrderData = await purchaseOrderRes.json()
   
   //STORE DATA
   let data = {
@@ -146,6 +160,10 @@ export const getServerSideProps = withSessionSsr(
     fuelIn,
     fuelOut,
     fuelCategories: categoryList_Fuel,
+    jobOrders: jobOrderData,
+    jobOrderCategories: categoryList_JobOrder,
+    purchaseOrders: purchaseOrderData,
+    purchaseOrderCategories: categoryList_PurchaseOrder,
   }
   console.log("After store:" + data.vehicle)
 
@@ -282,6 +300,57 @@ export default function ReportsPage({user, data}) {
 function fuelFilters(filter, setFilter, globalFilter, setGlobalFilter) {
   return
 }
+
+function jobOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+  return (
+    <>
+      <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+      <Dropdown
+        title="Plate Number"
+        options={data.jobOrderCategories.vehicles}
+        id="plateNumber"
+        name="plateNumber"
+        filter={filter}
+        setFilter={setFilter}
+      />
+      <Dropdown
+        title="Status"
+        options={data.jobOrderCategories.jobOrderStatus}
+        id="status"
+        name="name"
+        filter={filter}
+        setFilter={setFilter}
+      />
+    </>
+  );
+}
+
+function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+  return (
+    <>
+      <GlobalFilter
+        filter={globalFilter}
+        setFilter={setGlobalFilter} 
+      ></GlobalFilter>
+      <Dropdown 
+        title="Supplier"
+        options={data.purchaseOrderCategories.suppliers}
+        id="supplier"
+        name="name"
+        filter={filter}
+        setFilter={setFilter}
+      ></Dropdown>
+        <Dropdown 
+        title="Status"
+        options={data.purchaseOrderCategories.poStatus}
+        id="status"
+        name="name"
+        filter={filter}
+        setFilter={setFilter}
+      ></Dropdown>
+    </>
+  )
+}
   
   // MAIN
   return (
@@ -364,27 +433,27 @@ function fuelFilters(filter, setFilter, globalFilter, setGlobalFilter) {
                 />
               </TabPanel>
               {/* Job Orders */}
-              {/* <TabPanel>
+              <TabPanel>
                 <BasicTable 
                   COLUMNS={JO_COLUMNS}
-                  DATA={data.vehicle}
-                  FILTERS={vehicleFilters}
-                  HIDDEN={["photo", "status"]}
+                  DATA={data.jobOrders}
+                  FILTERS={jobOrderFilters}
+                  HIDDEN={[]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
-              </TabPanel> */}
+              </TabPanel>
               {/* Purchase Orders */}
-              {/* <TabPanel>
+              <TabPanel>
                 <BasicTable 
                   COLUMNS={PO_COLUMNS}
-                  DATA={data.vehicle}
-                  FILTERS={vehicleFilters}
-                  HIDDEN={["photo", "status"]}
+                  DATA={data.purchaseOrders.purchaseOrders}
+                  FILTERS={purchaseOrderFilters}
+                  HIDDEN={[]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
-              </TabPanel> */}
+              </TabPanel>
             </TabPanels>
           </Tabs>       
         </GridItem>
