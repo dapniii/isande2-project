@@ -9,13 +9,15 @@ import {
     Stack
 } from "@chakra-ui/react"
 import { AddCommentButton } from "@/components/buttons";
-import { formatDistance } from 'date-fns'
+import { formatDistance } from 'date-fns';
+import { purchaseOrderAPI } from "@/lib/routes";
 
-function PurchaseOrderCommentSection({user, data}) {
+function PurchaseOrderCommentSection({user, poNumber, data}) {
     const [editState, setEditState] = useState(false)
+    const [commentTemplate, setCommentTemplate] = useState(null)
     const [commentList, dispatch] = useReducer((state, action) => {
         switch (action.type) {
-            case "add": {// add new item at end of array 
+            case "add": {// add new item at end of array
                 return [...state, action.payload]
             }
             default: 
@@ -30,15 +32,50 @@ function PurchaseOrderCommentSection({user, data}) {
             dispatch({type: "default"})
         }
 
-    },[data])
+    }, [data])
+
+    useEffect(() => {
+        if (commentTemplate != null) {
+            saveComment()
+        }
+        
+    }, [commentList])
+
+    async function saveComment() {  
+        let commentInfo = {
+            poNumber: poNumber,
+            commentInfo: commentTemplate
+        }
+        await fetch(purchaseOrderAPI.create_comment, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(commentInfo),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+            
+        })
+    }
 
     function handleCommentClick() {
         if (editState) {
+            let date = new Date()
+            setCommentTemplate({
+                userID: user.userID,
+                user: user.firstName + " " + user.lastName,
+                commentText: comment,
+                commentDate: date
+            })
+
             dispatch({type: "add", payload: {
                 userID: user.userID,
                 user: user.firstName + " " + user.lastName,
                 commentText: comment,
-                commentDate: new Date()
+                commentDate: date
             }})
             setComment("")
             setEditState(false)
@@ -77,16 +114,24 @@ function PurchaseOrderCommentSection({user, data}) {
                                 
                                     <Card variant={"elevated"} size={"sm"}>
                                         <CardHeader display={"flex"} justifyContent={"space-between"}>
-                                            <Text fontWeight={"bold"}>{comment.user}</Text>
+                                            <Text fontWeight={"bold"}>{comment.creatorID != null 
+                                                ? (comment.creatorID.firstName + " " + comment.creatorID.lastName) 
+                                                : (comment.user)}
+                                            </Text>
                                             <Text>
-                                                {
-                                                    formatDistance(comment.commentDate, new Date(), 
-                                                    { addSuffix: true })
+                                                {   
+                                                    typeof(comment.commentDate) == "string" ? (
+                                                        formatDistance(new Date(comment.commentDate), new Date(), 
+                                                        { addSuffix: true })
+                                                    ) : (
+                                                        formatDistance(comment.commentDate, new Date(), 
+                                                        { addSuffix: true })
+                                                    )
                                                 }
                                             </Text>
                                         </CardHeader>
                                         <CardBody>
-                                            <Text>{comment.commentText}</Text>
+                                            <Text>{comment.comment != null ? (comment.comment) : (comment.commentText)}</Text>
                                         </CardBody>
                                         
                                     </Card>

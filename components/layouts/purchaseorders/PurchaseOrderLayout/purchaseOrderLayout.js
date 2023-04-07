@@ -120,7 +120,7 @@ function PurchaseOrderLayout({user, initialData}) {
             </CardBody>
           </Card>
           <EditablePurchaseOrderPartsList partsList={initialData.partsList} />
-          <PurchaseOrderCommentSection user={user} data={initialData.comments} />
+          <PurchaseOrderCommentSection user={user} poNumber={initialData.poNumber} data={initialData.comments} />
         </Flex>
   
         {/* Order History */}
