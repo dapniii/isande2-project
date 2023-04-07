@@ -18,6 +18,13 @@ export default async (req, res) => {
     .populate("roleID")
     .populate("userTypeID")
 
+    let allUsers = await User.find({})
+    .populate("imageID")
+    .populate("departmentID")
+    .populate("roleID")
+    .populate("userTypeID")
+
+
     let mechanics = await Mechanic.find({}).populate("specialtyID")
     
     active.map(user => {
@@ -40,7 +47,8 @@ export default async (req, res) => {
         users: {
             active: active,
             inactive: inactive,
+            all: allUsers
         },
-        count: active.length + inactive.length
+        count: allUsers.length
     })
 }

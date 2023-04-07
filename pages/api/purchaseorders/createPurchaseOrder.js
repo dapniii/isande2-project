@@ -15,10 +15,12 @@ export default async (req, res) => {
     let requesterSplit = poInfo.requestedBy.split(" ")
     let statusID = await PurchaseOrderStatus.findOne({name: poInfo.statusID})
     let supplierID = await Supplier.findOne({name: poInfo.supplierID})
-    let requestedByID = await User.find({
+    let requestedByID = await User.findOne({
         firstName: requesterSplit[0],
         lastName: requesterSplit[1],
     })
+    console.log("Requested By")
+    console.log(requestedByID)
     let creatorID = await User.findOne({userID: poInfo.creatorID})
 
     let poResult = await PurchaseOrder.create({

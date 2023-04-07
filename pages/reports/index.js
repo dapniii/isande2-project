@@ -12,11 +12,16 @@ import {
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { Router, useRouter } from "next/router";
-import { COLUMNS } from "@/components/layouts/users/usersColumns";
+import { COLUMNS as USERS_COLUMNS } from "@/components/layouts/users/usersColumns";
+import { COLUMNS as VEHICLE_COLUMNS } from "@/components/layouts/vehicles/vehicleColumns";
+import { COLUMNS as PARTS_COLUMNS } from "@/components/layouts/parts/partsColumns";
+import { COLUMNS as FUEL_COLUMNS } from "@/components/layouts/fuel/fuelColumns";
+import { COLUMNS as JO_COLUMNS} from "@/components/layouts/joborders/jobordersColumns";
+import { COLUMNS as PO_COLUMNS } from "@/components/layouts/purchaseorders/HomeTab/poColumns";
 import BasicTable from "@/components/table/basicTable";
 import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
-import { userAPI } from "@/lib/routes";
+import { userAPI, vehicleAPI, sparePartsAPI, fuelAPI, jobOrderAPI, purchaseOrderAPI } from "@/lib/routes";
 import { withSessionSsr } from "@/lib/auth/withSession";
 
 export const getServerSideProps = withSessionSsr(
@@ -49,27 +54,82 @@ export const getServerSideProps = withSessionSsr(
       }
   }}
 
+  //GET USERS DATA
   const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
   
-  const categoryList = {
+  const categoryList_User = {
     departments: [],
     roles: [],
     userTypes: [],
     specialties: [],
   }
-  const resCat = await fetch(userAPI.get_categories)
-  const catData = await resCat.json()
 
-  categoryList.departments = catData.departments
-  categoryList.roles = catData.roles
-  categoryList.userTypes = catData.userTypes
-  categoryList.specialties = catData.specialties
+  const resUser = await fetch(userAPI.get_categories)
+  const catUser = await resUser.json()
 
+  categoryList_User.departments = catUser.departments
+  categoryList_User.roles = catUser.roles
+  categoryList_User.userTypes = catUser.userTypes
+  categoryList_User.specialties = catUser.specialties
+
+  //GET VEHICLES DATA
+  const resVehicles = await fetch(vehicleAPI.get_all);
+  const vehicleData = await resVehicles.json();
+  console.log("First:" + vehicleData)
+
+  const categoryList_Vehicle = {
+    brands: [],
+    chassis: [],
+    engineType: [],
+    fuelSensor: [],
+    gps: [],
+    status: [],
+    tireSize: [],
+    transmission: [],
+    vehicleTypes: []
+  };
+
+  const resVehicle = await fetch(vehicleAPI.get_categories)
+  const catVehicle = await resVehicle.json()
+
+  categoryList_Vehicle.brands = catVehicle.brands
+  categoryList_Vehicle.chassis = catVehicle.chassis
+  categoryList_Vehicle.engineType = catVehicle.engineType
+  categoryList_Vehicle.fuelSensor = catVehicle.fuelSensor
+  categoryList_Vehicle.gps = catVehicle.gps
+  categoryList_Vehicle.status = catVehicle.status
+  categoryList_Vehicle.tireSize = catVehicle.tireSize
+  categoryList_Vehicle.transmission = catVehicle.transmission
+  categoryList_Vehicle.vehicleTypes = catVehicle.vehicleType
+
+  //GET PARTS DATA
+  const resParts = await fetch(sparePartsAPI.get_all_parts)
+  const partsData = await resParts.json()
+  
+  const categoryList_Parts = {
+    brands: [],
+    itemCategories: [],
+    measures: [],
+  }
+  const resPart = await fetch(sparePartsAPI.get_categories)
+  const catPart = await resPart.json()
+
+  categoryList_Parts.brands = catPart.brands
+  categoryList_Parts.itemCategories = catPart.categories
+  categoryList_Parts.measures = catPart.measures
+  categoryList_Parts.status = catPart.status
+  
+  //STORE DATA
   let data = {
     users: userData.users,
-    categories: categoryList,
+    usersCategories: categoryList_User,
+    vehicle: vehicleData,
+    vehicleCategories: categoryList_Vehicle,
+    parts: partsData,
+    partsCategories: categoryList_Parts,
   }
+  console.log("After store:" + data.vehicle)
 
   return { props: { 
     data,             
@@ -82,11 +142,6 @@ export const getServerSideProps = withSessionSsr(
 
 export default function ReportsPage({user, data}) {
   const router = useRouter();  
-
-  // Header Functions
-  function navToCreate() {
-    router.push("/users/create");
-  }
 
   function headerBreadcrumbs() {return (<></>)}
 
@@ -109,10 +164,10 @@ export default function ReportsPage({user, data}) {
   }
 
   function navToDetails(query) {
-    router.push(`/users/${query.id}`)
+    
   }
 
-  function filters(filter, setFilter, globalFilter, setGlobalFilter) {
+  function userFilters(filter, setFilter, globalFilter, setGlobalFilter) {
     return (
       <>
         <GlobalFilter
@@ -121,7 +176,7 @@ export default function ReportsPage({user, data}) {
         />
         <Dropdown 
           title="Roles"
-          options={data.categories.roles}
+          options={data.usersCategories.roles}
           id="role"
           name="name"
           filter={filter}
@@ -129,7 +184,7 @@ export default function ReportsPage({user, data}) {
         />
         <Dropdown 
           title="Departments"
-          options={data.categories.departments}
+          options={data.usersCategories.departments}
           id="department"
           name="name"
           filter={filter}
@@ -137,7 +192,7 @@ export default function ReportsPage({user, data}) {
         />
         <Dropdown 
           title="User Types"
-          options={data.categories.userTypes}
+          options={data.usersCategories.userTypes}
           id="userType"
           name="name"
           filter={filter}
@@ -146,6 +201,65 @@ export default function ReportsPage({user, data}) {
       </>
     )
   }
+
+  function vehicleFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+    return (
+      <>
+        <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+        <Dropdown
+          title="Status"
+          options={data.vehicleCategories.status}
+          id="status"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        />
+        <Dropdown
+          title="Vehicle Type"
+          options={data.vehicleCategories.vehicleTypes}
+          id="vehicleType"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        />
+        <Dropdown
+          title="Transmission"
+          options={data.vehicleCategories.transmission}
+          id="transmission"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        />
+      </>
+    );
+  }
+
+  function partsFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+    return (
+      <>
+        <GlobalFilter
+          filter={globalFilter}
+          setFilter={setGlobalFilter} 
+        ></GlobalFilter>
+        <Dropdown 
+          title="Categories"
+          options={data.partsCategories.itemCategories}
+          id="categoryID"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        ></Dropdown>
+        <Dropdown 
+          title="Status"
+          options={data.partsCategories.status}
+          id="status"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        ></Dropdown>
+      </>
+    )
+}
   
   // MAIN
   return (
@@ -175,26 +289,72 @@ export default function ReportsPage({user, data}) {
               <Tab>Purhcase Orders</Tab>
             </TabList>
             <TabPanels p={2} overflowY={"auto"}>
+              {/* Users */}
               <TabPanel>
                 <BasicTable 
-                  COLUMNS={COLUMNS}
-                  DATA={data.users.active}
-                  FILTERS={filters}
-                  HIDDEN={["tableName", "firstName", "lastName", "specialty"]}
+                  COLUMNS={USERS_COLUMNS}
+                  DATA={data.users.all}
+                  FILTERS={userFilters}
+                  HIDDEN={["tableName", "specialty"]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
               </TabPanel>
+              {/* Vehicles */}
               <TabPanel>
                 <BasicTable 
-                  COLUMNS={COLUMNS}
-                  DATA={data.users.inactive}
-                  FILTERS={filters}
-                  HIDDEN={["firstName", "lastName", "department", "specialty"]}
+                  COLUMNS={VEHICLE_COLUMNS}
+                  DATA={data.vehicle}
+                  FILTERS={vehicleFilters}
+                  HIDDEN={["photo", "status"]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
               </TabPanel>
+              {/* Spare Parts */}
+              <TabPanel>
+                <BasicTable 
+                  COLUMNS={PARTS_COLUMNS}
+                  DATA={data.parts.parts}
+                  FILTERS={partsFilters}
+                  HIDDEN={["photo", "item"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                />
+              </TabPanel>
+              {/* Fuel */}
+              {/* <TabPanel>
+                <BasicTable 
+                  COLUMNS={FUEL_COLUMNS}
+                  DATA={data.vehicle}
+                  FILTERS={vehicleFilters}
+                  HIDDEN={["photo", "status"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                />
+              </TabPanel> */}
+              {/* Job Orders */}
+              {/* <TabPanel>
+                <BasicTable 
+                  COLUMNS={JO_COLUMNS}
+                  DATA={data.vehicle}
+                  FILTERS={vehicleFilters}
+                  HIDDEN={["photo", "status"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                />
+              </TabPanel> */}
+              {/* Purchase Orders */}
+              {/* <TabPanel>
+                <BasicTable 
+                  COLUMNS={PO_COLUMNS}
+                  DATA={data.vehicle}
+                  FILTERS={vehicleFilters}
+                  HIDDEN={["photo", "status"]}
+                  getRowData={getRowData}
+                  clickRowFunction={navToDetails}
+                />
+              </TabPanel> */}
             </TabPanels>
           </Tabs>       
         </GridItem>

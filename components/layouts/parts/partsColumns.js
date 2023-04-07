@@ -44,6 +44,27 @@ export const COLUMNS = [
       width: 170,
     },
     {
+      // HIDDEN
+      Header: "Item Code",
+      id: "itemNumber",
+      accessor: "itemNumber",
+      Filter: GlobalFilter,
+    },
+    {
+      // HIDDEN
+      Header: "Name",
+      id: "itemName",
+      accessor: "itemName",
+      Filter: GlobalFilter,
+    },
+    {
+      // HIDDEN
+      Header: "Model",
+      id: "itemModel",
+      accessor: "itemModel",
+      Filter: GlobalFilter,
+    },
+    {
       Header: "Category",
       id: "categoryID",
       accessor: "categoryID.name",
@@ -214,26 +235,5 @@ export const COLUMNS = [
       },
       disableGlobalFilter: true,
       width: 90,
-    },
-    {
-      // HIDDEN
-      Header: "Item Code",
-      id: "itemNumber",
-      accessor: "itemNumber",
-      Filter: GlobalFilter,
-    },
-    {
-      // HIDDEN
-      Header: "Name",
-      id: "itemName",
-      accessor: "itemName",
-      Filter: GlobalFilter,
-    },
-    {
-      // HIDDEN
-      Header: "Model",
-      id: "itemModel",
-      accessor: "itemModel",
-      Filter: GlobalFilter,
     },
   ];

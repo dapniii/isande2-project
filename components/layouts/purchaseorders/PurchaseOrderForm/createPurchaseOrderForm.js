@@ -23,7 +23,7 @@ import {
   AutoCompleteList,
   AutoCompleteItem
 } from "@choc-ui/chakra-autocomplete";
-import OrderHistoryLayout from './orderHistory';
+import OrderHistoryLayout from '../orderHistory';
 import PurchaseOrderPartsList from './partsList';
 import { purchaseOrderAPI } from '@/lib/routes';
 import { generateID } from '@/lib/dataHandler';
@@ -71,7 +71,7 @@ function CreatePurchaseOrderForm({options, creatorID, submitFunc}) {
   return (
     <Flex p={5} gap={5}>
         {/* Order Details */}
-        <Flex flexDir={"column"} w={"70%"} gap={3}>
+      <Flex flexDir={"column"} w={"70%"} gap={3}>
         <Card variant={"outline"} >
           <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
               <Text fontSize={"xl"} fontWeight={"bold"}>Order Details</Text>

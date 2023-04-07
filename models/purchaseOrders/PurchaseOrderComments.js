@@ -14,8 +14,12 @@ const PurchaseOrderCommentSchema = new mongoose.Schema({
     comment: {
         type: String,
         required: true,
+    },
+    commentDate: {
+        type: Date,
+        default: new Date()
     }
-}, {timestamps: true})
+})
 
 const PurchaseOrderComment = mongoose.models.PurchaseOrderComment || mongoose.model("PurchaseOrderComment", PurchaseOrderCommentSchema)
 

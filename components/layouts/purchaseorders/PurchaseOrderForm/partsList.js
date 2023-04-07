@@ -254,12 +254,19 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
                 </GridItem>
                 <GridItem colStart={5}>
                     <NumberInput  
-                        min={0} max={1000} 
+                        min={0} 
+                        max={1000} 
                         precision={2}
-                        value={partTemplate.unitCost} o
+                        step={0.1}
+                        value={partTemplate.unitCost}
+                        
                         onChange={(value) => setPartTemplate((prevState) => ({...prevState, unitCost: parseFloat(value)}))} 
                     >
-                        <NumberInputField  border={"2px solid #9F9F9F"} />
+                        <NumberInputField 
+                            border={"2px solid #9F9F9F"} 
+                            inputMode={"text"}
+                            type={"text"}
+                        />
                         <NumberInputStepper >
                             <NumberIncrementStepper  />
                             <NumberDecrementStepper  />

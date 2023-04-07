@@ -1,6 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Header from "@/components/Header";
-import { AddButton } from "@/components/Buttons";
+import { AddButton } from "@/components/buttons";
 import { useRouter } from "next/router";
 import {
   Grid,
