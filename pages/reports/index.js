@@ -295,11 +295,11 @@ export default function ReportsPage({user, data}) {
         ></Dropdown>
       </>
     )
-}
+  }
 
 function fuelFilters(filter, setFilter, globalFilter, setGlobalFilter) {
   return
-}
+  }
 
 function jobOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) {
   return (
@@ -323,7 +323,7 @@ function jobOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) {
       />
     </>
   );
-}
+  }
 
 function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) {
   return (
@@ -350,7 +350,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
       ></Dropdown>
     </>
   )
-}
+  }
   
   // MAIN
   return (
