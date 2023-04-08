@@ -2,6 +2,7 @@ import {
     Flex,
     Text 
 } from "@chakra-ui/react";
+import { poStatusIndicator } from "@/components/statusIndicators";
 
 export const COLUMNS = [
     {
@@ -64,15 +65,21 @@ export const COLUMNS = [
                 filterValue.includes(row.values[id])
             );
         },
+        Cell: (props) => {
+            return (
+                poStatusIndicator(props.value)
+            )
+        }
     },
     {
         Header: "Total Cost",
         id: "totalCost",
         accessor: "totalCost",
         Cell: (props) => {
-            return (
-                <Text>PHP {props.value.toFixed(2)}</Text>
-            )
+            if (props.value != null)
+                return (
+                    <Text float={"left"}>PHP {props.value.toFixed(2)}</Text>
+                )
         }
     }
 ]

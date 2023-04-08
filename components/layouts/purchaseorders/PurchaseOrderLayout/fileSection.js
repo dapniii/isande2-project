@@ -20,10 +20,6 @@ function PurchaseOrderFileSection({data, setSubmitArray}) {
     const inputFile = useRef(null)
 
     useEffect(() => {
-        console.log(inputFile.current.files)
-        console.log(files)
-    })
-    useEffect(() => {
         setSubmitArray(files)
     }, [files])
 

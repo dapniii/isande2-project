@@ -24,7 +24,7 @@ import {
     withIssues
 } from './PurchaseOrderForm/statusIcons'
 
-function OrderHistoryLayout({data}) {
+function OrderHistoryLayout() {
     function showPath() {
         return (
             <>
@@ -45,65 +45,37 @@ function OrderHistoryLayout({data}) {
 
         <CardBody>
             <Flex gap={4} alignItems={"center"} zIndex={99}>
-                { 
-                    data.statusID.name == null || 
-                    ["Posted", "Approved", "Rejected", "Ongoing", "Purchased", "Delivered", "Completed"].findIndex(option => 
-                        option == data.statusID.name) == -1     
-                    ? (postedGray()) : (postedColor())
-                }
+                {postedGray()}
                 <Flex flexDir={"column"} lineHeight={"1.2em"}>
                     <Text fontWeight={"bold"}>Posted</Text>
-                    { data.createdAt != null ? (<Text fontSize={"sm"}>{new Date(data.createdAt).toLocaleString()}</Text>) : (<></>) }
-                    
                 </Flex>
             </Flex>
             {showPath()}
             <Flex gap={4} alignItems={"center"}>
-                {
-                    data.statusID.name != "Rejected" ? (
-                        ["Approved", "Ongoing", "Purchased", "Delivered", "Completed"].findIndex(option => 
-                            option == data.statusID.name) != -1
-                            ? (approvedColor()) : (approvedGray())
-                        
-                    ) : (rejectedColor())
-                }
-
+                {approvedGray()}
                 <Flex flexDir={"column"} lineHeight={"1.2em"}>
-                    <Text fontWeight={"bold"}>{data.statusID.name != "Rejected" ? ("Approved") : ("Rejected")}</Text>
-                    { data.approval.createdAt != null ? (<Text fontSize={"sm"}>{new Date(data.approval.createdAt).toLocaleString()}</Text>) : (<></>) }
+                    <Text fontWeight={"bold"}>Approved</Text>
                 </Flex>
             </Flex>
             {showPath()}
             <Flex gap={4} alignItems={"center"}>
-                {["Purchased", "Delivered", "Completed"].findIndex(option => 
-                    option == data.statusID.name) != -1
-                    ? (purchasedColor()) : (purchasedGray())
-                }
+                {purchasedGray()}
                 <Flex flexDir={"column"} lineHeight={"1.2em"}>
                     <Text fontWeight={"bold"}>Purchased</Text>
-                    {/* <Text fontSize={"sm"}>Date</Text> */}
                 </Flex>
             </Flex>
             {showPath()}
             <Flex gap={4} alignItems={"center"}>
-                {["Delivered", "Completed"].findIndex(option => 
-                    option == data.statusID.name) != -1
-                    ? (deliveredColor()) : (deliveredGray())
-                }
+                {deliveredGray()}
                 <Flex flexDir={"column"} lineHeight={"1.2em"}>
-                    <Text fontWeight={"bold"}>Delivered</Text>
-                    {/* <Text fontSize={"sm"}>Date</Text> */}
+                    <Text fontWeight={"bold"}>Received</Text>
                 </Flex>
             </Flex>
             {showPath()}
             <Flex gap={4} alignItems={"center"}>
-                {["Completed"].findIndex(option => 
-                    option == data.statusID.name) != -1
-                    ? (completedColor()) : (completedGray())
-                }
+                {completedGray()}
                 <Flex flexDir={"column"} lineHeight={"1.2em"}>
                     <Text fontWeight={"bold"}>Completed</Text>
-                    {/* <Text fontSize={"sm"}>Date</Text> */}
                 </Flex>
             </Flex>
         </CardBody>

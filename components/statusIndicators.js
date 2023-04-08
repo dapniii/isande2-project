@@ -133,4 +133,113 @@ export function joStatusIndicator(status) {
     }
 }
 
+export function poStatusIndicator(status) {
+    if (status == "Posted") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(0, 93, 242, 0.35)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3} 
+                justifyContent={"center"} 
+                w={"50%"}
+            >
+                <Text color={"rgba(0, 93, 242, 1)"} fontWeight={"bold"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Approved") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(37, 198, 133, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3} 
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(37, 198, 133, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Purchased") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(255, 192, 0, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3} 
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(255, 192, 0, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Received") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(117, 95, 226, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3} 
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(117, 95, 226, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Completed") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(37, 198, 133, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3}
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(37, 198, 133, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "With Issues") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(248, 58, 58, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3}                 
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+    else if (status == "Rejected") {
+        return (
+            <Flex 
+                gap={1} 
+                bg={"rgba(248, 58, 58, 0.3)"} 
+                borderRadius={"30em"} 
+                px={3.5} 
+                py={0.3} 
+                justifyContent={"center"}
+                w={"50%"}
+            >
+                <Text color={"rgba(248, 58, 58, 1)"} fontWeight={"bold"} fontSize={"lg"}>{status}</Text>
+            </Flex> 
+        )
+    }
+
+}
+
 

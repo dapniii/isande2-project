@@ -19,8 +19,7 @@ export default async (req, res) => {
         firstName: requesterSplit[0],
         lastName: requesterSplit[1],
     })
-    console.log("Requested By")
-    console.log(requestedByID)
+
     let creatorID = await User.findOne({userID: poInfo.creatorID})
 
     let poResult = await PurchaseOrder.create({
@@ -31,21 +30,16 @@ export default async (req, res) => {
         description: poInfo.description,
         creatorID: creatorID._id,
     })
-
+    console.log(poResult)
     poInfo.partsList.map(async item => {
         let partsListRes = await PurchaseOrderPartsList.create({
             poID: poResult._id,
             itemID: ObjectId(item.itemID),
-            detailID: ObjectId(item.detailID),
-            unitCost: item.unitCost,
-            quantity: item.quantity
+            // detailID: ObjectId(item.detailID),
+            // unitCost: item.unitCost,
+            requestedQty: item.quantity
         })
 
-        // let detailsRes = await ItemDetails.findByIdAndUpdate(item.detailID,
-        //     { $inc: 
-        //         { quantity: item.quantity }
-        //     }
-        // )
     })
 
     res.json("success")

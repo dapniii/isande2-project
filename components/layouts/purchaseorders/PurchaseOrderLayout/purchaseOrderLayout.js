@@ -23,8 +23,9 @@ import {
     AutoCompleteList,
     AutoCompleteItem
 } from "@choc-ui/chakra-autocomplete";
-import OrderHistoryLayout from '../orderHistory';
-import EditablePurchaseOrderPartsList from './layoutPartsList';
+import ActiveOrderHistory from '../activeOrderHistory';
+import PurchaseOrderDetailedPartsList from './detailedPartsList';
+import PurchaseOrderCompletePartsList from './completePartsList';
 import PurchaseOrderCommentSection from './commentSection';
 import PurchaseOrderFileSection from './fileSection';
 import { uploadPoFile } from '@/lib/images/imageHandler';
@@ -32,12 +33,50 @@ import { purchaseOrderAPI } from '@/lib/routes';
 import { generateID } from '@/lib/dataHandler';
 
 
-function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
+function PurchaseOrderLayout({
+  user, 
+  initialData, 
+  categoryList, 
+  approveFunc,
+  confirmPurchaseFunc
+}) {
     const [supplier, setSupplier] = useState(initialData.supplierID);
     const [requestedBy, setRequestedBy] = useState(initialData.requestedBy)
     const [description, setDescription] = useState("")
     const [partsList, setPartsList] = useState([])
     const [files, setFiles] = useState([])
+
+
+
+    async function approve() {
+      let poData = {
+          poID: initialData._id,
+          approverID: user.userID,
+          approvedDate: new Date(),
+      }
+  
+      await fetch(purchaseOrderAPI.approve, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(poData),
+      }).then(result => result.json())
+      .then(data => {
+          console.log(data)
+          if (data.error != null) 
+              console.log(data.error)
+          location.reload()
+      })
+    }
+
+    function passApproveFunc() {
+      return approve
+    }
+
+    useEffect(() => {
+      approveFunc(passApproveFunc)
+    }, [partsList])
 
     async function confirmPurchase() {
       let uploadConfig = {
@@ -47,10 +86,12 @@ function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
   
       console.log(fileRes)
       let bodyData = {
+        poID: initialData._id,
         poNumber: initialData.poNumber,
-        purchasedData: new Date(),
+        purchasedDate: new Date(),
         purchasedBy: user.userID,
-        uploadedFiles: fileRes
+        uploadedFiles: fileRes,
+        detailedParts: partsList,
       }
       
       await fetch(purchaseOrderAPI.confirm_purchase, {
@@ -65,10 +106,10 @@ function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
           console.log(data)
           if (data.error != null) 
               console.log(data.error)
-          // location.reload()
+          location.reload()
       })
 
-  }
+    }
 
     function passConfirmPurchaseFunc() {
       return confirmPurchase
@@ -76,7 +117,7 @@ function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
 
     useEffect(() => {
       confirmPurchaseFunc(passConfirmPurchaseFunc)
-    }, [files])
+    }, [files, partsList])
 
     return (
         <Flex p={5} gap={5}>
@@ -162,13 +203,32 @@ function PurchaseOrderLayout({user, initialData, confirmPurchaseFunc}) {
               </FormControl>
             </CardBody>
           </Card>
-          <EditablePurchaseOrderPartsList partsList={initialData.partsList} />
+
+          {/* 
+              Form to specify the details of the items to be purchased 
+              User must have a purchasing role
+          */}
+          { 
+            ["Posted", "Rejected", "Approved"].findIndex(option => option == initialData.statusID.name) != -1 
+            ? (<PurchaseOrderDetailedPartsList user={user} initialData={initialData} options={categoryList} setSubmitArray={setPartsList} />) 
+            : (<></>)
+          }
+
+          {/* 
+              Completed parts list after PO has been approved
+          */}
+          { 
+            ["Purchased", "Received", "Completed", "With Issues"].findIndex(option => option == initialData.statusID.name) != -1
+            ? (<PurchaseOrderCompletePartsList partsList={initialData.partsList} />) 
+            : (<></>)
+          }
+
           <PurchaseOrderCommentSection user={user} poNumber={initialData.poNumber} data={initialData.comments} />
         </Flex>
   
         {/* Order History */}
         <Flex flexDir={"column"} w={"30%"} gap={3}>
-          <OrderHistoryLayout data={initialData} />
+          <ActiveOrderHistory data={initialData} />
           <PurchaseOrderFileSection data={initialData} setSubmitArray={setFiles} />
         </Flex>
         
