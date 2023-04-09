@@ -24,7 +24,8 @@ import {
   AutoCompleteItem
 } from "@choc-ui/chakra-autocomplete";
 import OrderHistoryLayout from '../orderHistory';
-import PurchaseOrderPartsList from './partsList';
+import PurchaseOrderPartsRequestList from './partsRequest';
+import PurchaseOrderPartsList from '../PurchaseOrderLayout/detailedPartsList';
 import { purchaseOrderAPI } from '@/lib/routes';
 import { generateID } from '@/lib/dataHandler';
 
@@ -141,7 +142,7 @@ function CreatePurchaseOrderForm({options, creatorID, submitFunc}) {
             </FormControl>
           </CardBody>
         </Card>
-        <PurchaseOrderPartsList options={options} setSubmitArray={setPartsList} />
+        <PurchaseOrderPartsRequestList options={options} setSubmitArray={setPartsList} initialData={[]} />
       </Flex>
 
       {/* Order History */}

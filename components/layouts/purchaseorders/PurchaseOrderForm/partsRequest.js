@@ -24,24 +24,20 @@ import {
 import { AddButton } from "@/components/buttons";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 
-export default function PurchaseOrderPartsList({options, setSubmitArray}) {
+function PurchaseOrderPartsRequestList({options, setSubmitArray, initialData}) {
     const [editState, setEditState] = useState(false)
     const [partTemplate, setPartTemplate] = useState({
         itemID: "",
         itemNumber: "",
         itemName: "",
         itemModel: "",
-        detailID: "",
-        partNumber: "",
-        brand: "",
-        unitCost: 0.00,
         quantity: 0,
     })
 
     const [partsList, dispatch] = useReducer((state, action) => {
         switch (action.type) {
             case "initialize": // Get item data from context
-                return []
+                return initialData
             case "edit": { // replace edited item at index and return edited array
                 return state.map((row, i) => i === action.payload.index ? action.payload.item : row)
             } 
@@ -54,7 +50,7 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
                 return state.map((row, i) => i == action.payload ? {...row, disabled: true} : row)
             }
             default: 
-                return []
+                return initialData.partsList
         }
     })
 
@@ -62,11 +58,12 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
     // Clear template after updating partsList
     useEffect(() => {
         if (partsList == null) {
-            dispatch({type: "initialize"})
+            dispatch({type: "initialize"})            
         }
 
         if (partsList != null) {
             clearTemplate()
+            setEditState(false)
             setSubmitArray(partsList)
         }
     }, [partsList])
@@ -74,16 +71,15 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
 
     function clearTemplate() {
         setPartTemplate({
+            itemID: "",
             itemNumber: "",
             itemName: "",
             itemModel: "",
-            partNumber: "",
-            brand: "",
-            unitCost: 0.00,
             quantity: 0,
         })
     }
 
+    
     return (
         <Card variant={"outline"} >
             <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
@@ -91,20 +87,16 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
             </CardHeader>
             <CardBody px={0}>
                 <Grid
-                    templateColumns={"1fr 3fr 2fr 2fr 2fr 2fr 2fr 2fr"}
+                    templateColumns={"0.7fr 7fr 2fr 1fr"}
                     autoFlow={"row"}
                     gap={3}
                 >
                     {/* Headers */}
                     <GridItem colStart={1}><Text>{" "}</Text></GridItem>
                     <GridItem colStart={2}><Text>Item</Text></GridItem>
-                    <GridItem colStart={3}><Text>Part Number</Text></GridItem>
-                    <GridItem colStart={4}><Text>Brand</Text></GridItem>
-                    <GridItem colStart={5}><Text>Unit Cost</Text></GridItem>
-                    <GridItem colStart={6}><Text>Quantity</Text></GridItem>
-                    <GridItem colStart={7}><Text>Subtotal</Text></GridItem>
-                    <GridItem colStart={8}><Text>{" "}</Text></GridItem>
-                    <GridItem colSpan={8}><hr /></GridItem>
+                    <GridItem colStart={3}><Text>Requested Qty</Text></GridItem>
+                    <GridItem colStart={4}><Text>{" "}</Text></GridItem>
+                    <GridItem colSpan={4}><hr /></GridItem>
 
                     {
                         partsList != null ? (
@@ -114,20 +106,21 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
                                         {/* Sample */}
                                         <GridItem colStart={1} m={"auto"}><Text fontWeight={"semibold"}>{index + 1}</Text></GridItem>
                                         <GridItem colStart={2} my={"auto"}><Text>{row.itemName + " " + row.itemModel}</Text></GridItem>
-                                        <GridItem colStart={3} my={"auto"}><Text>{row.partNumber}</Text></GridItem>
-                                        <GridItem colStart={4} my={"auto"}><Text>{row.brand}</Text></GridItem>
-                                        <GridItem colStart={5} my={"auto"}><Text>PHP {row.unitCost.toFixed(2)}</Text></GridItem>
-                                        <GridItem colStart={6} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.quantity}</Text></GridItem>
-                                        <GridItem colStart={7} my={"auto"}><Text>PHP {(row.unitCost * row.quantity).toFixed(2)}</Text></GridItem>
-                                        <GridItem colStart={8}>
-                                            <IconButton
-                                                variant={"outline"}
-                                                border={"1px solid white"}
-                                                color={"red"}
-                                                aria-label="Delete item"
-                                                icon={<MdCancel />}
-                                                onClick={() => dispatch({type: "delete", payload: index})}
-                                            />
+                                        <GridItem colStart={3} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.quantity}</Text></GridItem>
+
+                                        <GridItem colStart={4}>
+                                            {
+                                                initialData == null ? (                                                
+                                                    <IconButton
+                                                        variant={"outline"}
+                                                        border={"1px solid white"}
+                                                        color={"red"}
+                                                        aria-label="Delete item"
+                                                        icon={<MdCancel />}
+                                                        onClick={() => dispatch({type: "delete", payload: index})}
+                                                    />) : (<></>) 
+                                            }
+
                                         </GridItem>
                                     </>
                                 )
@@ -151,10 +144,6 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
         </Card>
     )
 
-    function createRow(item, index) {
-        
-    }
-
     function handleItemSelect(value) {
         let item = options.partsList.find(option => option.itemNumber == value)
         setPartTemplate((prevState) => ({
@@ -162,23 +151,7 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
             itemNumber: item.itemNumber,
             itemName: item.itemName,
             itemModel: item.itemModel,
-            partNumber: "",
-            brand: "",
         }));
-    }
-
-    function handleDetailSelect(value) {
-        let select = value.split("/")
-        let detail = options
-            .partsList.find(option => option.itemNumber == partTemplate.itemNumber)
-            .details.find(option => option.partNumber == select[0] && option.itemBrandID.name == select[1])
-        
-        setPartTemplate((prevState) => ({
-            ...prevState,
-            detailID: detail._id,
-            partNumber: select[0],
-            brand: select[1]
-        }))
     }
 
     function rowInput() {
@@ -215,91 +188,22 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
                         </AutoCompleteList>
                     </AutoComplete>
                 </GridItem>
-                <GridItem colStart={3} colSpan={2}>
-                    <AutoComplete 
-                        openOnFocus
-                        focusInputOnSelect={false}
-                        suggestWhenEmpty
-                        restoreOnBlurIfEmpty={false} 
-                        mx={2} 
-                        onChange={(value) => handleDetailSelect(value)} 
-                    >
-                        <AutoCompleteInput 
-                            border={"2px solid #9F9F9F"} 
-                            variant="outline" 
-                            value={partTemplate.partNumber}
-                        />
-                        <AutoCompleteList>
-                            { partTemplate.itemNumber != "" ? (
-                                options.partsList.find(option => option.itemNumber == partTemplate.itemNumber).details.map((item) => (
-                                    <AutoCompleteItem
-                                        key={item._id}
-                                        value={item.partNumber + "/" + item.itemBrandID.name}
-                                    >
-                                        <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
-                                            <Flex flexDirection={"column"}>
-                                                <Text fontWeight={"bold"}>{item.itemBrandID.name}</Text>
-                                                <Text fontSize={"sm"}>{item.partNumber}</Text>
-                                            </Flex>
-                                            <Flex>
-                                            <Text fontSize={"lg"} fontWeight={"bold"}>{item.quantity}</Text>
-                                        </Flex>
-                                        </Flex>
-                                    </AutoCompleteItem>
-                                ))
-                            ) : (<></>) }
-
-                        </AutoCompleteList>
-                    </AutoComplete>
-                </GridItem>
-                <GridItem colStart={5}>
-                    <NumberInput  
+                <GridItem colStart={3}>
+                    <NumberInput 
                         min={0} 
-                        max={1000} 
-                        precision={2}
-                        step={0.1}
-                        value={partTemplate.unitCost}
-                        
-                        onChange={(value) => setPartTemplate((prevState) => ({...prevState, unitCost: parseFloat(value)}))} 
+                        precision={0}
+                        value={partTemplate.quantity}
+                        onChange={(value) => setPartTemplate((prevState) => ({...prevState, quantity: parseInt(value)}))}
                     >
-                        <NumberInputField 
-                            border={"2px solid #9F9F9F"} 
-                            inputMode={"text"}
-                            type={"text"}
+                        <NumberInputField  border={"2px solid #9F9F9F"} 
                         />
-                        <NumberInputStepper >
-                            <NumberIncrementStepper  />
-                            <NumberDecrementStepper  />
+                        <NumberInputStepper>
+                            <NumberIncrementStepper />
+                            <NumberDecrementStepper />
                         </NumberInputStepper>
                     </NumberInput>
                 </GridItem>
-                <GridItem colStart={6}>
-                    {
-                        partTemplate.partNumber != "" ? (
-                            <NumberInput 
-                            min={0} 
-                            max={
-                                options
-                                .partsList.find(option => option.itemNumber == partTemplate.itemNumber)
-                                .details.find(detail => detail.partNumber == partTemplate.partNumber)
-                                .quantity
-                            } 
-                            precision={0}
-                            value={partTemplate.quantity}
-                            onChange={(value) => setPartTemplate((prevState) => ({...prevState, quantity: parseInt(value)}))}
-                            >
-                                <NumberInputField  border={"2px solid #9F9F9F"} 
-                                />
-                                <NumberInputStepper>
-                                    <NumberIncrementStepper />
-                                    <NumberDecrementStepper />
-                                </NumberInputStepper>
-                            </NumberInput>
-                        ) : (<></>)
-                    }
-
-                </GridItem>
-                <GridItem colStart={8} display={"flex"} alignItems={"center"}>
+                <GridItem colStart={4} display={"flex"} alignItems={"center"}>
                     <ButtonGroup gap={0} >
                         <IconButton
                             border={"1px solid #9F9F9F"}
@@ -320,9 +224,10 @@ export default function PurchaseOrderPartsList({options, setSubmitArray}) {
                             onClick={() => dispatch({type: "add", payload: partTemplate})}
                         />
                     </ButtonGroup>
-
                 </GridItem>
             </>
         )
     }
 }
+
+export default PurchaseOrderPartsRequestList

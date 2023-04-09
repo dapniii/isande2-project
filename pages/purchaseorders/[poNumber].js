@@ -11,11 +11,13 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
-  ButtonGroup
+  ButtonGroup,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { purchaseOrderAPI } from '@/lib/routes';
 import { BackButton, SaveButton, RejectButton } from '@/components/buttons';
 import PurchaseOrderLayout from '@/components/layouts/purchaseorders/PurchaseOrderLayout/purchaseOrderLayout';
+import PurchaseOrderReceiveModal from '@/components/layouts/purchaseorders/PurchaseOrderLayout/receiveItemModal';
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -77,7 +79,9 @@ function PurchaseOrderDetailsPage({user, categoryList}) {
   const router = useRouter();
   const { poNumber } = router.query;
   const [initialData, setInitialData] = useState();
+  const [approve, setApprove] = useState();
   const [confirmPurchase, setConfirmPurchase] = useState();
+  const receiveModal = useDisclosure();
 
   useEffect(() => {
       fetch("/api/purchaseorders/" + poNumber, {
@@ -93,25 +97,9 @@ function PurchaseOrderDetailsPage({user, categoryList}) {
       });
   },[poNumber])
 
-  async function approve() {
-    let poData = {
-        poNumber: poNumber,
-        approverID: user.data.userID,
-    }
 
-    await fetch(purchaseOrderAPI.approve, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(poData),
-    }).then(result => result.json())
-    .then(data => {
-        console.log(data)
-        if (data.error != null) 
-            console.log(data.error)
-        location.reload()
-    })
+  function getApprove(submitFunc) {
+    setApprove(submitFunc)
   }
 
   function getConfirmPurchase(submitFunc) {
@@ -157,6 +145,14 @@ function PurchaseOrderDetailsPage({user, categoryList}) {
                         <SaveButton title={"Confirm Purchase"} clickFunction={confirmPurchase} />
                         ) : (<></>)
                     }
+                    {
+                        initialData.purchaseOrder.statusID.name == "Purchased" && user.data.role == "Inventory" ? (
+                          <>
+                            <SaveButton title={"Receive Items"} clickFunction={receiveModal.onOpen} />
+                            <PurchaseOrderReceiveModal modalOpen={receiveModal} data={initialData.purchaseOrder} user={user.data} />
+                          </>
+                        ) : (<></>)
+                    }
                   </>
                 ) : (<></>)
             }
@@ -186,6 +182,8 @@ function PurchaseOrderDetailsPage({user, categoryList}) {
                       <PurchaseOrderLayout 
                           user={user.data}
                           initialData={initialData.purchaseOrder}
+                          categoryList={categoryList}
+                          approveFunc={getApprove}
                           confirmPurchaseFunc={getConfirmPurchase}
                       />
                   ) : (<></>)

@@ -19,11 +19,14 @@ const PurchaseOrderPartsListSchema = new mongoose.Schema({
     unitCost: {
         type: mongoose.Types.Decimal128,
     },
-    quantity: {
+    requestedQty: {
         type: Number,
         min: 0,
     },
-    
+    receivedQty: {
+        type: Number,
+        default: 0,
+    }
 }, {timestamps: true})
 
 const PurchaseOrderPartsList = mongoose.models.PurchaseOrderPartsList || mongoose.model("PurchaseOrderPartsList", PurchaseOrderPartsListSchema)

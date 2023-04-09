@@ -9,6 +9,7 @@ import {
   TabPanel,
   Tab,
   Select,
+  Button,
 } from "@chakra-ui/react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
@@ -24,6 +25,8 @@ import GlobalFilter from "@/components/table/globalFilter";
 import Dropdown from "@/components/table/dropdown";
 import { userAPI, vehicleAPI, sparePartsAPI, fuelAPI, jobOrderAPI, purchaseOrderAPI } from "@/lib/routes";
 import { withSessionSsr } from "@/lib/auth/withSession";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -351,6 +354,22 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
     </>
   )
   }
+
+  function generatePDF() {
+    const doc = new jsPDF();
+
+    const columns = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
+    const rows = [
+      ["Doe", "John", "johndoe@example.com", "123-456-7890", "Marketing", "Manager", "Admin"],
+    ];
+
+    doc.autoTable({
+      head: [columns],
+      body: rows,
+    });
+
+    doc.save("report.pdf")
+  }
   
   // MAIN
   return (
@@ -391,6 +410,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
+                <Button onClick={generatePDF}>Generate PDF</Button>
               </TabPanel>
               {/* Vehicles */}
               <TabPanel>
@@ -444,7 +464,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                 />
               </TabPanel>
               {/* Purchase Orders */}
-              <TabPanel>
+              {/* <TabPanel>
                 <BasicTable 
                   COLUMNS={PO_COLUMNS}
                   DATA={data.purchaseOrders.purchaseOrders}
@@ -453,7 +473,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
-              </TabPanel>
+              </TabPanel> */}
             </TabPanels>
           </Tabs>       
         </GridItem>

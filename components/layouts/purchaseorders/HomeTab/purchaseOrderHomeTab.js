@@ -65,7 +65,7 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                 <CardBody>
                     <Stack direction={'row'} justifyContent={"center"}>
                         <Flex 
-                            w='18%' 
+                            w='21%' 
                             h='5em' 
                             align={"center"} 
                             justify={"center"} 
@@ -76,7 +76,7 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                             <Text>Posted</Text>
                         </Flex>
                         <Flex 
-                            w='18%' 
+                            w='21%' 
                             h='5em' 
                             align={"center"} 
                             justify={"center"} 
@@ -86,7 +86,7 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                             <Text fontSize={"3xl"} fontWeight={"bold"}>{poData.approvedCount}</Text>
                             <Text>Approved</Text>
                         </Flex>
-                        <Flex 
+                        {/* <Flex 
                             w='18%' 
                             h='5em' 
                             align={"center"} 
@@ -96,9 +96,9 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                         >
                             <Text fontSize={"3xl"} fontWeight={"bold"}>{poData.ongoingCount}</Text>
                             <Text>Ongoing</Text>
-                        </Flex>
+                        </Flex> */}
                         <Flex 
-                            w='18%' 
+                            w='21%'  
                             h='5em' 
                             align={"center"} 
                             justify={"center"} 
@@ -109,7 +109,7 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                             <Text>Purchased</Text>
                         </Flex>
                         <Flex 
-                            w='18%'
+                            w='21%' 
                             h='5em' 
                             align={"center"} 
                             justify={"center"} 
@@ -120,7 +120,7 @@ function PurchaseOrderHomeTab({poData, categoryList}) {
                             <Text>Delivered</Text>
                         </Flex>
                         <Flex 
-                            w='18%' 
+                            w='21%' 
                             h='5em' 
                             align={"center"} 
                             justify={"center"} 

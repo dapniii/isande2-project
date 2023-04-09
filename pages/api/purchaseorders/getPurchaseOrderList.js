@@ -8,7 +8,7 @@ import PurchaseOrderFile from "@/models/purchaseOrders/PurchaseOrderFileSchema";
 export default async (req, res) => {
     await connectToDatabase();
 
-    let purchaseOrders = await PurchaseOrder.find({})
+    let purchaseOrders = await PurchaseOrder.find({}).sort([["updatedAt", -1]])
         .populate("statusID")
         .populate("supplierID")
         .populate("requestedBy")

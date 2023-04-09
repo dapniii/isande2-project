@@ -24,7 +24,7 @@ import {
 import { AddButton } from "@/components/buttons";
 import { MdCancel, MdCheckCircle } from "react-icons/md";
 
-function EditablePurchaseOrderPartsList({partsList}) {
+function PurchaseOrderCompletePartsList({partsList}) {
     return (
         <Card variant={"outline"} >
             <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
@@ -42,9 +42,9 @@ function EditablePurchaseOrderPartsList({partsList}) {
                     <GridItem colStart={3}><Text>Part Number</Text></GridItem>
                     <GridItem colStart={4}><Text>Brand</Text></GridItem>
                     <GridItem colStart={5}><Text>Unit Cost</Text></GridItem>
-                    <GridItem colStart={6}><Text>Quantity</Text></GridItem>
-                    <GridItem colStart={7}><Text>Subtotal</Text></GridItem>
-                    <GridItem colStart={8}><Text>{" "}</Text></GridItem>
+                    <GridItem colStart={6}><Text>Requested</Text></GridItem>
+                    <GridItem colStart={7}><Text>Received</Text></GridItem>
+                    <GridItem colStart={8}><Text>Subtotal</Text></GridItem>
                     <GridItem colSpan={8}><hr /></GridItem>
 
                     {
@@ -58,8 +58,9 @@ function EditablePurchaseOrderPartsList({partsList}) {
                                         <GridItem colStart={3} my={"auto"}><Text>{row.detailID.partNumber}</Text></GridItem>
                                         <GridItem colStart={4} my={"auto"}><Text>{row.detailID.itemBrandID.name}</Text></GridItem>
                                         <GridItem colStart={5} my={"auto"}><Text>PHP {parseFloat(row.unitCost.$numberDecimal).toFixed(2)}</Text></GridItem>
-                                        <GridItem colStart={6} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.quantity}</Text></GridItem>
-                                        <GridItem colStart={7} my={"auto"}><Text>PHP {(parseFloat(row.unitCost.$numberDecimal) * row.quantity).toFixed(2)}</Text></GridItem>
+                                        <GridItem colStart={6} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.requestedQty}</Text></GridItem>
+                                        <GridItem colStart={7} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.receivedQty}</Text></GridItem>
+                                        <GridItem colStart={8} my={"auto"}><Text>PHP {(parseFloat(row.unitCost.$numberDecimal) * row.requestedQty).toFixed(2)}</Text></GridItem>
                                         {/* <GridItem colStart={8}>
                                             <IconButton
                                                 variant={"outline"}
@@ -81,4 +82,4 @@ function EditablePurchaseOrderPartsList({partsList}) {
     )
 }
 
-export default EditablePurchaseOrderPartsList
+export default PurchaseOrderCompletePartsList
