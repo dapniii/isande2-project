@@ -82,9 +82,9 @@ function JobOrderDetailsPage({user, categoryList}) {
         returnList: []
     })
 
-    React.useEffect(() => {
-        console.log(partsList)
-    })
+    // React.useEffect(() => {
+    //     console.log(partsList)
+    // })
 
     React.useEffect(() => {
         fetch("/api/joborders/" + jobOrderID, {

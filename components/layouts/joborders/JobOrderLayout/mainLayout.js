@@ -23,6 +23,8 @@ import {
     AutoCompleteList,
     AutoCompleteItem
 } from "@choc-ui/chakra-autocomplete";
+import { joPartStatusIndicator } from '@/components/statusIndicators';
+import { AddButton } from '@/components/buttons';
 
 function JobOrderMainLayout({user, initialData, categoryList, setFormState, setSubmitArray}) {
     const [detailTemplate, setDetailTemplate] = React.useState({
@@ -44,6 +46,11 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                     mode: "handover"
                 }
             }
+            // case "return": {
+            //     return {
+            //         mode: "return"
+            //     }
+            // }
             default: {
                 return {
                     index: -1,
@@ -177,17 +184,24 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                                     mx={2} 
                                                     onChange={(value) => handleDetailSelect(row, value)}
                                                 >
-                                                    <AutoCompleteInput variant="outline" />
+                                                    <AutoCompleteInput variant="outline" border={"2px solid gray"} />
                                                     <AutoCompleteList>
                                                         {editState.options.map((option) => (
                                                             <AutoCompleteItem
                                                                 key={option._id}
                                                                 value={option.itemBrandID.name + "/" + option.partNumber}
                                                             >
-                                                                <Flex flexDirection={"column"}>
-                                                                    <Text fontWeight={"bold"}>{option.partNumber}</Text>
-                                                                    <Text fontSize={"sm"}>{option.itemBrandID.name}</Text>
+                                                                <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>   
+                                                                    <Flex flexDirection={"column"}>
+                                                                        <Text fontWeight={"bold"}>{option.partNumber}</Text>
+                                                                        <Text fontSize={"sm"}>{option.itemBrandID.name}</Text>
+                                                                    </Flex>
+                                                                    <Flex alignItems={"baseline"} gap={1}>
+                                                                        <Text fontWeight={"bold"} fontSize={"lg"}>{option.quantity}</Text>
+                                                                        <Text fontSize={"sm"} color={"gray"}>{row.itemID.unitID.abbreviation}</Text>
+                                                                    </Flex>
                                                                 </Flex>
+
                                                             </AutoCompleteItem>
                                                         ))}
                                                     </AutoCompleteList>
@@ -197,14 +211,14 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
 
                                             <GridItem colStart={8}>
                                                 <NumberInput 
-                                                    min={row.receivedQty} max={row.requestQty} precision={0} 
+                                                    min={row.receivedQty} precision={0} 
                                                     value={detailTemplate.quantity} 
                                                     onChange={(value) => setDetailTemplate((prevState) => ({
                                                         ...prevState,
                                                         quantity: parseInt(value)
                                                     }))}
                                                 >
-                                                    <NumberInputField  />
+                                                    <NumberInputField border={"2px solid gray"} />
                                                     <NumberInputStepper>
                                                         <NumberIncrementStepper />
                                                         <NumberDecrementStepper />
@@ -243,14 +257,16 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                             <GridItem colStart={1} m={"auto"} key={index}><Text fontWeight={"bold"}>{index+1}</Text></GridItem>
                                             <GridItem colStart={2} my={"auto"}><Text>{row.itemID.itemNumber}</Text></GridItem>
                                             <GridItem colStart={3} my={"auto"}><Text>{row.itemID.itemName + " " + row.itemID.itemModel}</Text></GridItem>
-                                            <GridItem colStart={4} my={"auto"}><Text></Text></GridItem>
+                                            <GridItem colStart={4} my={"auto"}><Text>{joPartStatusIndicator(row.requestQty, row.receivedQty)}</Text></GridItem>
                                             <GridItem colStart={5} my={"auto"}><Text>{row.detailID != null ? (row.detailID.partNumber) : (<></>)}</Text></GridItem>
                                             <GridItem colStart={6} my={"auto"}><Text>{row.detailID != null ? (row.detailID.itemBrandID.name) : (<></>)}</Text></GridItem>
                                             <GridItem colStart={7} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.requestQty}</Text></GridItem>
                                             <GridItem colStart={8} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.receivedQty}</Text></GridItem>
                                             <GridItem colStart={9} my={"auto"}>
                                                 {   
-                                                    user.role == "Inventory" ? (
+                                                    user.role == "Inventory"
+                                                    && initialData.statusID != null 
+                                                    && initialData.statusID.name == "Pending Parts" ? (
                                                             <IconButton 
                                                             variant='outline'
                                                             size={"sm"}

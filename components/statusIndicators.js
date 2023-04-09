@@ -68,9 +68,8 @@ export function joStatusIndicator(status) {
                 bg={"rgba(248, 58, 58, 0.2)"} 
                 borderRadius={"30em"} 
                 px={3} 
-                py={0.3} 
+                py={1} 
                 w={"10em"} 
-                h={"2em"}
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
@@ -86,9 +85,8 @@ export function joStatusIndicator(status) {
                 border={"2px solid rgba(248, 58, 58, 0.7)"} 
                 borderRadius={"30em"} 
                 px={3} 
-                py={0.3} 
+                py={1} 
                 w={"10em"} 
-                h={"2em"}
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
@@ -104,9 +102,8 @@ export function joStatusIndicator(status) {
                 border={"2px solid rgba(37, 198, 133, 0.7)"} 
                 borderRadius={"30em"} 
                 px={3} 
-                py={0.3} 
+                py={1} 
                 w={"10em"} 
-                h={"2em"}
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
@@ -121,9 +118,8 @@ export function joStatusIndicator(status) {
                 bg={"rgba(37, 198, 133, 0.3)"} 
                 borderRadius={"30em"} 
                 px={3} 
-                py={0.3} 
+                py={1} 
                 w={"10em"} 
-                h={"2em"}
                 justifyContent={"center"} 
                 alignItems={"center"}
             >
@@ -240,6 +236,17 @@ export function poStatusIndicator(status) {
         )
     }
 
+}
+
+export function joPartStatusIndicator(requested, received) {
+
+    if (received == 0 || received > 0 && received < requested) {
+        return <Text>Pending</Text>
+    }
+
+    else {
+        return <Text>Complete</Text>
+    }
 }
 
 

@@ -39,7 +39,6 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
         itemName: "",
         itemModel: "",
         quantity: 0,
-        manualQty: 0,
     })
     const [partsList, dispatch] = useReducer((state, action) => {
         switch (action.type) {
@@ -49,7 +48,12 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                 return state.map((row, i) => i === action.payload.index ? action.payload.item : row)
             } 
             case "add": {// add new item at end of array 
-                return [...state, action.payload]
+                let foundIndex = state.findIndex(row => row.itemNumber == action.payload.itemNumber)
+                if (foundIndex != -1) {
+                    return state.map((row, index) => foundIndex == index ? {...row, quantity: row.quantity + action.payload.quantity} : row)
+                }
+                else return [...state, action.payload]
+                
             }
             case "delete": // delete item at specified index from array 
                 return state.filter((row, i) => {return i != action.payload})
@@ -72,8 +76,6 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                 return []
         }
     })
-
-
 
     // Initialize empty array for partsList
     // Clear template after updating partsList
@@ -108,7 +110,6 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                             itemName: object.itemID.itemName,
                             itemModel: object.itemID.itemModel,
                             quantity: object.recommendedQty,
-                            manualQty: 0,
                         }})
                     }
                     else if (itemIndex != -1 && partsList[itemIndex].quantity >= object.recommendedQty) {
@@ -152,7 +153,6 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
             itemName: "",
             itemModel: "",
             quantity: 0,
-            manualQty: 0,
         })
     }
 
@@ -165,7 +165,6 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
             itemName: item.itemName,
             itemModel: item.itemModel,
             quantity: prevState.quantity,
-            manualQty: prevState.manualQty
         }));
     }
 
@@ -205,7 +204,7 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                                             <GridItem colStart={4} display={"flex"} alignItems={"center"} >
                                                 <Text>{row.itemModel}</Text>
                                             </GridItem>
-                                            <GridItem colStart={5} display={"flex"} alignItems={"center"}><Text fontSize={"lg"} fontWeight={"bold"}>{parseInt(row.quantity) + parseInt(row.manualQty)}</Text></GridItem>
+                                            <GridItem colStart={5} display={"flex"} alignItems={"center"}><Text fontSize={"lg"} fontWeight={"bold"}>{parseInt(row.quantity)}</Text></GridItem>
                                             <GridItem colStart={6} display={"flex"} alignItems={"center"}>
                                                 <IconButton
                                                     variant='outline'
@@ -263,10 +262,17 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                                         key={item.itemNumber}
                                         value={item.itemNumber}
                                     >
-                                        <Flex flexDirection={"column"}>
-                                            <Text fontWeight={"bold"}>{item.itemNumber}</Text>
-                                            <Text fontSize={"sm"}>{item.itemName} {item.itemModel}</Text>
+                                        <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>
+                                            <Flex flexDirection={"column"}>
+                                                <Text fontWeight={"bold"}>{item.itemNumber}</Text>
+                                                <Text fontSize={"sm"}>{item.itemName} {item.itemModel}</Text>
+                                            </Flex>
+                                            <Flex alignItems={"baseline"} gap={1}>
+                                                <Text fontWeight={"bold"} fontSize={"lg"}>{item.quantity}</Text>
+                                                <Text fontSize={"sm"} color={"gray"}>{item.unitID.abbreviation}</Text>
+                                            </Flex>
                                         </Flex>
+
                                         
                                     </AutoCompleteItem>
                                 ))}
@@ -275,7 +281,7 @@ export default function CreateJobOrderPartsList({options, selectedJobs, setSubmi
                     </Flex>
                     <Flex gap={5} alignItems={"center"}>
                         <Text fontWeight={"semibold"}>Qty</Text>
-                        <NumberInput min={0} max={1000} precision={0} value={template.manualQty} onChange={(value) => setTemplate((prevState) => ({...prevState, manualQty: value}))}>
+                        <NumberInput min={0} max={1000} precision={0} value={template.quantity} onChange={(value) => setTemplate((prevState) => ({...prevState, quantity: parseInt(value)}))}>
                             <NumberInputField  />
                             <NumberInputStepper>
                                 <NumberIncrementStepper />
