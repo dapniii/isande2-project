@@ -28,7 +28,8 @@ const FuelOutSchema = new mongoose.Schema({
     //     required: true,
     // },
     oPlateNumber: { //TO EDIT IF VEHICLES PART IS CREATED
-        type: String,
+        type: mongoose.Types.ObjectId,
+        ref: "Vehicle",
         required: true
     },
     ofLiters: {

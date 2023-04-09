@@ -25,6 +25,7 @@ import AddFuelEntryForm from "@/components/layouts/fuel/addFuelEntryForm";
 import { useState } from "react";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import { fuelAPI } from "@/lib/routes";
+import { useEffect } from "react";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
@@ -111,6 +112,36 @@ export default function FuelPage({ user, data }) {
   //Add fuel entry button function -OPEN CLOSE FORMS
   const [isFormOpen, setIsFormOpen] = useState(false);
 
+  //TOTAL LITERS COMPUTATION
+  const [total, setTotal] = useState(0);
+  const totalStyle = {
+    color: total <= 5000 ? "#FF575F" : "#25C685"
+  };
+
+  const calculateTotal = () => {
+    let sum = 0;
+    let sum1 = 0;
+    let totalLiters = 0;
+    for (let i = 0; i < data.fuelIn.length; i++) {
+      sum += data.fuelIn[i].fLiters;
+    }
+    for (let i = 0; i < data.fuelOut.length; i++) {
+      sum1 += data.fuelOut[i].ofLiters;
+    }
+    totalLiters = sum-sum1;
+    return totalLiters;
+  }
+
+  useEffect(() => {
+    setTotal(calculateTotal());
+  }, [data.fuelIn, data.fuelOut]);
+
+  //DATE SORTING
+  const sortedFuelIn = data.fuelIn.sort((a, b) => new Date(b.fRecordDateTime) - new Date(a.fRecordDateTime));
+  const sortedFuelOut = data.fuelOut.sort((a, b) => new Date(b.oRecordDateTime) - new Date(a.oRecordDateTime));
+
+  //END OF CODE
+
   function addFuelEntry() {
     setIsFormOpen(true);
   }
@@ -135,6 +166,8 @@ export default function FuelPage({ user, data }) {
           onClose={closeFuelEntryForm}
           fuelInCount={data.fuelIn.length}
           fuelOutCount={data.fuelOut.length}
+          data={data}
+          total = {total}
         />
       </Flex>
     );
@@ -184,20 +217,22 @@ export default function FuelPage({ user, data }) {
             <StatGroup bg={"white"} p={5} boxShadow={"xl"} borderRadius={5}>
               <Stat>
                 <StatLabel>Total Fuel Tank Liters</StatLabel>
-                <StatNumber>11,000L out of 64,000L</StatNumber> //to update
+                <StatNumber>
+                  <span style={totalStyle}>{total.toLocaleString()}L</span> out of 64,000L
+                </StatNumber> //to update
               </Stat>
             </StatGroup>
             { refuelType == "" && 
                <BasicTable
                COLUMNS={COLUMNS}
-               DATA={data.fuelIn}
+               DATA={sortedFuelIn}
                FILTERS={filters}
                HIDDEN={["refuelType"]}
              />}
             { refuelType == "Refuel Truck" && 
              <BasicTable
              COLUMNS={FUEL_OUT_COLUMNS}
-             DATA={data.fuelOut}
+             DATA={sortedFuelOut}
              FILTERS={filters}
              HIDDEN={["refuelType"]}
            />}

@@ -1,5 +1,6 @@
 import { connectToDatabase } from "@/lib/db";
 import FuelIn from "@/models/fuel/FuelInSchema";
+import moment from 'moment-timezone';
 
 export default async (req, res) => {
     switch(req.method) {
@@ -16,7 +17,7 @@ export default async (req, res) => {
                   .project({
                     'fuelInID': 1, 
                     'fRecordDateTime': 1, 
-                    formattedDate: { $dateToString: { format: "%d %m %Y, %H:%M ", date: "$fRecordDateTime" } },
+                    formattedDate: { $dateToString: { format: "%Y-%m-%d, %H:%M", date: { $toDate: { $add: [ "$fRecordDateTime", 8 * 60 * 60 * 1000 ] } } } },
                     'fUnitCost': 1, 
                     'fLiters': 1, 
                     'creationDate': 1, 
@@ -24,8 +25,12 @@ export default async (req, res) => {
                     'user.firstName': 1,
                     'user.lastName': 1,
                   })
+                  .exec();
+            data.forEach((item) => {
+              item.formattedDate = moment(item.formattedDate).tz('Asia/Singapore').format('DD MMM YYYY, hh:mm A');
+            });
             res.json({data});
-            break
+            break;
         }
 
         default: {

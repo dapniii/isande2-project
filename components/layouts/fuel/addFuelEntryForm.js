@@ -26,10 +26,20 @@ import { MdCheckCircle } from "react-icons/md";
 import { generateID } from "@/lib/dataHandler";
 import { fuelAPI } from "@/lib/routes";
 import { useRouter } from "next/router";
+import {
+  AutoComplete,
+  AutoCompleteInput,
+  AutoCompleteItem,
+  AutoCompleteList,
+  AutoCompleteGroup,
+  AutoCompleteGroupTitle,
+  AutoCompleteTag,
+  AutoCompleteCreatable
+} from "@choc-ui/chakra-autocomplete";
 
 const AddFuelEntry = ({
   creatorID, fuelInCount, fuelOutCount, isOpen,
-  onClose,
+  onClose, data, total
 }) => {
   const { reload } = useRouter()
 
@@ -50,16 +60,6 @@ const AddFuelEntry = ({
   const [ofLiters, setOLiters] = useState(0);
   const [oPreviousRoute, setOPreviousRoute] = useState("");
 
-
-  //CONTINUE HERE
-
-  // useEffect(() => {
-  //   submitFunc(passSubmitFunc);
-  // }, []);
-
-  // function passSubmitFunc() {
-  //   return submitForm;
-  // }
 
   function clear() {
     setFuelInID("");
@@ -139,6 +139,7 @@ const AddFuelEntry = ({
     onClose();
   };
 
+
   return (
     <Modal isOpen={isOpen} onClose={handleCancel}>
       <ModalOverlay />
@@ -153,7 +154,7 @@ const AddFuelEntry = ({
                 onChange={handleRefuelTypeChange}
               >
                 <option value="tank">Refuel Tank</option>
-                <option value="truck">Refuel Truck</option>
+                <option value="truck" disabled={total === 0}>Refuel Truck</option>
               </Select>
             </FormControl>
           )}
@@ -212,10 +213,36 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Plate Number</FormLabel>
-                    <Input
+                    {/*********************TO EDIT *********************/}
+                    <AutoComplete openOnFocus suggestWhenEmpty value={oPlateNumber} onChange={(e) => setOPlateNumber(e.target.value)}>
+                                <AutoCompleteInput variant="outline" />
+                                <AutoCompleteList w={"100%"}>
+                                {data.vehicles?.map((item) => (
+                                    <AutoCompleteItem
+                                        key={item.oPlateNumber}
+                                        value={item.oPlateNumber}
+                                    >
+                                        <Flex gap={5}>
+                                            <Image 
+                                                src={item.imageID.secure_url}
+                                                alt={item.oPlateNumber}
+                                                objectFit={"cover"}
+                                                borderRadius={"15"}
+                                                w={"5em"}
+                                            /> 
+                                            <Flex flexDirection={"column"}>
+                                                <Text fontWeight={"bold"}>{item.oPlateNumber}</Text>
+                                                <Text>{item.brandID.name} {item.vehicleTypeID.name}</Text>
+                                            </Flex>
+                                        </Flex>
+                                    </AutoCompleteItem>
+                                ))}
+                                </AutoCompleteList>
+                            </AutoComplete>
+                    {/* <Input
                       value={oPlateNumber}
                       onChange={(e) => setOPlateNumber(e.target.value)}
-                    />
+                    /> */}
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Quantity</FormLabel>
