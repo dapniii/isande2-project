@@ -25,6 +25,7 @@
         "iron-session": "^6.3.1",
         "jspdf": "^2.5.1",
         "jspdf-autotable": "^3.5.28",
+        "moment-timezone": "^0.5.43",
         "mongodb": "^5.0.1",
         "mongoose": "^6.9.1",
         "nanoid": "^4.0.1",
