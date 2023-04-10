@@ -48,8 +48,8 @@ const AddFuelEntry = ({
 
   const [fuelInID, setFuelInID] = useState(generateID(fuelInCount, 15));
   const [fRecordDateTime, setFRecordDateTime] = useState("");
-  const [fUnitCost, setFUnitCost] = useState(0);
-  const [fLiters, setFLiters] = useState(0);
+  const [fUnitCost, setFUnitCost] = useState();
+  const [fLiters, setFLiters] = useState();
  
 
   const [fuelOutID, setFuelOutID] = useState(generateID(fuelOutCount, 15));
@@ -57,7 +57,7 @@ const AddFuelEntry = ({
   const [oDriver, setODriver] = useState("");
   //const [oUserID, setOUserID] = useState("");
   const [oPlateNumber, setOPlateNumber] = useState("");
-  const [ofLiters, setOLiters] = useState(0);
+  const [ofLiters, setOLiters] = useState();
   const [oPreviousRoute, setOPreviousRoute] = useState("");
 
 
@@ -173,7 +173,7 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} >
                     <FormLabel>Quantity</FormLabel>
-                    <NumberInput step={0.01} min={1} value={fLiters} onChange={(_, value) => setFLiters(value)}>
+                    <NumberInput step={0.01} min={1} value={fLiters} max={64000 - total}onChange={(_, value) => setFLiters(value)}>
                       <NumberInputField  />
                       <NumberInputStepper >
                         <NumberIncrementStepper  />
@@ -246,7 +246,7 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Quantity</FormLabel>
-                    <NumberInput step={0.01} min={1} value={ofLiters} onChange={(_, value) => setOLiters(value)}>
+                    <NumberInput step={0.01} min={1} value={ofLiters} max={64000 - total} onChange={(_, value) => setOLiters(value)}>
                       <NumberInputField  />
                       <NumberInputStepper >
                         <NumberIncrementStepper  />
