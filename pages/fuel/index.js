@@ -219,7 +219,7 @@ export default function FuelPage({ user, data }) {
                 <StatLabel>Total Fuel Tank Liters</StatLabel>
                 <StatNumber>
                   <span style={totalStyle}>{total.toLocaleString()}L</span> out of 64,000L
-                </StatNumber> //to update
+                </StatNumber>
               </Stat>
             </StatGroup>
             { refuelType == "" && 
