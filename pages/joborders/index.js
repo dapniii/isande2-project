@@ -1,3 +1,4 @@
+import { useState } from "react";
 import Navbar from "@/components/navbar";
 import Header from "@/components/header";
 import { AddButton } from "@/components/buttons";
@@ -10,11 +11,13 @@ import { Grid, GridItem, Flex, Text, Button, Tabs,
   useDisclosure 
 } from "@chakra-ui/react";
 import BasicTable from "@/components/table/basicTable";
-import { COLUMNS } from "@/components/layouts/joborders/jobordersColumns";
+import { COLUMNS as JO_COLUMNS } from "@/components/layouts/joborders/jobordersColumns";
+import { COLUMNS as PREJOB_COLUMNS } from "@/components/layouts/joborders/JobList/jobListColumns";
 import Dropdown from "@/components/table/dropdown";
 import GlobalFilter from "@/components/table/globalFilter";
 import { withSessionSsr } from '@/lib/auth/withSession';
 import CreateJobModal from "@/components/layouts/joborders/JobList/createJobModal";
+import JobDetailsModal from "@/components/layouts/joborders/JobList/jobDetailsModal";
 import { jobOrderAPI } from "@/lib/routes";
 
 export const getServerSideProps = withSessionSsr(
@@ -68,7 +71,9 @@ export const getServerSideProps = withSessionSsr(
 
 export default function JobOrdersPage({ user, categoryList, jobOrders }) {
   const router = useRouter();
-  const tempModal = useDisclosure();
+  const [modalData, setModalData] = useState("");
+  const createModalOpen = useDisclosure();
+  const detailModalOpen = useDisclosure();
 
   //Add vehicle entry button function
   function navToCreate() {
@@ -95,14 +100,14 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
   }
 
   // Table Functions
-  function getRowData(rowData) {
+  function getJobOrderRowData(rowData) {
     let query = {
       id: rowData.jobOrderID
     }
     return query
   }
 
-  function filters(filter, setFilter, globalFilter, setGlobalFilter) {
+  function joFilters(filter, setFilter, globalFilter, setGlobalFilter) {
     return (
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
@@ -126,6 +131,31 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
     );
   }
 
+  function preJobFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+    return (
+      <>
+        <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
+        <Dropdown
+          title="Categories"
+          options={categoryList.specialties}
+          id="category"
+          name="name"
+          filter={filter}
+          setFilter={setFilter}
+        />
+      </>
+    )
+  }
+
+  function getJobRowData(rowData) {
+    return rowData;
+  }
+
+  function handleJobRowClick(rowData) {
+    setModalData(rowData)
+    detailModalOpen.onOpen();
+  }
+
   return (
     <>
       <Grid minH="100vh" templateColumns={"1fr 7fr"} templateRows={"0fr 1fr"}>
@@ -145,23 +175,35 @@ export default function JobOrdersPage({ user, categoryList, jobOrders }) {
         <GridItem colStart={2} bg={"blackAlpha.300"} >
           <Tabs>
             <TabList bg={"white"} top={"1em"} position={"sticky"} zIndex={3} boxShadow={"lg"} mt={-3}>
-                <Tab>Active</Tab>
+                <Tab>Home</Tab>
                 <Tab>Predefined Jobs</Tab>
             </TabList>
             <TabPanels p={2} >
                 <TabPanel>
                   <BasicTable 
-                    COLUMNS={COLUMNS}
+                    COLUMNS={JO_COLUMNS}
                     DATA={jobOrders}
-                    FILTERS={filters}
+                    FILTERS={joFilters}
                     HIDDEN={[]}
-                    getRowData={getRowData}
+                    getRowData={getJobOrderRowData}
                     clickRowFunction={navToDetails}
                   />
                 </TabPanel>
-                <TabPanel>
-                    <Button onClick={tempModal.onOpen}>Pre-defined jobs go here</Button>
-                    <CreateJobModal modalOpen={tempModal} options={categoryList} />
+                <TabPanel display={"flex"} flexDir={"column"} gap={3}>
+                    <Flex w={"100%"} justifyContent={"right"}>
+                      <AddButton title={"Create Predefined Job"} clickFunction={createModalOpen.onOpen}>Pre-defined jobs go here</AddButton>
+                      <CreateJobModal modalOpen={createModalOpen} options={categoryList} />
+                    </Flex>
+
+                    <BasicTable 
+                      COLUMNS={PREJOB_COLUMNS}
+                      DATA={categoryList.jobNames}
+                      FILTERS={preJobFilters}
+                      HIDDEN={[]}
+                      getRowData={getJobRowData}
+                      clickRowFunction={handleJobRowClick}
+                    />
+                    <JobDetailsModal modalOpen={detailModalOpen} data={modalData} />
                 </TabPanel>
             </TabPanels>
           </Tabs>

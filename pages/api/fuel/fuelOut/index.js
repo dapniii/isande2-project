@@ -13,6 +13,13 @@ export default async (req, res) => {
           foreignField: "userID",
           as: "user",
         })
+        .lookup({
+          from: 'vehicles',
+          localField: 'oPlateNumber',
+          foreignField: '_id',
+          as: 'oPlateNumber'
+        })
+        .unwind('$oPlateNumber')
         .unwind("$user")
         .project({
           fuelOutID: 1,
@@ -26,7 +33,7 @@ export default async (req, res) => {
             },
           },
           oDriver: 1,
-          oPlateNumber: 1,
+          oPlateNumber: '$oPlateNumber.plateNumber',
           ofLiters: 1,
           oPreviousRoute: 1,
           creationDate: 1,
@@ -40,6 +47,7 @@ export default async (req, res) => {
           .tz("Asia/Singapore")
           .format("DD MMM YYYY, hh:mm A");
       });
+      console.log(data)
       res.json({ data });
       break;
     }

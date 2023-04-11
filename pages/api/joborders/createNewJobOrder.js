@@ -99,7 +99,7 @@ export default async (req, res) => {
             jobOrderID: joResult._id,
             itemID: element.itemID,
             // itemStatusID: itemStatusResult._id,
-            requestQty: element.quantity + element.manualQty,
+            requestQty: element.quantity,
         })
         console.log("Added to job order items collection")
 

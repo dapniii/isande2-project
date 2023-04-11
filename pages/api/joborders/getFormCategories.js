@@ -6,6 +6,7 @@ import JobItem from "@/models/jobOrders/descriptionItems/JobItemSchema";
 import Specialty from "@/models/users/SpecialtySchema";
 import JobOrderStatus from "@/models/jobOrders/categories/JobOrderStatusSchema";
 import JobOrder from "@/models/jobOrders/JobOrderSchema";
+import JobName from "@/models/jobOrders/descriptionItems/JobNameSchema";
 import { calcQuantityStatus } from "@/lib/dataHandler";
 
 export default async (req, res) => {
@@ -30,6 +31,9 @@ export default async (req, res) => {
                 }
             ]})
         .populate("specialtyID", "name")
+    let jobNames = await JobName.find({})
+        .populate("categoryID")
+
     let jobItems = await JobItem.find({})
         .populate("jobID")
         .populate({
@@ -49,6 +53,12 @@ export default async (req, res) => {
                     model: "ItemCategory",
                 }
             ]})
+
+    jobNames.map(job => {
+        let items = jobItems.filter(item => {return job._id.toString() == item.jobID._id.toString()})
+        job.set("jobItems", items, {strict: false})
+    })
+
     let partItems = await Item.find({})
         .populate("unitID")
         .populate("categoryID")
@@ -81,6 +91,7 @@ export default async (req, res) => {
     res.json({
         vehicles,
         mechanics,
+        jobNames,
         jobItems,
         partItems,
         itemDetails,
