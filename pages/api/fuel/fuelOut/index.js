@@ -47,7 +47,6 @@ export default async (req, res) => {
           .tz("Asia/Singapore")
           .format("DD MMM YYYY, hh:mm A");
       });
-      console.log(data)
       res.json({ data });
       break;
     }

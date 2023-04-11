@@ -89,7 +89,6 @@ const AddFuelEntry = ({
         fLiters: fLiters,
         creatorID: creatorID,
       };
-      console.log(fuelInData);
       //EDIT FUELINAPI
       await fetch(fuelAPI.create_fuelIn, {
         method: "POST",

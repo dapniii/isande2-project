@@ -7,7 +7,6 @@ export default async (req, res) => {
     await connectToDatabase();
     const e = req.body;
 
-    console.log(e)
 
     let vehicleID = await Vehicle.findOne({
       plateNumber: e.oPlateNumber
