@@ -20,7 +20,7 @@ export const COLUMNS = [
   //   width: 10,
   // },
   {
-    Header: "",
+    Header: "JO Number",
     id: "joNumber",
     accessor: "jobOrderID",
     filter: GlobalFilter,
