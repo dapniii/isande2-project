@@ -1,6 +1,7 @@
 import { connectToDatabase } from "@/lib/db";
 import FuelIn from "@/models/fuel/FuelInSchema";
 import moment from 'moment-timezone';
+import { DateTime } from "luxon";
 
 export default async (req, res) => {
     switch(req.method) {
@@ -17,7 +18,6 @@ export default async (req, res) => {
                   .project({
                     'fuelInID': 1, 
                     'fRecordDateTime': 1, 
-                    formattedDate: { $dateToString: { format: "%Y-%m-%d, %H:%M", date: { $toDate: { $add: [ "$fRecordDateTime", 8 * 60 * 60 * 1000 ] } } } },
                     'fUnitCost': 1, 
                     'fLiters': 1, 
                     'creationDate': 1, 
@@ -26,9 +26,12 @@ export default async (req, res) => {
                     'user.lastName': 1,
                   })
                   .exec();
-            data.forEach((item) => {
-              item.formattedDate = moment(item.formattedDate).tz('Asia/Singapore').format('DD MMM YYYY, hh:mm A');
-            });
+                  data.forEach((item) => {
+                    // Parse oRecordDateTime using moment-timezone and convert to Luxon DateTime
+                    const parsedDateTime = moment(item.fRecordDateTime).tz("Asia/Singapore").format();
+                    item.formattedDate = DateTime.fromISO(parsedDateTime).toFormat("dd MMM yyyy, hh:mm a");
+                  });
+                  
             res.json({data});
             break;
         }
