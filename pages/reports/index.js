@@ -80,7 +80,6 @@ export const getServerSideProps = withSessionSsr(
   //GET VEHICLES DATA
   const resVehicles = await fetch(vehicleAPI.get_all);
   const vehicleData = await resVehicles.json();
-  console.log("First:" + vehicleData)
 
   const categoryList_Vehicle = {
     brands: [],
@@ -168,7 +167,6 @@ export const getServerSideProps = withSessionSsr(
     purchaseOrders: purchaseOrderData,
     purchaseOrderCategories: categoryList_PurchaseOrder,
   }
-  console.log("After store:" + data.vehicle)
 
   return { props: { 
     data,             
@@ -355,7 +353,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
   )
   }
 
-  function generatePDF() {
+  function generatePDF(tabName, columns, data) {
     const doc = new jsPDF();
 
     const columns = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
@@ -365,11 +363,12 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
 
     doc.autoTable({
       head: [columns],
-      body: rows,
+      body: [rowList],
     });
 
     doc.save("report.pdf")
   }
+  console.log("users: " + data.users.all)
   
   // MAIN
   return (
@@ -410,7 +409,10 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
-                <Button onClick={generatePDF}>Generate PDF</Button>
+                <Button onClick={() => 
+                  generatePDF("Users", USERS_COLUMNS, data.users.all)}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Vehicles */}
               <TabPanel>
