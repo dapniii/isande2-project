@@ -20,6 +20,8 @@ import {
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
+  Text,
+  Image
 } from "@chakra-ui/react";
 import { SaveButton, BackButton, CancelButton } from "@/components/Buttons";
 import { MdCheckCircle } from "react-icons/md";
@@ -48,8 +50,8 @@ const AddFuelEntry = ({
 
   const [fuelInID, setFuelInID] = useState(generateID(fuelInCount, 15));
   const [fRecordDateTime, setFRecordDateTime] = useState("");
-  const [fUnitCost, setFUnitCost] = useState();
-  const [fLiters, setFLiters] = useState();
+  const [fUnitCost, setFUnitCost] = useState("");
+  const [fLiters, setFLiters] = useState("");
  
 
   const [fuelOutID, setFuelOutID] = useState(generateID(fuelOutCount, 15));
@@ -57,8 +59,11 @@ const AddFuelEntry = ({
   const [oDriver, setODriver] = useState("");
   //const [oUserID, setOUserID] = useState("");
   const [oPlateNumber, setOPlateNumber] = useState("");
-  const [ofLiters, setOLiters] = useState();
+  const [ofLiters, setOLiters] = useState("");
   const [oPreviousRoute, setOPreviousRoute] = useState("");
+
+  const format = (val) => `₱${typeof val === 'number' ? val.toFixed(2) : val}`
+  const parse = (val) => val.replace(/^\₱/, '')
 
 
   function clear() {
@@ -173,8 +178,8 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} >
                     <FormLabel>Quantity</FormLabel>
-                    <NumberInput step={0.01} min={1} value={fLiters} max={64000 - total}onChange={(_, value) => setFLiters(value)}>
-                      <NumberInputField  />
+                    <NumberInput precision={2} step={0.01} min={1} value={fLiters} max={64000 - total}onChange={(_, value) => setFLiters(value)}>
+                      <NumberInputField  inputMode="decimal" />
                       <NumberInputStepper >
                         <NumberIncrementStepper  />
                         <NumberDecrementStepper />
@@ -214,24 +219,24 @@ const AddFuelEntry = ({
                   <FormControl mt={4} isRequired>
                     <FormLabel>Plate Number</FormLabel>
                     {/*********************TO EDIT *********************/}
-                    <AutoComplete openOnFocus suggestWhenEmpty value={oPlateNumber} onChange={(e) => setOPlateNumber(e.target.value)}>
+                    <AutoComplete openOnFocus suggestWhenEmpty value={oPlateNumber} onChange={setOPlateNumber}>
                                 <AutoCompleteInput variant="outline" />
                                 <AutoCompleteList w={"100%"}>
                                 {data.vehicles?.map((item) => (
                                     <AutoCompleteItem
-                                        key={item.oPlateNumber}
-                                        value={item.oPlateNumber}
+                                        key={item.plateNumber}
+                                        value={item.plateNumber}
                                     >
                                         <Flex gap={5}>
                                             <Image 
                                                 src={item.imageID.secure_url}
-                                                alt={item.oPlateNumber}
+                                                alt={item.plateNumber}
                                                 objectFit={"cover"}
                                                 borderRadius={"15"}
                                                 w={"5em"}
                                             /> 
                                             <Flex flexDirection={"column"}>
-                                                <Text fontWeight={"bold"}>{item.oPlateNumber}</Text>
+                                                <Text fontWeight={"bold"}>{item.plateNumber}</Text>
                                                 <Text>{item.brandID.name} {item.vehicleTypeID.name}</Text>
                                             </Flex>
                                         </Flex>

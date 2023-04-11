@@ -11,7 +11,7 @@ import {
   Stat,
   StatLabel,
   StatNumber,
-  Select
+  Select,
 } from "@chakra-ui/react";
 import BasicTable from "@/components/table/basicTable";
 import {
@@ -26,6 +26,7 @@ import { useState } from "react";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import { fuelAPI } from "@/lib/routes";
 import { useEffect } from "react";
+import Vehicle from "@/models/vehicles/VehicleSchema";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
@@ -71,6 +72,12 @@ export const getServerSideProps = withSessionSsr(
       };
     }
 
+    const vehicles = await Vehicle.find({}, '-_id plateNumber imageID brandID')
+      .populate('imageID', '-_id secure_url')
+      .populate('brandID', '-_id name')
+      .populate('vehicleTypeID', '-_id name')
+      .lean()
+
     const [fuelIn, fuelOut] = await Promise.all([
       fetch(fuelAPI.get_fuelIn)
         .then((res) => res.json())
@@ -88,6 +95,7 @@ export const getServerSideProps = withSessionSsr(
       fuelIn,
       fuelOut,
       categories,
+      vehicles
     };
 
     return {
@@ -104,18 +112,16 @@ export const getServerSideProps = withSessionSsr(
 //***************************************************************************************/
 
 export default function FuelPage({ user, data }) {
-
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [refuelType, setRefuelType] = useState("");
-
-  console.log(refuelType)
+ 
   //Add fuel entry button function -OPEN CLOSE FORMS
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   //TOTAL LITERS COMPUTATION
   const [total, setTotal] = useState(0);
   const totalStyle = {
-    color: total <= 5000 ? "#FF575F" : "#25C685"
+    color: total <= 5000 ? "#FF575F" : "#25C685",
   };
 
   const calculateTotal = () => {
@@ -128,17 +134,21 @@ export default function FuelPage({ user, data }) {
     for (let i = 0; i < data.fuelOut.length; i++) {
       sum1 += data.fuelOut[i].ofLiters;
     }
-    totalLiters = sum-sum1;
+    totalLiters = sum - sum1;
     return totalLiters;
-  }
+  };
 
   useEffect(() => {
     setTotal(calculateTotal());
   }, [data.fuelIn, data.fuelOut]);
 
   //DATE SORTING
-  const sortedFuelIn = data.fuelIn.sort((a, b) => new Date(b.fRecordDateTime) - new Date(a.fRecordDateTime));
-  const sortedFuelOut = data.fuelOut.sort((a, b) => new Date(b.oRecordDateTime) - new Date(a.oRecordDateTime));
+  const sortedFuelIn = data.fuelIn.sort(
+    (a, b) => new Date(b.fRecordDateTime) - new Date(a.fRecordDateTime)
+  );
+  const sortedFuelOut = data.fuelOut.sort(
+    (a, b) => new Date(b.oRecordDateTime) - new Date(a.oRecordDateTime)
+  );
 
   //END OF CODE
 
@@ -167,32 +177,33 @@ export default function FuelPage({ user, data }) {
           fuelInCount={data.fuelIn.length}
           fuelOutCount={data.fuelOut.length}
           data={data}
-          total = {total}
+          total={total}
         />
       </Flex>
     );
   }
 
-  
-
   function filters(filter, setFilter, globalFilter, setGlobalFilter) {
-  
-
     return (
       <>
         <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
-        
-        <Select
-                w={"25%"}
-                value={refuelType} 
-                name={refuelType}
-                onChange={e => setRefuelType(e.target.value)}
-                border={"1px solid #9F9F9F"}
-            >
-                <option key="00000" value="" defaultValue> Refuel Tank </option>
-                <option key="00001" value="Refuel Truck" defaultValue> Refuel Truck </option>
-            </Select>
 
+        <Select
+          w={"25%"}
+          value={refuelType}
+          name={refuelType}
+          onChange={(e) => setRefuelType(e.target.value)}
+          border={"1px solid #9F9F9F"}
+        >
+          <option key="00000" value="" defaultValue>
+            {" "}
+            Refuel Tank{" "}
+          </option>
+          <option key="00001" value="Refuel Truck" defaultValue>
+            {" "}
+            Refuel Truck{" "}
+          </option>
+        </Select>
       </>
     );
   }
@@ -218,28 +229,30 @@ export default function FuelPage({ user, data }) {
               <Stat>
                 <StatLabel>Total Fuel Tank Liters</StatLabel>
                 <StatNumber>
-                  <span style={totalStyle}>{total.toLocaleString()}L</span> out of 64,000L
+                  <span style={totalStyle}>{total.toLocaleString()}L</span> out
+                  of 64,000L
                 </StatNumber>
               </Stat>
             </StatGroup>
-            { refuelType == "" && 
-               <BasicTable
-               COLUMNS={COLUMNS}
-               DATA={sortedFuelIn}
-               FILTERS={filters}
-               HIDDEN={["refuelType"]}
-             />}
-            { refuelType == "Refuel Truck" && 
-             <BasicTable
-             COLUMNS={FUEL_OUT_COLUMNS}
-             DATA={sortedFuelOut}
-             FILTERS={filters}
-             HIDDEN={["refuelType"]}
-           />}
+            {refuelType == "" && (
+              <BasicTable
+                COLUMNS={COLUMNS}
+                DATA={sortedFuelIn}
+                FILTERS={filters}
+                HIDDEN={["refuelType"]}
+              />
+            )}
+            {refuelType == "Refuel Truck" && (
+              <BasicTable
+                COLUMNS={FUEL_OUT_COLUMNS}
+                DATA={sortedFuelOut}
+                FILTERS={filters}
+                HIDDEN={["refuelType"]}
+              />
+            )}
           </Flex>
         </GridItem>
       </Grid>
     </>
   );
 }
-
