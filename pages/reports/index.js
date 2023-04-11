@@ -61,6 +61,17 @@ export const getServerSideProps = withSessionSsr(
   //GET USERS DATA
   const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
+
+  // for (let key in userData.users) {
+  //   console.log("userData.users["+ key + "]: " + userData.users[key]);
+  // }
+
+  // for (let user of userData.users.all) {
+  //   console.log("user: "+ user);
+  // }
+  
+  
+
   
   const categoryList_User = {
     departments: [],
@@ -353,22 +364,67 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
   )
   }
 
-  function generatePDF(tabName, columns, data) {
+
+  function generatePDF(data, type) {
     const doc = new jsPDF();
 
-    const columns = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
-    const rows = [
-      ["Doe", "John", "johndoe@example.com", "123-456-7890", "Marketing", "Manager", "Admin"],
-    ];
+    let columnList = []
+    let allData = []
+
+    if (type == "users") {
+      columnList = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
+      data.map(user => {
+        let newRow = [];
+
+        newRow.push(user.lastName)
+        newRow.push(user.firstName)
+        newRow.push(user.email)
+        newRow.push(user.phone)
+        newRow.push(user.departmentID.name)
+        newRow.push(user.roleID.name)
+        newRow.push(user.userTypeID.name)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "vehicles") {
+      columnList = ["PLATE NUMBER", "VEHICLE TYPE", "BRAND", "TRANSMISSION", "INSURANCE EXPIRY"];
+      data.map(vehicle => {
+        let newRow = [];
+
+        newRow.push(vehicle.plateNumber)
+        newRow.push(vehicle.vehicleType)
+        newRow.push(vehicle.brandID.name)
+        newRow.push(vehicle.transmissionID.name)
+        newRow.push(vehicle.insuranceExpiry)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "parts") {
+      columnList = ["ITEM CODE", "NAME", "MODEL", "CATEGORY", "STATUS", "CURRENT QTY", "REORDER POINT", "EOQ"];
+      data.map(vehicle => {
+        let newRow = [];
+
+        newRow.push(vehicle.plateNumber)
+        newRow.push(vehicle.vehicleTypeID.name)
+        newRow.push(vehicle.brandID.name)
+        newRow.push(vehicle.transmissionID.name)
+        newRow.push(vehicle.insuranceExpiry)
+        allData.push(newRow)
+      })
+    }
+
+    console.log("allData: " + allData);
 
     doc.autoTable({
-      head: [columns],
-      body: [rowList],
+      head: [columnList],
+      body: allData,
     });
 
     doc.save("report.pdf")
   }
-  console.log("users: " + data.users.all)
+  console.log("rowData: " + Object.values(data.users.all))
   
   // MAIN
   return (
@@ -409,8 +465,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
-                <Button onClick={() => 
-                  generatePDF("Users", USERS_COLUMNS, data.users.all)}>
+                <Button onClick={() => generatePDF(data.users.all, "users")}>
                   Generate PDF
                 </Button>
               </TabPanel>
@@ -424,6 +479,9 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
+                <Button onClick={() => generatePDF(data.vehicle, "vehicles")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Spare Parts */}
               <TabPanel>
