@@ -51,6 +51,15 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
     const [editState, switchState] = React.useReducer((state, action) => {
         switch(action.type) {
             case "handover": {
+                if (action.payload.item.detailID != null)
+                    setDetailTemplate((prevState) => ({...prevState, 
+                        itemBrandID: {
+                            name: action.payload.item.detailID.itemBrandID.name
+                        },
+                        partNumber: action.payload.item.detailID.partNumber,
+                        quantity: action.payload.item.receivedQty
+                    })
+                )
                 return {
                     index: action.payload.index,
                     info: action.payload.item,
@@ -78,6 +87,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             case "initialize": // Get item data from context
                 return action.payload
             case "specify details": {
+                console.log(action.payload.detail)
                 return state.map((row, i) => i == action.payload.index ? {...row, 
                     detailID: {
                         partNumber: action.payload.detail.partNumber,
@@ -106,10 +116,10 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         }
     })
 
-    React.useEffect(() => {
-        if (returnList != null)
-            console.log(returnList[0].returnQty)
-    })
+    // React.useEffect(() => {
+    //     if (returnList != null)
+    //         console.log(returnList[0].returnQty)
+    // })
 
     // Initialize data
     React.useEffect(() => {
@@ -282,42 +292,53 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                             <GridItem colStart={2} my={"auto"}><Text>{row.itemID.itemNumber}</Text></GridItem>
                                             <GridItem colStart={3} my={"auto"}><Text>{row.itemID.itemName + " " + row.itemID.itemModel}</Text></GridItem>
                                             <GridItem colStart={4} my={"auto"}><Text>{joPartStatusIndicator(row.requestQty, row.receivedQty)}</Text></GridItem>
-                                            <GridItem colStart={5} colSpan={2} pr={5}>
-                                                <AutoComplete 
-                                                    openOnFocus
-                                                    focusInputOnSelect={false}
-                                                    suggestWhenEmpty
-                                                    restoreOnBlurIfEmpty={false} 
-                                                    mx={2} 
-                                                    onChange={(value) => handleDetailSelect(row, value)}
-                                                >
-                                                    <AutoCompleteInput variant="outline" border={"2px solid gray"} />
-                                                    <AutoCompleteList>
-                                                        {editState.options.map((option) => {
-                                                            if (option.quantity != 0) {
-                                                                return (
-                                                                    <AutoCompleteItem
-                                                                        key={option._id}
-                                                                        value={option.itemBrandID.name + "/" + option.partNumber}
-                                                                    >
-                                                                        <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>   
-                                                                            <Flex flexDirection={"column"}>
-                                                                                <Text fontWeight={"bold"}>{option.partNumber}</Text>
-                                                                                <Text fontSize={"sm"}>{option.itemBrandID.name}</Text>
-                                                                            </Flex>
-                                                                            <Flex alignItems={"baseline"} gap={1}>
-                                                                                <Text fontWeight={"bold"} fontSize={"lg"}>{option.quantity}</Text>
-                                                                                <Text fontSize={"sm"} color={"gray"}>{row.itemID.unitID.abbreviation}</Text>
-                                                                            </Flex>
-                                                                        </Flex>
+                                            {
+                                                typeof(row.detailID) == "string" ? (
+                                                    <GridItem colStart={5} colSpan={2} pr={5}>
+                                                        <AutoComplete 
+                                                            openOnFocus
+                                                            focusInputOnSelect={false}
+                                                            suggestWhenEmpty
+                                                            restoreOnBlurIfEmpty={false} 
+                                                            mx={2} 
+                                                            onChange={(value) => handleDetailSelect(row, value)}
 
-                                                                    </AutoCompleteItem>
-                                                                )
-                                                            }
-                                                        })}
-                                                    </AutoCompleteList>
-                                                </AutoComplete>
-                                            </GridItem>
+                                                        >
+                                                            <AutoCompleteInput variant="outline" border={"2px solid gray"} />
+                                                            <AutoCompleteList>
+                                                                {editState.options.map((option) => {
+                                                                    if (option.quantity != 0) {
+                                                                        return (
+                                                                            <AutoCompleteItem
+                                                                                key={option._id}
+                                                                                value={option.itemBrandID.name + "/" + option.partNumber}
+                                                                            >
+                                                                                <Flex w={"100%"} justifyContent={"space-between"} alignItems={"center"}>   
+                                                                                    <Flex flexDirection={"column"}>
+                                                                                        <Text fontWeight={"bold"}>{option.partNumber}</Text>
+                                                                                        <Text fontSize={"sm"}>{option.itemBrandID.name}</Text>
+                                                                                    </Flex>
+                                                                                    <Flex alignItems={"baseline"} gap={1}>
+                                                                                        <Text fontWeight={"bold"} fontSize={"lg"}>{option.quantity}</Text>
+                                                                                        <Text fontSize={"sm"} color={"gray"}>{row.itemID.unitID.abbreviation}</Text>
+                                                                                    </Flex>
+                                                                                </Flex>
+        
+                                                                            </AutoCompleteItem>
+                                                                        )
+                                                                    }
+                                                                })}
+                                                            </AutoCompleteList>
+                                                        </AutoComplete>
+                                                    </GridItem>
+                                                ) : (
+                                                <>
+                                                    <GridItem colStart={5} my={"auto"}><Text>{row.detailID.partNumber}</Text></GridItem>
+                                                    <GridItem colStart={6} my={"auto"}><Text>{row.detailID.itemBrandID.name}</Text></GridItem>
+                                                </>
+                                                )
+                                            }
+
                                             <GridItem colStart={7} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.requestQty}</Text></GridItem>
 
                                             <GridItem colStart={8}>
@@ -377,7 +398,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                                 {   
                                                     user.role == "Inventory" 
                                                     && initialData.jobOrder.statusID != null ? (
-                                                        initialData.jobOrder.statusID.name == "Pending Parts"  ? (
+                                                        row.requestQty > row.receivedQty  ? (
                                                             <IconButton 
                                                                 variant='outline'
                                                                 size={"sm"}
@@ -515,33 +536,28 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                         <AutoCompleteInput variant="outline" border={"2px solid gray"} />
                         <AutoCompleteList>
                         {
-                                initialData.partsList.filter((item, index) => { 
-                                    if (returnList.length > 0) {
-                                        return item.returnQty < item.receivedQty
-                                    }
+                            initialData.partsList.filter((item, index) => { 
+                                if (returnList.length > 0) return item.returnQty < item.receivedQty 
+                                else return item
+                            }).map((option) => {
+                                return (
+                                    <AutoCompleteItem
+                                        key={option}
+                                        label={option.itemID.itemNumber}
+                                        value={option}
+                                    >
                                         
-                                    else    
-                                        return item
-                                    }
-                                ).map((option) => {
-                                    return (
-                                        <AutoCompleteItem
-                                            key={option}
-                                            label={option.itemID.itemNumber}
-                                            value={option}
-                                        >
-                                            
-                                            <Flex w={"100%"} flexDirection={"column"}>
-                                                <Text fontWeight={"bold"}>{option.itemID.itemNumber}</Text>
-                                                <Flex>
-                                                    <Text fontSize={"sm"}>{option.itemID.itemName} {option.itemID.itemModel}</Text>
-                                                </Flex>   
-                                            </Flex>
+                                        <Flex w={"100%"} flexDirection={"column"}>
+                                            <Text fontWeight={"bold"}>{option.itemID.itemNumber}</Text>
+                                            <Flex>
+                                                <Text fontSize={"sm"}>{option.itemID.itemName} {option.itemID.itemModel}</Text>
+                                            </Flex>   
+                                        </Flex>
 
-                                        </AutoCompleteItem>
-                                    )
-                                })
-                            } 
+                                    </AutoCompleteItem>
+                                )
+                            })
+                        } 
                         </AutoCompleteList>
                     </AutoComplete>  
                 </GridItem>
