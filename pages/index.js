@@ -149,16 +149,16 @@ export default function UserDetails({ user, categoryList }) {
           <VStack spacing={2}>
           <Text fontSize={"5xl"} lineHeight={"8"}>Welcome back to <b>Stockly</b>!</Text>
             <Image
-              src={preview}
-              alt={"Upload Preview"}
+              src={user.data.image}
+              alt={"User Photo"}
               objectFit={"cover"}
               borderRadius={"15"}
               w={"15em"}
               h={"15em"}
               paddingTop={"5em"}
             />
-            <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"8"}>Odinson, Thor</Text>
-            <Text fontSize={"xl"}>iluvjane@gmail.com</Text>
+            <Text fontSize={"3xl"} fontWeight={"bold"} lineHeight={"8"}>{user.data.lastName + ", " + user.data.firstName}</Text>
+            <Text fontSize={"xl"}>{user.data.email}</Text>
           </VStack>
         </GridItem>
       </Grid>

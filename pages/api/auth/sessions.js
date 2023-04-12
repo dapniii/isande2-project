@@ -16,6 +16,7 @@ async function createSessionRoute(req, res) {
         .populate("departmentID")
         .populate("roleID")
         .populate("userTypeID")
+        .populate("imageID")
 
 
         if (user == null) {
@@ -37,6 +38,9 @@ async function createSessionRoute(req, res) {
                 department: user.departmentID.name,
                 role: user.roleID.name,
                 userType: user.userTypeID.name,
+                image: user.imageID.secure_url,
+                email: user.email,
+                phone: user.phone,
                 isAdmin: user.userTypeID.name == "Admin"
             };
             await req.session.save();
