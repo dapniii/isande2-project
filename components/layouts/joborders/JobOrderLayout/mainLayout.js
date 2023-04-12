@@ -106,6 +106,11 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         }
     })
 
+    React.useEffect(() => {
+        if (returnList != null)
+            console.log(returnList[0].returnQty)
+    })
+
     // Initialize data
     React.useEffect(() => {
         if (initialData != null) {
@@ -175,7 +180,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             detailID: "",
             brand: "",
             partNumber: "",
-            requestQty: 0,
+            receivedQty: 0,
             returnQty: 0
         })
     }
@@ -191,7 +196,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             detailID: item.detailID._id,
             brand: item.detailID.itemBrandID.name,
             partNumber: item.detailID.partNumber,
-            requestQty: item.requestQty,
+            receivedQty: item.receivedQty,
             new: true,
         })
     }
@@ -509,10 +514,12 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                     >
                         <AutoCompleteInput variant="outline" border={"2px solid gray"} />
                         <AutoCompleteList>
-                            {
+                        {
                                 initialData.partsList.filter((item, index) => { 
-                                    if (returnList.length > 0)
-                                        return returnList[index].returnQty == 0
+                                    if (returnList.length > 0) {
+                                        return item.returnQty < item.receivedQty
+                                    }
+                                        
                                     else    
                                         return item
                                     }
@@ -551,7 +558,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                 <GridItem colStart={6}>
                     <NumberInput 
                         min={0} 
-                        max={returnTemplate.requestQty}
+                        max={returnTemplate.receivedQty}
                         precision={0} 
                         value={returnTemplate.returnQty} 
                         onChange={(value) => setReturnTemplate((prevState) => ({
@@ -588,7 +595,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         )
     }
 
-    else {
+    else if (initialData != null && initialData.jobOrder.statusID.name != "Pending Parts") {
         return (
             <GridItem colStart={2}>
                 <AddButton title={"Return Item"} clickFunction={() => switchState({type: "return"})}/>
