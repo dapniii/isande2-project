@@ -62,8 +62,15 @@ const AddFuelEntry = ({
   const [ofLiters, setOLiters] = useState("");
   const [oPreviousRoute, setOPreviousRoute] = useState("");
 
-  const format = (val) => `₱${typeof val === 'number' ? val.toFixed(2) : val}`
-  const parse = (val) => val.replace(/^\₱/, '')
+
+  const format = (val) => `₱` + val
+  const parse = (val) => {
+    if (typeof val === 'string') {
+      return val.replace(/^\₱/, '');
+    }
+    return val;
+  }
+  
 
 
   function clear() {
@@ -187,7 +194,7 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4}>
                     <FormLabel>Unit Cost</FormLabel>
-                    <NumberInput step={0.01} min={1} value={fUnitCost} onChange={(_, value) => setFUnitCost(value)}>
+                    <NumberInput step={0.01} min={1} value={format(fUnitCost)} onChange={(_, value) => setFUnitCost(parse(value))}>
                       <NumberInputField  />
                       <NumberInputStepper  >
                         <NumberIncrementStepper  />

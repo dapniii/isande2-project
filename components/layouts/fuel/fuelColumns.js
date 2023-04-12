@@ -21,7 +21,7 @@ export const COLUMNS = [
     Header: "Quantity",
     accessor: "fLiters",
     Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.fLiters}</Flex>;
+      return <Flex alignItems={"center"}>{props.row.original.fLiters + ' L'}</Flex>;
     },
   },
   {
@@ -29,7 +29,7 @@ export const COLUMNS = [
     accessor: "fUnitCost",
     filter: GlobalFilter,
     Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.fUnitCost}</Flex>;
+      return <Flex alignItems={"center"}>{'₱ ' + props.row.original.fUnitCost}</Flex>;
     },
   },
   {
@@ -84,7 +84,7 @@ export const FUEL_OUT_COLUMNS = [
     Header: "Quantity",
     accessor: "ofLiters",
     Cell: (props) => {
-      return <Flex alignItems={"center"}>{props.row.original.ofLiters}</Flex>;
+      return <Flex alignItems={"center"}>{props.row.original.ofLiters + ' L'}</Flex>;
     },
   },
   {
