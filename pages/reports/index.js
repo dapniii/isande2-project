@@ -61,6 +61,17 @@ export const getServerSideProps = withSessionSsr(
   //GET USERS DATA
   const resUsers = await fetch(userAPI.get_all_users)
   const userData = await resUsers.json()
+
+  // for (let key in userData.users) {
+  //   console.log("userData.users["+ key + "]: " + userData.users[key]);
+  // }
+
+  // for (let user of userData.users.all) {
+  //   console.log("user: "+ user);
+  // }
+  
+  
+
   
   const categoryList_User = {
     departments: [],
@@ -353,22 +364,126 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
   )
   }
 
-  function generatePDF(tabName, columns, data) {
+
+  function generatePDF(data, type) {
     const doc = new jsPDF();
 
-    const columns = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
-    const rows = [
-      ["Doe", "John", "johndoe@example.com", "123-456-7890", "Marketing", "Manager", "Admin"],
-    ];
+    let columnList = []
+    let allData = []
+
+    if (type == "users") {
+      columnList = ["LASTNAME", "FIRSTNAME", "EMAIL", "PHONENUMBER", "DEPARTMENT", "ROLE", "USERTYPE"];
+      data.map(user => {
+        let newRow = [];
+
+        newRow.push(user.lastName)
+        newRow.push(user.firstName)
+        newRow.push(user.email)
+        newRow.push(user.phone)
+        newRow.push(user.departmentID.name)
+        newRow.push(user.roleID.name)
+        newRow.push(user.userTypeID.name)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "vehicles") {
+      columnList = ["PLATE NUMBER", "VEHICLE TYPE", "BRAND", "TRANSMISSION", "INSURANCE EXPIRY"];
+      data.map(vehicle => {
+        let newRow = [];
+
+        newRow.push(vehicle.plateNumber)
+        newRow.push(vehicle.vehicleTypeID.name)
+        newRow.push(vehicle.brandID.name)
+        newRow.push(vehicle.transmissionID.name)
+        newRow.push(vehicle.insuranceExpiry)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "parts") {
+      columnList = ["ITEM CODE", "NAME", "MODEL", "CATEGORY", "CURRENT QTY", "REORDER POINT", "EOQ"];
+      data.map(part => {
+        let newRow = [];
+
+        newRow.push(part.itemNumber)
+        newRow.push(part.itemName)
+        newRow.push(part.itemModel)
+        newRow.push(part.categoryID.name)
+        newRow.push(part.quantity)
+        newRow.push(part.reorderPoint)
+        newRow.push(part.eoq)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "fuelIn") {
+      columnList = ["DATE & TIME", "QUANTITY", "UNIT COST", "RECORDED BY", ];
+      data.map(fuelIn => {
+        let newRow = [];
+
+        newRow.push(fuelIn.fRecordDateTime)
+        newRow.push(fuelIn.fLiters)
+        newRow.push(fuelIn.fUnitCost)
+        newRow.push(fuelIn.recordedby)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "fuelOut") {
+      columnList = ["DATE & TIME", "DRIVER", "PLATE NUMBER", "PREVIOUS ROUTE", "QUANTITY", "RECORDED BY", ];
+      data.map(fuelOut => {
+        let newRow = [];
+
+        newRow.push(fuelOut.oRecordDateTime)
+        newRow.push(fuelOut.oDriver)
+        newRow.push(fuelOut.oPlateNumber)
+        newRow.push(fuelOut.oPreviousRoute)
+        newRow.push(fuelOut.ofLiters)
+        newRow.push(fuelOut.recordedby)
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "jobOrder") {
+      columnList = ["JO NUMBER", "PLATE NUMBER", "ISSUE DATE", "STATUS", "ASSIGNED TO", "COST", ];
+      data.map(jobOrder => {
+        let newRow = [];
+
+        newRow.push(jobOrder.jobOrderID)
+        newRow.push(jobOrder.vehicleID.plateNumber)
+        newRow.push(jobOrder.updatedAt)
+        newRow.push(jobOrder.statusID.name)
+        newRow.push(jobOrder.mechanics)
+        newRow.push("null")
+        allData.push(newRow)
+      })
+    }
+
+    if (type == "purchaseOrder") {
+      columnList = ["", "SUPPLIER", "ITEMS", "STATUS", "TOTAL COST", ];
+      data.map(purchaseOrder => {
+        let newRow = [];
+
+        newRow.push(purchaseOrder.index)
+        newRow.push(purchaseOrder.supplierID.name)
+        newRow.push(purchaseOrder.partsList.length)
+        newRow.push(purchaseOrder.statusID.name)
+        newRow.push(purchaseOrder.totalCost)
+        allData.push(newRow)
+      })
+    }
+
+    console.log("allData: " + allData);
 
     doc.autoTable({
-      head: [columns],
-      body: [rowList],
+      head: [columnList],
+      body: allData,
     });
 
     doc.save("report.pdf")
   }
-  console.log("users: " + data.users.all)
+  console.log("rowData: " + Object.values(data.users.all))
   
   // MAIN
   return (
@@ -409,8 +524,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 /> 
-                <Button onClick={() => 
-                  generatePDF("Users", USERS_COLUMNS, data.users.all)}>
+                <Button onClick={() => generatePDF(data.users.all, "users")}>
                   Generate PDF
                 </Button>
               </TabPanel>
@@ -424,6 +538,9 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
+                <Button onClick={() => generatePDF(data.vehicle, "vehicles")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Spare Parts */}
               <TabPanel>
@@ -431,10 +548,13 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   COLUMNS={PARTS_COLUMNS}
                   DATA={data.parts.parts}
                   FILTERS={partsFilters}
-                  HIDDEN={["photo", "item"]}
+                  HIDDEN={["photo", "item", "status"]}
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
+                <Button onClick={() => generatePDF(data.parts.parts, "parts")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Fuel In */}
               <TabPanel>
@@ -444,6 +564,9 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   FILTERS={fuelFilters}
                   HIDDEN={["refuelType"]}
                 />
+                <Button onClick={() => generatePDF(data.fuelIn, "fuelIn")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Fuel Out */}
               <TabPanel>
@@ -453,6 +576,9 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   FILTERS={fuelFilters}
                   HIDDEN={["refuelType"]}
                 />
+                <Button onClick={() => generatePDF(data.fuelOut, "fuelOut")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Job Orders */}
               <TabPanel>
@@ -464,9 +590,12 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
+                <Button onClick={() => generatePDF(data.jobOrders, "jobOrder")}>
+                  Generate PDF
+                </Button>
               </TabPanel>
               {/* Purchase Orders */}
-              {/* <TabPanel>
+              <TabPanel>
                 <BasicTable 
                   COLUMNS={PO_COLUMNS}
                   DATA={data.purchaseOrders.purchaseOrders}
@@ -475,7 +604,10 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
                   getRowData={getRowData}
                   clickRowFunction={navToDetails}
                 />
-              </TabPanel> */}
+                <Button onClick={() => generatePDF(data.purchaseOrders.purchaseOrders, "purchaseOrder")}>
+                  Generate PDF
+                </Button>
+              </TabPanel>
             </TabPanels>
           </Tabs>       
         </GridItem>
