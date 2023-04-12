@@ -393,7 +393,7 @@ function purchaseOrderFilters(filter, setFilter, globalFilter, setGlobalFilter) 
         let newRow = [];
 
         newRow.push(vehicle.plateNumber)
-        newRow.push(vehicle.vehicleType)
+        newRow.push(vehicle.vehicleTypeID.name)
         newRow.push(vehicle.brandID.name)
         newRow.push(vehicle.transmissionID.name)
         newRow.push(vehicle.insuranceExpiry)
