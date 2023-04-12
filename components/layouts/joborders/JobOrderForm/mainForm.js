@@ -26,8 +26,10 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 import CategoryListModal from "@/components/basicCategoryModal";
 import CreateJobOrderPartsList from "./partsList";
+import { useRouter } from "next/router";
 
 function CreateJobOrderForm({user, JONumber, data, submitFunc}) {
+    const router = useRouter();
     const [plateNumber, setPlateNumber] = useState("");
     const [mechanics, setMechanics] = useState([]);
     const [selectedJobs, setSelectedJobs] = useState([]);
@@ -65,7 +67,7 @@ function CreateJobOrderForm({user, JONumber, data, submitFunc}) {
         .then(data => {
             if (data.error != null) 
                 console.log(data.error)
-            location.reload()
+            router.push("/joborders")
         })
 
     }

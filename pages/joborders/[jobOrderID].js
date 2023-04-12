@@ -106,6 +106,7 @@ function JobOrderDetailsPage({user, categoryList}) {
 
     async function submitInvForm() {
         let jobOrderData = {
+            _id: initialData.jobOrder._id,
             jobOrderID: jobOrderID,
             details: partsList,
             inventoryStaffID: user.data.userID
@@ -225,7 +226,7 @@ function JobOrderDetailsPage({user, categoryList}) {
                                 <>
                                 {
                                     user.data.role == "Inventory" 
-                                    && ["Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
+                                    && ["Open", "For Review", "Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
                                     ? (<SaveButton title={"Save"} clickFunction={submitInvForm} />) : (<></>)
                                 }
                                 {
