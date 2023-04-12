@@ -23,6 +23,7 @@ import { vehicleAPI } from "@/lib/routes";
 import { addCommasToNum } from "@/lib/dataHandler";
 import ViewVehicleLayout from "@/components/layouts/vehicles/viewVehicleLayout";
 import { withSessionSsr } from "@/lib/auth/withSession";
+import VehicleServiceHistoryTab from "@/components/layouts/vehicles/serviceHistoryTab";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -143,9 +144,14 @@ export default function VehicleDetails({user, categoryList}) {
             fuelSensor: data.fuelSensorID.name,
             status: data.vehicleStatusID.name,
             disabled: data.disabled,
+            serviceHistory: data.serviceHistory
             }))  
         });
     }, []);
+
+    useEffect(() => {
+      console.log(vehicleInfo.serviceHistory)
+    })
 
     function cancel() {
         router.back()
@@ -233,7 +239,12 @@ export default function VehicleDetails({user, categoryList}) {
                   <TabPanel overflowY={"auto"}>
                     <ViewVehicleLayout data={vehicleInfo} />
                   </TabPanel>
-                  <TabPanel>Service History</TabPanel>
+                  <TabPanel>
+                  {
+                    vehicleInfo.serviceHistory != null ? (<VehicleServiceHistoryTab data={vehicleInfo.serviceHistory} />
+                    ) : (<></>)
+                  }
+                  </TabPanel>
                   <TabPanel>Fuel History</TabPanel>
                   <TabPanel>Cost History</TabPanel>
                 </TabPanels>
