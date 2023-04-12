@@ -25,6 +25,7 @@ import {
 } from "@choc-ui/chakra-autocomplete";
 import { joPartStatusIndicator } from '@/components/statusIndicators';
 import { AddButton, RequestReviewButton } from '@/components/buttons';
+import { jobOrderAPI } from '@/lib/routes';
 
 function JobOrderMainLayout({user, initialData, categoryList, setFormState, setSubmitArray}) {
     const [showSaveReturn, setShowSaveReturn] = React.useState(false)
@@ -105,9 +106,6 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         }
     })
 
-    React.useEffect(() => {
-        console.log(returnList)
-    })
     // Initialize data
     React.useEffect(() => {
         if (initialData != null) {
@@ -136,9 +134,13 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             ...prevState,
             partsList: partsList
         }))
-
-
     }, [partsList])
+
+    React.useEffect(() => {
+        if (returnList != null) {
+            setShowSaveReturn(returnList.filter(item => item.partNumber != null && item.brand != null).length > 0)
+        }
+    }, [returnList])
 
     function handleDetailSelect(row, value) {
         let select = value.split("/")
@@ -190,6 +192,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             brand: item.detailID.itemBrandID.name,
             partNumber: item.detailID.partNumber,
             requestQty: item.requestQty,
+            new: true,
         })
     }
     
@@ -199,12 +202,29 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             rlDispatch({type: "add", payload: returnTemplate})
         else rlDispatch({type: "edit", payload: returnTemplate})
         clearReturnTemplate()
+        setShowSaveReturn(true)
     }
 
     function handleReturnDelete(index) {
         rlDispatch({type: "delete", payload: index})
         clearReturnTemplate()
     }
+
+    async function submitReturnForm() {
+        await fetch(jobOrderAPI.receive_items, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(returnList),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+            // location.reload()
+        })
+    } 
 
     return (
     <Flex flexDirection={"column"} p={3} gap={5}>
@@ -386,7 +406,12 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         <Card variant={"outline"}>
             <CardHeader borderBottom={"1px ridge #d3d0cf"} py={2} display={"flex"} justifyContent={"space-between"}>
                 <Text fontSize={"xl"} fontWeight={"bold"}>Return List</Text>
-                <RequestReviewButton title={"Save Return"} />
+                {
+                    showSaveReturn ? (
+                        <RequestReviewButton title={"Save Return"} clickFunction={() => submitReturnForm()}/>
+
+                    ) : (<></>)
+                }
             </CardHeader>
             <CardBody px={0}>
                 <Grid
