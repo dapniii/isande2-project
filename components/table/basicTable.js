@@ -69,11 +69,21 @@ function BasicTable({
 	const { pageIndex } = state;
 
   function showNumRows() {
-    if ((pageIndex+1)*pageSize < rows.length) {
-      return (<>{(pageIndex*pageSize + 1)}-{(pageIndex+1)*pageSize} of {rows.length}</>)
-    } else 
-      return (<>{(pageIndex*pageSize + 1)}-{(pageIndex+1)*pageSize - ((pageIndex+1)*pageSize) % rows.length} of {rows.length}</>)
+  if ((pageIndex + 1) * pageSize <= rows.length) {
+    return (
+      <>
+        {(pageIndex * pageSize + 1)}-{(pageIndex + 1) * pageSize} of {rows.length}
+      </>
+    );
+  } else {
+    return (
+      <>
+        {(pageIndex * pageSize + 1)}-{rows.length} of {rows.length}
+      </>
+    );
   }
+}
+
 
   return (
     <Flex flexDirection={"column"} bg={"white"} borderRadius={5} boxShadow={"xl"}>
