@@ -28,6 +28,7 @@ import { AddButton, RequestReviewButton } from '@/components/buttons';
 import { jobOrderAPI } from '@/lib/routes';
 
 function JobOrderMainLayout({user, initialData, categoryList, setFormState, setSubmitArray}) {
+    const [showSaveHandOver, setShowHandOver] = React.useState(false)
     const [showSaveReturn, setShowSaveReturn] = React.useState(false)
     const [detailTemplate, setDetailTemplate] = React.useState({
         itemBrandID: {
@@ -57,7 +58,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                             name: action.payload.item.detailID.itemBrandID.name
                         },
                         partNumber: action.payload.item.detailID.partNumber,
-                        quantity: action.payload.item.receivedQty
+                        quantity: action.payload.item.receivedQty,
                     })
                 )
                 return {
@@ -87,7 +88,6 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             case "initialize": // Get item data from context
                 return action.payload
             case "specify details": {
-                console.log(action.payload.detail)
                 return state.map((row, i) => i == action.payload.index ? {...row, 
                     detailID: {
                         partNumber: action.payload.detail.partNumber,
@@ -95,7 +95,8 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                             name: action.payload.detail.itemBrandID.name
                         }
                     },
-                    receivedQty: action.payload.detail.quantity
+                    receivedQty: action.payload.detail.quantity,
+                    new: true
                 } : row)
             }
         }
@@ -116,21 +117,14 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         }
     })
 
-    // React.useEffect(() => {
-    //     if (returnList != null)
-    //         console.log(returnList[0].returnQty)
-    // })
 
     // Initialize data
     React.useEffect(() => {
         if (initialData != null) {
-            
             switchState({type: "default"})
             plDispatch({type: "initialize", payload: initialData.partsList})
             if (initialData.partsList != null) {
                 rlDispatch({type: "initialize", payload: initialData.partsList.filter(item => {return item.returnQty == item.receivedQty})})
-                console.log(initialData.partsList.filter(item => {return item.returnQty == item.receivedQty}))
-
             }
 
         }
@@ -149,6 +143,16 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             ...prevState,
             partsList: partsList
         }))
+
+        if (partsList != null) {
+            if (
+                user.role == "Inventory"
+                && ["For Review", "Complete"].findIndex(option => option == initialData.jobOrder.statusID.name) == -1 
+                && partsList.filter(item => {return item.new}).length > 0
+            ) {setShowHandOver(true)}
+            else setShowHandOver(false)
+        }
+
     }, [partsList])
 
     React.useEffect(() => {
@@ -178,23 +182,6 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             quantity: 0,
         })
     }
-
-    function clearReturnTemplate() {
-        switchState({type: "reset"})
-        setReturnTemplate({
-            _id: "",
-            itemID: "",
-            itemNumber: "",
-            itemName: "",
-            itemModel: "",
-            detailID: "",
-            brand: "",
-            partNumber: "",
-            receivedQty: 0,
-            returnQty: 0
-        })
-    }
-
     
     function handleReturnSelect(item) {
         setReturnTemplate({
@@ -225,8 +212,24 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         clearReturnTemplate()
     }
 
+    function clearReturnTemplate() {
+        switchState({type: "reset"})
+        setReturnTemplate({
+            _id: "",
+            itemID: "",
+            itemNumber: "",
+            itemName: "",
+            itemModel: "",
+            detailID: "",
+            brand: "",
+            partNumber: "",
+            receivedQty: 0,
+            returnQty: 0
+        })
+    }
+
     async function submitReturnForm() {
-        await fetch(jobOrderAPI.receive_items, {
+        await fetch(jobOrderAPI.return_items, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -240,6 +243,28 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
             // location.reload()
         })
     } 
+
+    async function submitInvForm() {
+        let jobOrderData = {
+            _id: initialData.jobOrder._id,
+            jobOrderID: initialData.jobOrder.jobOrderID,
+            details: partsList,
+            inventoryStaffID: user.userID
+        } 
+        await fetch(jobOrderAPI.handover_items, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jobOrderData),
+        }).then(result => result.json())
+        .then(data => {
+            console.log(data)
+            if (data.error != null) 
+                console.log(data.error)
+            location.reload()
+        })
+    }
 
     return (
     <Flex flexDirection={"column"} p={3} gap={5}>
@@ -263,8 +288,10 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
 
         {/* Parts List */}
         <Card variant={"outline"}>
-            <CardHeader borderBottom={"1px ridge #d3d0cf"} py={1}>
+            <CardHeader borderBottom={"1px ridge #d3d0cf"} py={2} display={"flex"} justifyContent={"space-between"}>
                 <Text fontSize={"xl"} fontWeight={"bold"}>Parts List</Text>
+                
+                {showSaveHandOver ? (<><RequestReviewButton title={"Save"} clickFunction={() => submitInvForm()}/></>) : (<></>)}
             </CardHeader>
             <CardBody px={0}>
                 <Grid
@@ -347,7 +374,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                                     value={detailTemplate.quantity} 
                                                     onChange={(value) => setDetailTemplate((prevState) => ({
                                                         ...prevState,
-                                                        quantity: parseInt(value)
+                                                        quantity: parseInt(value),
                                                     }))}
                                                 >
                                                     <NumberInputField border={"2px solid gray"} />
@@ -611,7 +638,11 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
         )
     }
 
-    else if (initialData != null && initialData.jobOrder.statusID.name != "Pending Parts") {
+    else if (
+        initialData != null 
+        && initialData.jobOrder.statusID.name != "Pending Parts"
+        && user.role == "Inventory"
+        ) {
         return (
             <GridItem colStart={2}>
                 <AddButton title={"Return Item"} clickFunction={() => switchState({type: "return"})}/>

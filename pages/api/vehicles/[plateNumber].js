@@ -65,8 +65,8 @@ export default async (req, res) => {
         jo.set("jobOrderParts", joItem, {strict: false})
         jo.set("assignedMechanics", joMechanics, {strict:false})
         jo.set("jobList", jobList, {strict: false})
-
     })
+    
     vehicleInfo.set("serviceHistory", jobOrders, {strict: false})
 
     if (vehicleInfo == null) {

@@ -104,34 +104,14 @@ function JobOrderDetailsPage({user, categoryList}) {
         router.back()
     }
 
-    async function submitInvForm() {
-        let jobOrderData = {
-            _id: initialData.jobOrder._id,
-            jobOrderID: jobOrderID,
-            details: partsList,
-            inventoryStaffID: user.data.userID
-        } 
-        await fetch("/api/joborders/transactions/handoverItems", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(jobOrderData),
-        }).then(result => result.json())
-        .then(data => {
-            console.log(data)
-            if (data.error != null) 
-                console.log(data.error)
-            location.reload()
-        })
-    }
+
 
     async function requestForReview() {
         let jobOrderData = {
             jobOrderID: jobOrderID,
             mechanicID: user.data.userID,
         }
-        await fetch("/api/joborders/transactions/requestReview", {
+        await fetch(jobOrderAPI.request_review, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -151,7 +131,7 @@ function JobOrderDetailsPage({user, categoryList}) {
             jobOrderID: jobOrderID,
             mechanicID: user.data.userID,
         }
-        await fetch("/api/joborders/transactions/approve", {
+        await fetch(jobOrderAPI.approve, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -224,11 +204,11 @@ function JobOrderDetailsPage({user, categoryList}) {
                         {
                             initialData.jobOrder != null ? (
                                 <>
-                                {
+                                {/* {
                                     user.data.role == "Inventory" 
                                     && ["Open", "For Review", "Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 
                                     ? (<SaveButton title={"Save"} clickFunction={submitInvForm} />) : (<></>)
-                                }
+                                } */}
                                 {
                                     user.data.role == "Mechanic"
                                     && ["Pending Parts", "For Review", "Complete"].findIndex(option => initialData.jobOrder.statusID.name == option) == -1 

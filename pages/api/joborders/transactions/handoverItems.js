@@ -18,19 +18,21 @@ export default async (req, res) => {
     let updateJo = await JobOrder.findOneAndUpdate({jobOrderID: joInfo.jobOrderID}, {statusID: statusID._id})
 
     let changeStatus = true
-    let data = await Promise.all(joInfo.details.partsList.map(async item => {
-        let brandID = await ItemBrand.findOne({name: item.detailID.itemBrandID.name})
-        let detailID = await ItemDetails.findOneAndUpdate({
-            partNumber: item.detailID.partNumber,
-            itemBrandID: brandID._id
-        }, { $inc: {quantity: -item.receivedQty}})
-        let updatePartsList = await JobOrderItem.findByIdAndUpdate(item._id, {
-            detailID: detailID._id,
-            receivedQty: item.receivedQty
-        })
-
-        if (updatePartsList.requestedQty != updatePartsList.receivedQty) {
-            changeStatus = false
+    let data = await Promise.all(joInfo.details.map(async item => {
+        if (item.new) {
+            let brandID = await ItemBrand.findOne({name: item.detailID.itemBrandID.name})
+            let detailID = await ItemDetails.findOneAndUpdate({
+                partNumber: item.detailID.partNumber,
+                itemBrandID: brandID._id
+            }, { $inc: {quantity: -item.receivedQty}})
+            let updatePartsList = await JobOrderItem.findByIdAndUpdate(item._id, {
+                detailID: detailID._id,
+                receivedQty: item.receivedQty
+            })
+    
+            if (updatePartsList.requestedQty != updatePartsList.receivedQty) {
+                changeStatus = false
+            }
         }
     }))
     
