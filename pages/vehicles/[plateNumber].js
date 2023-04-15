@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
     Grid,
     GridItem,
@@ -24,6 +24,9 @@ import { addCommasToNum } from "@/lib/dataHandler";
 import ViewVehicleLayout from "@/components/layouts/vehicles/viewVehicleLayout";
 import { withSessionSsr } from "@/lib/auth/withSession";
 import VehicleServiceHistoryTab from "@/components/layouts/vehicles/serviceHistoryTab";
+import BasicTable from "@/components/table/basicTable";
+import { FUEL_OUT_COLUMNS } from "@/components/layouts/fuel/fuelColumns";
+import { fuelAPI } from "@/lib/routes";
 
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
@@ -67,6 +70,16 @@ export const getServerSideProps = withSessionSsr(
         vehicleTypes: []
     };
 
+    const [fuelOut] = await Promise.all([
+      fetch(fuelAPI.get_fuelOut)
+        .then((res) => res.json())
+        .then((res) => res.data),
+    ]);
+
+    let data = {
+      fuelOut
+    };
+
     const catRes = await fetch(vehicleAPI.get_categories)
     const catData = await catRes.json()
   
@@ -81,6 +94,7 @@ export const getServerSideProps = withSessionSsr(
     categoryList.vehicleTypes = catData.vehicleType
 
     return { props: { 
+      data,
       categoryList,
       user: {
         data: user,
@@ -89,9 +103,13 @@ export const getServerSideProps = withSessionSsr(
     }}
 });
 
-export default function VehicleDetails({user, categoryList}) {
+export default function VehicleDetails({user, categoryList, data}) {
     const router = useRouter();
     const { plateNumber } = router.query
+
+    const sortedFuelOut = data.fuelOut.sort(
+      (a, b) => new Date(b.oRecordDateTime) - new Date(a.oRecordDateTime)
+    );
 
     const [vehicleInfo, setVehicleInfo] = useState({
         plateNumber: plateNumber,
@@ -113,6 +131,16 @@ export default function VehicleDetails({user, categoryList}) {
         status: "",
         disabled: false,
       })
+
+      
+        // Filter the data array based on the plate number to show
+        const filteredData = useMemo(() => {
+          
+          return sortedFuelOut.filter(row => row.oPlateNumber === plateNumber);
+        }, [data, plateNumber]);
+        
+      
+      
 
     // Fetch data
     useEffect(() => {
@@ -204,6 +232,10 @@ export default function VehicleDetails({user, categoryList}) {
           </Flex>
         );
       }
+
+      function fuelFilters(filter, setFilter, globalFilter, setGlobalFilter) {
+        return
+        }
     
       // MAIN
       return (
@@ -245,7 +277,14 @@ export default function VehicleDetails({user, categoryList}) {
                     ) : (<></>)
                   }
                   </TabPanel>
-                  <TabPanel>Fuel History</TabPanel>
+                  <TabPanel overflowY={"auto"}>
+                    <BasicTable
+                       COLUMNS={FUEL_OUT_COLUMNS}
+                       DATA={filteredData}
+                       FILTERS={fuelFilters}
+                       HIDDEN={["refuelType"]}
+                    />
+                  </TabPanel>
                   <TabPanel>Cost History</TabPanel>
                 </TabPanels>
               </Tabs>
