@@ -77,7 +77,6 @@ function ChiefMechanicMenu() {
             <Vehicles />
             <SpareParts />
             <JobOrders />
-            <Fuel />
         </>
     )
 }
