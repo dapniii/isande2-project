@@ -242,7 +242,7 @@ export default function ItemDetails({user, categoryList}) {
             </TabList>
             <TabPanels>
               <TabPanel overflowY={"auto"}>
-                <ViewPartLayout data={itemInfo} categoryList={categoryList} />
+                <ViewPartLayout user={user.data} data={itemInfo} categoryList={categoryList} />
               </TabPanel>
               <TabPanel>Transaction History</TabPanel>
             </TabPanels>

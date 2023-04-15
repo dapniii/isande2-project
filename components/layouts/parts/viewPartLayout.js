@@ -38,7 +38,7 @@ function createDetailRow(index, detail) {
     )
 }
 
-function ViewPartLayout({data, categoryList}) {
+function ViewPartLayout({data, categoryList, user}) {
     const adjustModal = useDisclosure();
     
     return (
@@ -56,7 +56,7 @@ function ViewPartLayout({data, categoryList}) {
                 <Flex alignItems={"center"} py={3}>
                     <Text my={"auto"} mx={5} fontSize={"xl"} fontWeight={"bold"}>Details</Text>
                     <EditButton title={"Adjust"} clickFunction={adjustModal.onOpen} />
-                    <ItemAdjustmentModal modalOpen={adjustModal} data={data} options={categoryList} /> 
+                    <ItemAdjustmentModal user={user} modalOpen={adjustModal} data={data} options={categoryList} /> 
                 </Flex>
                 <hr />
                 <Grid

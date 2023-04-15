@@ -22,7 +22,7 @@ export default async (req, res) => {
     let reasonInfo = await ItemAdjustmentReason.findOne({
         name: adjustInfo.reasonID
     })
-    console.log(reasonInfo)
+    
     adjustInfo.edits.forEach(async element => {
         
         if (element.newQuantity != null && element.quantity != element.newQuantity) {
@@ -40,7 +40,6 @@ export default async (req, res) => {
                 creatorID: creatorInfo._id
             })
 
-            console.log(newAdjust)
         }
     })
 

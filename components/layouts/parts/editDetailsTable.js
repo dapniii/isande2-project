@@ -110,7 +110,6 @@ function EditDetailsTable({brands, setSubmitArray}) {
     useEffect(() => {
         clearTemplate()
         switchState("reset")
-        console.log(editArray)
         setSubmitArray(editArray)
     }, [editArray])
 
