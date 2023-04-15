@@ -17,6 +17,8 @@ import {
   Tab,
   Select,
   Button,
+  Stack,
+  Switch,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import Navbar from "@/components/navbar";
@@ -562,7 +564,7 @@ export default function ReportsPage({ user, data }) {
           />
         </GridItem>
 
-        <GridItem colStart={2} bg={"blackAlpha.300"}>
+        <GridItem colStart={2} bg={"blackAlpha.100"} overflowY={"auto"}>
           <Grid templateColumns={"1fr 1.2fr"} px={2} py={5} gap={2}>
             <GridItem>
               <Card variant={"outline"}>
@@ -601,12 +603,222 @@ export default function ReportsPage({ user, data }) {
                       <option value="Fuel out">Fuel out</option>
                       <option value="Inventory">Inventory</option>
                       <option value="Job Orders">Job Orders</option>
-                      <option value="Purhcase Orders">Purhcase Orders</option>
+                      <option value="Purchase Orders">Purhcase Orders</option>
                     </Select>
                   </FormControl>
                 </CardBody>
               </Card>
             </GridItem>
+            {reportType === "Inventory" && (
+              <>
+                <GridItem>
+                  <Card variant={"outline"}>
+                    <CardHeader>
+                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                        Generate Inventory Report Form
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>
+                      <Stack>
+                        <Flex gap={2}>
+                          <FormControl >
+                            <FormLabel>All Items:</FormLabel>
+                            <Switch id="" />
+                          </FormControl>
+                          <FormControl>
+                            <FormLabel>Item Category:</FormLabel>
+                            <Select placeholder="Select Item Category">
+                              <option value="Vehicles">Vehicles</option>
+                              <option value="Fuel in">Fuel in</option>
+                            </Select>
+                          </FormControl>
+                        </Flex>
+                        <Flex gap={2}>
+                        <FormControl mt={4} isRequired>
+                            <FormLabel>Start Date</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>End Date</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                        </Flex>
+                        <Flex gap={2}>
+                          <Button>Generate Report</Button>
+                        </Flex>
+                      </Stack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              </>
+            )}
+            {reportType === "Fuel in" && (
+              <>
+                <GridItem>
+                  <Card variant={"outline"}>
+                    <CardHeader>
+                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                        Generate Fuel In Report Form
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>
+                      <Stack>
+                        <Flex gap={2}>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>Start Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>End Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2} mt={4}>
+                          <Button>Generate Report</Button>
+                        </Flex>
+                      </Stack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              </>
+            )}
+            {reportType === "Fuel out" && (
+              <>
+                <GridItem>
+                  <Card variant={"outline"}>
+                    <CardHeader>
+                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                        Generate Fuel Out Report Form
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>
+                      <Stack>
+                      <Flex gap={2}>
+                          <FormControl mt={4} >
+                            <FormLabel>Plate Number:</FormLabel>
+                            <Select>
+                              <option value="Vehicles">Vehicles</option>
+                              <option value="Fuel in">Fuel in</option>
+                            </Select>
+                          </FormControl>
+                          <Text mt={10}>or</Text>
+                          <FormControl mt={4}>
+                            <FormLabel>Driver:</FormLabel>
+                            <Select>
+                              <option value="Vehicles">Vehicles</option>
+                              <option value="Fuel in">Fuel in</option>
+                            </Select>
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2}>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>Start Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>End Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2}>
+                          <Button>Generate Report</Button>
+                        </Flex>
+                      </Stack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              </>
+            )}
+            {reportType === "Purchase Orders" && (
+              <>
+                <GridItem>
+                  <Card variant={"outline"}>
+                    <CardHeader>
+                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                        Generate Purchase Order Report Form
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>
+                      <Stack>
+    
+                        <Flex gap={2}>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>Start Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>End Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2}>
+                          <Button>Generate Report</Button>
+                        </Flex>
+                      </Stack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              </>
+            )}
+            {reportType === "Job Orders" && (
+              <>
+                <GridItem>
+                  <Card variant={"outline"}>
+                    <CardHeader>
+                      <Text fontSize={"xl"} fontWeight={"bold"}>
+                        Generate Job Order Report Form
+                      </Text>
+                    </CardHeader>
+                    <Divider />
+                    <CardBody>
+                      <Stack>
+
+                        <Flex gap={2}>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>Start Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                          <FormControl mt={4} isRequired>
+                            <FormLabel>End Date:</FormLabel>
+                            <Input type="datetime-local" />
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2}>
+                          <FormControl mt={4} >
+                            <FormLabel>Plate Number:</FormLabel>
+                            <Select>
+                              <option value="Vehicles">Vehicles</option>
+                              <option value="Fuel in">Fuel in</option>
+                            </Select>
+                          </FormControl>
+                         
+                          <FormControl mt={4} >
+                            <FormLabel>Mechanic:</FormLabel>
+                            <Select>
+                              <option value="Vehicles">Vehicles</option>
+                              <option value="Fuel in">Fuel in</option>
+                            </Select>
+                          </FormControl>
+                        </Flex>
+
+                        <Flex gap={2}>
+                          <Button>Generate Report</Button>
+                        </Flex>
+                      </Stack>
+                    </CardBody>
+                  </Card>
+                </GridItem>
+              </>
+            )}
           </Grid>
         </GridItem>
       </Grid>
