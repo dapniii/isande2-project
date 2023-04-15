@@ -13,7 +13,7 @@ import { withSessionSsr } from "@/lib/auth/withSession";
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
   const user = req.session.user;
-  const allowedRoles = ["Mechanic", "System Admin"]
+  const allowedRoles = ["Mechanic", "System Admin", "Operations"]
   
   if(user == null) {
     return {

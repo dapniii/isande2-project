@@ -28,14 +28,17 @@ export function selectMenu(role, userType) {
     if (role == "Inventory")
         return (<>{InventoryMenu()}</>)
 
-    if (role == "Operations Manager")
+    if (role == "Operations")
         return (<>{OperationsManagerMenu()}</>) 
 
     if (role == "Purchasing")
         return (<>{PurchasingMenu()}</>) 
 
     if (role == "Inventory") 
-        return (<>{InventoryMenu()}</>)   
+        return (<>{InventoryMenu()}</>)
+    
+    if (role == "Fuel")
+        return(<>{FuelEmployeeMenu()}</>)
 
     return (<>{AdminMenu()}</>)
 }
@@ -70,6 +73,15 @@ function OperationsManagerMenu() {
     )
 }
 
+function FuelEmployeeMenu() {
+    return (
+        <>
+            <Dashboard />
+            <Fuel />
+        </>
+    )
+}
+
 function ChiefMechanicMenu() {
     return (
         <>
@@ -77,7 +89,6 @@ function ChiefMechanicMenu() {
             <Vehicles />
             <SpareParts />
             <JobOrders />
-            <Fuel />
         </>
     )
 }
@@ -88,7 +99,6 @@ function MechanicMenu() {
             <Dashboard />
             <Vehicles />
             <JobOrders />
-            <Fuel />
         </>
     )
 }
@@ -100,7 +110,6 @@ function InventoryMenu() {
             <SpareParts />
             <JobOrders />
             <PurchaseOrders />
-            <Fuel />
         </>
     )
 }

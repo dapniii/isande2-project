@@ -23,7 +23,7 @@ import { jobOrderAPI } from "@/lib/routes";
 export const getServerSideProps = withSessionSsr(
   async ({req, res}) => {
       const user = req.session.user;
-      let allowedRoles = ["Inventory", "Driver", "Mechanic", "System Admin"]
+      let allowedRoles = ["Inventory", "Driver", "Mechanic", "System Admin", "Operations"]
 
       if (user == null) {
           return {

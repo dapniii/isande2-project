@@ -25,6 +25,7 @@ export const getServerSideProps = withSessionSsr(
         {role: "System Admin", userType: "Admin"},
         {role: "Purchasing", userType: "Manager"},
         {role: "Purchasing", userType: "Employee"},
+        { role: "Operations", userType: "Manager"},
         {role: "Inventory", userType: "Manager"},
 
       ]

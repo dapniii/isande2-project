@@ -169,7 +169,7 @@ export default function FuelPage({ user, data }) {
         <Text fontSize={"3xl"} fontWeight={"bold"}>
           Fuel
         </Text>
-        if(!user.role==="Operations"){
+       {(user.data.role=="Fuel"||user.data.role=="System Admin") &&(
           <>
         <AddButton title={"Add Fuel Entry"} clickFunction={addFuelEntry} />
         <AddFuelEntryForm
@@ -180,7 +180,7 @@ export default function FuelPage({ user, data }) {
           fuelOutCount={data.fuelOut.length}
           data={data}
           total={total}
-        /></>}
+        /></>)}
       </Flex>
     );
   }
