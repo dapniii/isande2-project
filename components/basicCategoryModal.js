@@ -45,9 +45,10 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
         }))
     }
 
-    function enableEdit(option) {
+    function enableEdit(option, index) {
         setNewCategory((prevState) => ({
             ...prevState,
+            index: index,
             id: option.pubId,
             name: option.name,
             disabled: option.disabled,
@@ -74,7 +75,6 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
 			newOptions.shift();
 		}
         setNewOptions((newOptions) => [...newOptions, newCategory]);
-        console.log("AFTER ADD \n" + newOptions)
         clearNewCategory();
         setAddClicked(false);
 
@@ -147,11 +147,9 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {options.length == 0 ? (
-                        <Text>No records to show</Text>
-                        ) : (<></>)}
+
                     {newOptions.map((option, index) => {
-                        if (option.pubId == newCategory.id) {
+                        if (option.pubId == newCategory.id && index == newCategory.index) {
                             return (
                                 <Tr key={option.pubId}>
                                     <Td><Switch isChecked={!newCategory.disabled} onChange={() => setNewCategory((prevState) => ({...prevState, disabled: !newCategory.disabled}))} alignSelf={"center"} /></Td>
@@ -170,7 +168,7 @@ function CategoryListModal({modalOpen, title, options, apiPath}) {
                         }
                         else 
                             return (
-                                    <Tr key={option.pubId} onClick={() => enableEdit(option)} cursor={"pointer"}>
+                                    <Tr key={option.pubId} onClick={() => enableEdit(option, index)} cursor={"pointer"}>
                                         { option.disabled == false ? (<Td color={"green.300"}>⬤</Td>) : (<Td color={"red.300"}>⬤</Td>)}
                                         <Td>{option.name}</Td>
                                     </Tr>

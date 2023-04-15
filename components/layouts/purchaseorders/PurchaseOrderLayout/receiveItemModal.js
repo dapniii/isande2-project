@@ -64,7 +64,6 @@ export default function PurchaseOrderReceiveModal({modalOpen, data, user}) {
         if (partsList != null) {
             setIsComplete(partsList.every((item) => item.requestedQty <= item.receivedQty))
         }
-        console.log(isComplete)
     }, [partsList, template])
 
     function handleInputChange(value, index) {
