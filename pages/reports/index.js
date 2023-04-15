@@ -275,7 +275,7 @@ import {
                         <option value="" hidden disabled>
                           Select Report Type
                         </option>
-                        <option value="Vehicles">Vehicles</option>
+                        {/* <option value="Vehicles">Vehicles</option> */}
                         <option value="Fuel in">Fuel in</option>
                         <option value="Fuel out">Fuel out</option>
                         <option value="Inventory">Inventory</option>
