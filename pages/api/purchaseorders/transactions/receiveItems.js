@@ -19,6 +19,7 @@ export default async (req, res) => {
     else if (poInfo.hasIssues) statusName = "With Issues";
     else statusName = "Received"
 
+    console.log(statusName)
     // Get status ID
     let statusID = await PurchaseOrderStatus.findOne({name: statusName})
     // Get userID
@@ -26,43 +27,36 @@ export default async (req, res) => {
 
     // Update PO
 
-    switch (statusName) {
-        case "Completed": {
-            let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
-                statusID: statusID._id,
-                deliveredDate: poInfo.date,
-                completedDate: poInfo.date
-            })
-
-            console.log(updatePo)
-        }
-        case "With Issues": {
-            let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
-                statusID: statusID._id,
-                deliveredDate: poInfo.date,
-                completedDate: poInfo.date
-            })
-
-            let poComment = await PurchaseOrderComment.create({
-                poID: ObjectId(poInfo.poID),
-                creatorID: receivedByID._id,
-                comment: poInfo.issueNote,
-                commentDate: poInfo.date,
-            })
-
-            console.log(updatePo)
-            console.log(poComment)
-        }
-        case "Received": {
-            let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
-                statusID: statusID._id,
-                deliveredDate: poInfo.date,
-            })
-            console.log(updatePo)
-        }
+    if (statusName == "Completed") {
+        let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
+            statusID: statusID._id,
+            deliveredDate: poInfo.date,
+            completedDate: poInfo.date
+        })
     }
 
-    
+    else if (statusName == "With Issues") {
+        let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
+            statusID: statusID._id,
+            deliveredDate: poInfo.date,
+            completedDate: poInfo.date
+        })
+
+        let poComment = await PurchaseOrderComment.create({
+            poID: ObjectId(poInfo.poID),
+            creatorID: receivedByID._id,
+            comment: poInfo.issueNote,
+            commentDate: poInfo.date,
+        })
+    }
+
+    else {
+        let updatePo = await PurchaseOrder.findByIdAndUpdate(ObjectId(poInfo.poID), {
+            statusID: statusID._id,
+            deliveredDate: poInfo.date,
+        })
+    }
+
     /* 
         Access parts list
             - Update PO parts list
@@ -82,13 +76,11 @@ export default async (req, res) => {
             receivedQuantity: item.receivedQty,
         })
 
-        console.log(poTransaction)
         let detailsRes = await ItemDetails.findByIdAndUpdate(ObjectId(item.detailID._id),
             { $inc: 
                 { quantity: item.receivedQty }
             }
         )
-        console.log(detailsRes)
     })
 
     res.json("success")

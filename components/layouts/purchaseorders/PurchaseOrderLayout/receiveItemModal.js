@@ -30,7 +30,8 @@ export default function PurchaseOrderReceiveModal({modalOpen, data, user}) {
     const { isOpen, onClose } = modalOpen;
     const [isComplete, setIsComplete] = useState(false);
     const [hasIssues, setHasIssues] = useState(false);
-    const [issueNote, setIssueNote] = useState("")
+    const [issueNote, setIssueNote] = useState("");
+    const [template, setTemplate] = useState();
 
     const [partsList, dispatch] = useReducer((state, action) => {
         switch (action.type) {
@@ -61,11 +62,13 @@ export default function PurchaseOrderReceiveModal({modalOpen, data, user}) {
 
     useEffect(() => {
         if (partsList != null) {
-            setIsComplete(partsList.every((item) => item.quantity <= item.receivedQty))
+            setIsComplete(partsList.every((item) => item.requestedQty <= item.receivedQty))
         }
-    }, [partsList])
+        console.log(isComplete)
+    }, [partsList, template])
 
     function handleInputChange(value, index) {
+        setTemplate(index)
         dispatch({type: "update received qty", payload: {
             index: index,
             quantity: parseInt(value)
@@ -133,7 +136,7 @@ export default function PurchaseOrderReceiveModal({modalOpen, data, user}) {
                                                 </Flex>
                                                 
                                             </GridItem>
-                                            <GridItem colStart={3} my={"auto"}><Text fontWeight={"bold"} fontSize={"lg"}>{row.quantity}</Text></GridItem>
+                                            <GridItem colStart={3} my={"auto"}><Text fontWeight={"bold"} fontSize={"lg"}>{row.requestedQty}</Text></GridItem>
                                             <GridItem colStart={4}>
                                             <NumberInput  
                                                 min={0} 
