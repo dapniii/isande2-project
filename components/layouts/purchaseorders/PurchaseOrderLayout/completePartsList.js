@@ -55,12 +55,12 @@ function PurchaseOrderCompletePartsList({partsList}) {
                                         {/* Sample */}
                                         <GridItem colStart={1} m={"auto"}><Text fontWeight={"semibold"}>{index + 1}</Text></GridItem>
                                         <GridItem colStart={2} my={"auto"}><Text>{row.itemID.itemName + " " + row.itemID.itemModel}</Text></GridItem>
-                                        <GridItem colStart={3} my={"auto"}><Text>{row.detailID.partNumber != null ? (<Text>{row.detailID.partNumber}</Text>) : (<></>)}</Text></GridItem>
-                                        <GridItem colStart={4} my={"auto"}><Text>{row.detailID.itemBrandID != null ? (<Text>{row.detailID.itemBrandID.name}</Text>) : (<></>)}</Text></GridItem>
-                                        <GridItem colStart={5} my={"auto"}><Text>PHP {parseFloat(row.unitCost.$numberDecimal).toFixed(2)}</Text></GridItem>
+                                        <GridItem colStart={3} my={"auto"}><Text>{row.detailID != null ? (<Text>{row.detailID.partNumber}</Text>) : (<></>)}</Text></GridItem>
+                                        <GridItem colStart={4} my={"auto"}><Text>{row.detailID != null ? (<Text>{row.detailID.itemBrandID.name}</Text>) : (<></>)}</Text></GridItem>
+                                        <GridItem colStart={5} my={"auto"}><Text>PHP {row.detailID != null ? (parseFloat(row.unitCost.$numberDecimal).toFixed(2)) : (<></>)}</Text></GridItem>
                                         <GridItem colStart={6} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.requestedQty}</Text></GridItem>
                                         <GridItem colStart={7} my={"auto"}><Text fontSize={"lg"} fontWeight={"bold"}>{row.receivedQty}</Text></GridItem>
-                                        <GridItem colStart={8} my={"auto"}><Text>PHP {(parseFloat(row.unitCost.$numberDecimal) * row.requestedQty).toFixed(2)}</Text></GridItem>
+                                        <GridItem colStart={8} my={"auto"}><Text>PHP {row.detailID != null ? ((parseFloat(row.unitCost.$numberDecimal) * row.requestedQty).toFixed(2)) : (<></>)}</Text></GridItem>
                                         {/* <GridItem colStart={8}>
                                             <IconButton
                                                 variant={"outline"}
