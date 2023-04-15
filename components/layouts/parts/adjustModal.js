@@ -34,7 +34,7 @@ import { sparePartsAPI } from '@/lib/routes';
 import CategoryListModal from "@/components/basicCategoryModal"
 
 
-function ItemAdjustmentModal ({modalOpen, data, options}) {
+function ItemAdjustmentModal ({user, modalOpen, data, options}) {
     const { isOpen, onClose } = modalOpen;
     const [reason, setReason] = useState("");
     const [comment, setComment] = useState("");
@@ -44,16 +44,13 @@ function ItemAdjustmentModal ({modalOpen, data, options}) {
 
     const reasonModal = useDisclosure();
 
-    // TEMPORARY ONLY
-    let userID = "00001"
-
     useEffect(() => {
         setEditArray(data.detailsArray)
     }, [modalOpen, data, options])
 
     async function submitForm() {
         let adjustmentData = {
-            creatorID: userID,
+            creatorID: user.userID,
             itemID: data.itemNumber,
             reasonID: reason,
             comment: comment,

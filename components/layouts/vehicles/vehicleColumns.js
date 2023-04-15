@@ -103,7 +103,7 @@ export const COLUMNS = [
   {
     Header: "Vehicle Type",
     id: "vehicleType",
-    accessor: "vehicleTypeID",
+    accessor: "vehicleTypeID.name",
     filter: (rows, id, filterValue) => {
       return rows.filter(
         (row) =>
@@ -129,7 +129,7 @@ export const COLUMNS = [
   {
     Header: "Transmission",
     id: "transmission",
-    accessor: "transmissionID",
+    accessor: "transmissionID.name",
     filter: (rows, id, filterValue) => {
       return rows.filter(
         (row) =>
