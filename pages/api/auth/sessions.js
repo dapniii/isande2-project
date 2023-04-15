@@ -18,7 +18,6 @@ async function createSessionRoute(req, res) {
         .populate("userTypeID")
         .populate("imageID")
 
-
         if (user == null) {
             return res.status(404).json("User not found")
         }
