@@ -139,7 +139,6 @@ import {
     const [reportData, setReportData] = useState([])
 
     // Use "reportData" in jspdf
-
     // Data fetcher 
     const [dataFetcher, dispatch] = useReducer(async (state, action) => {
       switch(action.type) {
@@ -170,6 +169,24 @@ import {
             mechanics: joFilter.mechanics
           }
           await (fetch(reportAPI.generate_joborder_report, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(query),
+          }))
+          .then(result => result.json())
+          .then(data => {
+            setReportData(data)
+          })
+          return state
+        }
+        case "purchase order": {
+          let query = {
+            startDate: startDate,
+            endDate: endDate,
+          }
+          await (fetch(reportAPI.generate_purchaseorder_report, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -348,7 +365,7 @@ import {
                           <Flex gap={2}>
                             <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" />
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
@@ -431,16 +448,16 @@ import {
                           <Flex gap={2}>
                             <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={startDate} onChange={() => setStartDate(e.target.value)}/>
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={endDate} onChange={() => setEndDate(e.target.value)} />
                             </FormControl>
                           </Flex>
   
                           <Flex gap={2}>
-                            <Button>Generate Report</Button>
+                            <Button onClick={() => dispatch({type: "purchase order"})}>Generate Report</Button>
                           </Flex>
                         </Stack>
                       </CardBody>
