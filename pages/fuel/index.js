@@ -35,7 +35,7 @@ export const getServerSideProps = withSessionSsr(
     const user = req.session.user;
 
     // TODO: Add allowed users here
-    const allowedUsers = [{ role: "System Admin", userType: "Admin" }];
+    const allowedUsers = ["System Admin", "Inventory", "Mechanic"];
 
     // If not logged in
     if (user == null) {
@@ -54,11 +54,7 @@ export const getServerSideProps = withSessionSsr(
     }
 
     // If user role and user type not allowed
-    else if (
-      allowedUsers.findIndex(
-        (option) => option.role == user.role && option.userType == user.userType
-      ) == -1
-    ) {
+    else if (allowedUsers.findIndex(role => role == user.role) == -1) {
       return {
         redirect: {
           permanent: false,
