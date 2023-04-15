@@ -7,7 +7,8 @@ import { formatDistanceStrict, isWithinInterval, subMilliseconds, addDays } from
 
 export default async (req, res) => {
     await connectToDatabase();
-    const filters = req.query
+    const filters = req.body
+    console.log(filters)
 
     if (filters.startDate == null) filters.startDate = "All"
     if (filters.endDate == null) filters.endDate == "All"
@@ -46,24 +47,31 @@ export default async (req, res) => {
     function isWithinDateRange(date) {
         if (filters.startDate != "All" 
             && filters.endDate != "All" 
-        )
+        ) {
+            console.log(
+                isWithinInterval(new Date(date), {
+                    start: new Date(filters.startDate),
+                    end: subMilliseconds(addDays(new Date(filters.endDate), 1), 1)
+                })
+            )
             return isWithinInterval(new Date(date), {
                 start: new Date(filters.startDate),
                 end: subMilliseconds(addDays(new Date(filters.endDate), 1), 1)
             })
+        }
+
         else return true
     }
 
-    function isWithinFilters(vehicle) {
-        return true
+    function isWithinFilters(item) {
+        return item.categoryID.name == filters.category || filters.category == "All"
     }
 
     let items = await Item.find({disabled:false})
-        .populate("imageID")
-        .populate("categoryID")
-        .populate("unitID")
+        .populate("categoryID", "name")
+        .populate("unitID", ["name", "abbreviation"])
     let details = await ItemDetails.find({disabled: false})
-        .populate("itemBrandID")
+        .populate("itemBrandID", "name")
     let joItems = await JobOrderItem.find({})
         .populate("jobOrderID")
         .populate("detailID")
@@ -76,10 +84,12 @@ export default async (req, res) => {
             i._id.toString() == j.itemID.toString()
             && isWithinDateRange(j.jobOrderID.createdAt)
         )
-        let partsPurchased = poItems.filter(p => 
+        let partsPurchased = poItems.filter(p => {
             i._id.toString() == p.itemID.toString()
+            && p.poID != null
             && isWithinDateRange(p.poID.createdAt)
-        )
+        })
+        
         
         i.set("totalValue", detailsArray.map(getUnitValue).reduce(sum, 0), {strict: false})
         i.set("usedCost", partsUsed.map(getUsedCost).reduce(sum, 0), {strict: false})
