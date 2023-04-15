@@ -10,8 +10,8 @@ export default async (req, res) => {
     const filters = req.body
     console.log(filters)
 
-    if (filters.startDate == null) filters.startDate = "All"
-    if (filters.endDate == null) filters.endDate == "All"
+    // if (filters.startDate == null) filters["startDate"] = "All"
+    // if (filters.endDate == null) filters["endDate"] = "All"
 
     function getUnitValue(d) {
         return parseFloat(d.unitPrice) * parseInt(d.quantity)
@@ -26,7 +26,7 @@ export default async (req, res) => {
     }
 
     function getPurchasedValue(po) {
-        return parseFloat(po.unitCost) * po.requestedQty
+        return parseFloat(po.unitCost) * parseInt(po.requestedQty)
     }
 
     function getPurchasedQty(po) {
@@ -48,12 +48,6 @@ export default async (req, res) => {
         if (filters.startDate != "All" 
             && filters.endDate != "All" 
         ) {
-            console.log(
-                isWithinInterval(new Date(date), {
-                    start: new Date(filters.startDate),
-                    end: subMilliseconds(addDays(new Date(filters.endDate), 1), 1)
-                })
-            )
             return isWithinInterval(new Date(date), {
                 start: new Date(filters.startDate),
                 end: subMilliseconds(addDays(new Date(filters.endDate), 1), 1)
@@ -84,13 +78,13 @@ export default async (req, res) => {
             i._id.toString() == j.itemID.toString()
             && isWithinDateRange(j.jobOrderID.createdAt)
         )
-        let partsPurchased = poItems.filter(p => {
+        let partsPurchased = poItems.filter(p => 
             i._id.toString() == p.itemID.toString()
-            && p.poID != null
             && isWithinDateRange(p.poID.createdAt)
-        })
+        )
+
         
-        
+
         i.set("totalValue", detailsArray.map(getUnitValue).reduce(sum, 0), {strict: false})
         i.set("usedCost", partsUsed.map(getUsedCost).reduce(sum, 0), {strict: false})
         i.set("avgUsedCost", partsUsed.map(getUsedCost).reduce(sum, 0)/partsUsed.length, {strict: false})

@@ -140,7 +140,7 @@ import {
             body: JSON.stringify(query),
           }))
           
-          let data = result.json()
+          let data = await result.json()
           return data
         }
       }
