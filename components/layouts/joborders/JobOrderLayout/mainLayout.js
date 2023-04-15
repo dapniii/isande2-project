@@ -320,7 +320,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                             <GridItem colStart={3} my={"auto"}><Text>{row.itemID.itemName + " " + row.itemID.itemModel}</Text></GridItem>
                                             <GridItem colStart={4} my={"auto"}><Text>{joPartStatusIndicator(row.requestQty, row.receivedQty)}</Text></GridItem>
                                             {
-                                                typeof(row.detailID) == "string" ? (
+                                                row.detailID == null || row.new == true ? (
                                                     <GridItem colStart={5} colSpan={2} pr={5}>
                                                         <AutoComplete 
                                                             openOnFocus
@@ -360,8 +360,8 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                                     </GridItem>
                                                 ) : (
                                                 <>
-                                                    <GridItem colStart={5} my={"auto"}><Text>{row.detailID.partNumber}</Text></GridItem>
-                                                    <GridItem colStart={6} my={"auto"}><Text>{row.detailID.itemBrandID.name}</Text></GridItem>
+                                                    <GridItem colStart={5} my={"auto"}><Text>{row.detailID != null ? (row.detailID.partNumber) : (<></>)}</Text></GridItem>
+                                                    <GridItem colStart={6} my={"auto"}><Text>{row.detailID != null ? (row.detailID.itemBrandID.name) : (<></>)}</Text></GridItem>
                                                 </>
                                                 )
                                             }
@@ -425,7 +425,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                                                 {   
                                                     user.role == "Inventory" 
                                                     && initialData.jobOrder.statusID != null ? (
-                                                        row.requestQty > row.receivedQty  ? (
+                                                        row.requestQty > row.receivedQty || row.new  ? (
                                                             <IconButton 
                                                                 variant='outline'
                                                                 size={"sm"}
