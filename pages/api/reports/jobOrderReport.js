@@ -6,11 +6,8 @@ import { formatDistanceStrict, isWithinInterval, subMilliseconds, addDays } from
 
 export default async (req, res) => {
     await connectToDatabase();
-    const filters = req.query;
-
-    if (filters.startDate == null) filters.startDate = "All"
-    if (filters.endDate == null) filters.endDate == "All"
-
+    const filters = req.body;
+    console.log(filters)
     function getUnitCost(item) {
         return parseFloat(item.detailID.unitPrice) * parseInt(item.receivedQty-item.returnQty)
     }
@@ -45,8 +42,14 @@ export default async (req, res) => {
         else return true
     }
 
-    function isWithinFilters(vehicle) {
-        return true
+    function isWithinFilters(jo) {
+        let hasMechanic = filters.mechanics == "All" || filters.mechanics != null && filters.mechanics.findIndex(fm => 
+                jo.toJSON().mechanics.findIndex(jm => 
+                    jm.mechanicID._id.toString() == fm
+                ) != -1 ) != -1
+        let hasVehicle = filters.vehicles == "All" || filters.vehicles != null && filters.vehicles.some(fv => jo.toJSON().vehicleID._id.toString() == fv )
+
+        return hasMechanic && hasVehicle
     }
 
     let jobOrders = await JobOrder.find({})
@@ -69,7 +72,7 @@ export default async (req, res) => {
 
     jobOrders.map(jo => {
         let joItem = joParts.filter(item => item.jobOrderID._id.toString() == jo._id.toString())
-        let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == JO._id.toString())
+        let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == jo._id.toString())
 
         jo.set("mechanics", mechanics, {strict: false})
         jo.set("jobOrderCost", joItem.map(getUnitCost).reduce(sum, 0), {strict: false})
@@ -79,5 +82,5 @@ export default async (req, res) => {
         } catch {}
     })
 
-    res.json(jobOrders)
+    res.json(jobOrders.filter(jo => isWithinFilters(jo)))
 }

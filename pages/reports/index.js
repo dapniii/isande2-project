@@ -20,6 +20,16 @@ import {
     Stack,
     Switch,
   } from "@chakra-ui/react";
+  import {
+    AutoComplete,
+    AutoCompleteInput,
+    AutoCompleteItem,
+    AutoCompleteList,
+    AutoCompleteGroup,
+    AutoCompleteGroupTitle,
+    AutoCompleteTag,
+    AutoCompleteCreatable
+} from "@choc-ui/chakra-autocomplete";
   import { useState, useEffect, useReducer } from "react";
   import Navbar from "@/components/navbar";
   import Header from "@/components/header";
@@ -89,13 +99,14 @@ import {
     let partCatData = await partCatRes.json()
 
     let joCatRes = await fetch(jobOrderAPI.get_form_categories)
+    let joCatData = await joCatRes.json()
 
 
     let data = {
         userCategories: userCatData,
         vehicleCategories: vCatData,
         sparePartsCategories: partCatData,
-
+        jobOrderCategories: joCatData,
     }
 
     return {
@@ -121,6 +132,10 @@ import {
     const [startDate, setStartDate] = useState(new Date().toLocaleDateString('en-CA'))
     const [endDate, setEndDate] = useState(new Date().toLocaleDateString('en-CA'))
     const [invFilter, setInvFilter] = useState("All")
+    const [joFilter, setJoFilter] = useState({
+      vehicles: [],
+      mechanics: []
+    })
     const [reportData, setReportData] = useState([])
 
     // Use "reportData" in jspdf
@@ -145,7 +160,27 @@ import {
           .then(data => {
             setReportData(data)
           })
-
+          return state
+        }
+        case "job order": {
+          let query = {
+            startDate: startDate,
+            endDate: endDate,
+            vehicles: joFilter.vehicles,
+            mechanics: joFilter.mechanics
+          }
+          await (fetch(reportAPI.generate_joborder_report, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(query),
+          }))
+          .then(result => result.json())
+          .then(data => {
+            setReportData(data)
+          })
+          return state
         }
       }
     })
@@ -429,34 +464,128 @@ import {
                           <Flex gap={2}>
                             <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                             </FormControl>
                           </Flex>
   
                           <Flex gap={2}>
                             <FormControl mt={4} >
                               <FormLabel>Plate Number:</FormLabel>
-                              <Select>
-                                <option value="Vehicles">Vehicles</option>
-                                <option value="Fuel in">Fuel in</option>
-                              </Select>
+                                <AutoComplete openOnFocus suggestWhenEmpty multiple
+                                  value={joFilter.vehicles}
+                                  onChange={(vals, items) => {
+                                    if (vals.includes("All")) {
+                                      setJoFilter((prevState) => ({
+                                        ...prevState,
+                                        vehicles: "All"
+                                      }))
+                                    }
+
+                                    else {
+                                      setJoFilter((prevState) => ({
+                                        ...prevState,
+                                        vehicles: vals.filter(v => v != "All")
+                                      }))
+                                    }
+                                  }}
+                                >
+                                  <AutoCompleteInput variant="outline">
+                                    {({ tags }) =>
+                                            tags.map((tag, tid) => (
+                                                <AutoCompleteTag
+                                                key={tid}
+                                                label={tag.label}
+                                                onRemove={tag.onRemove}
+                                                />
+                                        ))
+                                    }
+                                  </AutoCompleteInput>
+                                  <AutoCompleteList w={"100%"}>
+                                    <AutoCompleteItem
+                                      key={"All"}
+                                      label={"All Vehicles"}
+                                      value={"All"}  
+                                    >
+                                      <Text fontWeight={"bold"} fontSize={"lg"}>All Vehicles</Text>
+                                    </AutoCompleteItem>
+                                    {data.jobOrderCategories.vehicles.map((item) => (
+                                        <AutoCompleteItem
+                                            key={item.plateNumber}
+                                            label={item.plateNumber}
+                                            value={item}
+                                        >
+                                          <Flex flexDirection={"column"}>
+                                              <Text fontWeight={"bold"}>{item.plateNumber}</Text>
+                                              <Text>{item.brandID.name} {item.vehicleTypeID.name}</Text>
+                                          </Flex>
+                                        </AutoCompleteItem>
+                                    ))}
+                                  </AutoCompleteList>
+                                </AutoComplete>
                             </FormControl>
                            
                             <FormControl mt={4} >
                               <FormLabel>Mechanic:</FormLabel>
-                              <Select>
-                                <option value="Vehicles">Vehicles</option>
-                                <option value="Fuel in">Fuel in</option>
-                              </Select>
+                              <AutoComplete openOnFocus suggestWhenEmpty multiple
+                                  value={joFilter.mechanics}
+                                  onChange={(vals, items) => {
+                                    if (vals.includes("All")) {
+                                      setJoFilter((prevState) => ({
+                                        ...prevState,
+                                        mechanics: "All"
+                                      }))
+                                    }
+
+                                    else {
+                                      setJoFilter((prevState) => ({
+                                        ...prevState,
+                                        mechanics: vals.filter(v => v != "All")
+                                      }))
+                                    }
+                                  }}
+                                >
+                                  <AutoCompleteInput variant="outline">
+                                    {({ tags }) =>
+                                            tags.map((tag, tid) => (
+                                                <AutoCompleteTag
+                                                key={tid}
+                                                label={tag.label}
+                                                onRemove={tag.onRemove}
+                                                />
+                                        ))
+                                    }
+                                  </AutoCompleteInput>
+                                  <AutoCompleteList w={"100%"}>
+                                    <AutoCompleteItem
+                                      key={"All"}
+                                      label={"All Mechanics"}
+                                      value={"All"}  
+                                    >
+                                      <Text fontWeight={"bold"} fontSize={"lg"}>All Mechanics</Text>
+                                    </AutoCompleteItem>
+                                    {data.jobOrderCategories.mechanics.map((item) => (
+                                        <AutoCompleteItem
+                                            key={item.userID.userID}
+                                            label={item.userID.firstName + " " + item.userID.lastName}
+                                            value={item}
+                                        >
+                                          <Flex flexDirection={"column"}>
+                                              <Text fontWeight={"bold"}>{item.userID.firstName + " " + item.userID.lastName}</Text>
+                                              <Text>{item.specialtyID.name}</Text>
+                                          </Flex>
+                                        </AutoCompleteItem>
+                                    ))}
+                                  </AutoCompleteList>
+                                </AutoComplete>
                             </FormControl>
                           </Flex>
   
                           <Flex gap={2}>
-                            <Button>Generate Report</Button>
+                            <Button onClick={() => dispatch({type: "job order"})}>Generate Report</Button>
                           </Flex>
                         </Stack>
                       </CardBody>
