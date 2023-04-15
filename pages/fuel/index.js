@@ -35,7 +35,7 @@ export const getServerSideProps = withSessionSsr(
     const user = req.session.user;
 
     // TODO: Add allowed users here
-    const allowedUsers = [{ role: "System Admin", userType: "Admin" }];
+    const allowedUsers =  [{ role: "System Admin", userType: "Admin" },{role: "Fuel", userType: "Employee"},{role: "Operations", userType: "Manager"}];
 
     // If not logged in
     if (user == null) {
@@ -58,7 +58,7 @@ export const getServerSideProps = withSessionSsr(
       allowedUsers.findIndex(
         (option) => option.role == user.role && option.userType == user.userType
       ) == -1
-    ) {
+    )  {
       return {
         redirect: {
           permanent: false,
@@ -169,6 +169,8 @@ export default function FuelPage({ user, data }) {
         <Text fontSize={"3xl"} fontWeight={"bold"}>
           Fuel
         </Text>
+        if(!user.role==="Operations"){
+          <>
         <AddButton title={"Add Fuel Entry"} clickFunction={addFuelEntry} />
         <AddFuelEntryForm
           creatorID={user.data.userID}
@@ -178,7 +180,7 @@ export default function FuelPage({ user, data }) {
           fuelOutCount={data.fuelOut.length}
           data={data}
           total={total}
-        />
+        /></>}
       </Flex>
     );
   }
