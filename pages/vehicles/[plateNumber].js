@@ -282,7 +282,7 @@ export default function VehicleDetails({user, categoryList, data}) {
                        COLUMNS={FUEL_OUT_COLUMNS}
                        DATA={filteredData}
                        FILTERS={fuelFilters}
-                       HIDDEN={["refuelType"]}
+                       HIDDEN={["refuelType", "oPlateNumber"]}
                     />
                   </TabPanel>
                   <TabPanel>Cost History</TabPanel>
