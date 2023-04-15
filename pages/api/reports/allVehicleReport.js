@@ -10,6 +10,9 @@ export default async (req, res) => {
     await connectToDatabase();
     const filters = req.query
 
+    if (filters.startDate == null) filters.startDate = "All"
+    if (filters.endDate == null) filters.endDate == "All"
+
     function getUnitCost(item) {
         return parseFloat(item.detailID.unitPrice) * parseInt(item.receivedQty-item.returnQty)
     }
@@ -50,15 +53,15 @@ export default async (req, res) => {
 
     
     let vehicles = await Vehicle.find({})
-        .populate("vehicleTypeID")
-        .populate("brandID")
-        .populate("transmissionID")
-        .populate("engineTypeID")
-        .populate("chassisTypeID")
-        .populate("tireSizeID")
-        .populate("gpsID")
-        .populate("fuelSensorID")
-        .populate("vehicleStatusID")
+        .populate("vehicleTypeID", "name")
+        .populate("brandID", "name")
+        .populate("transmissionID", "name")
+        .populate("engineTypeID", "name")
+        .populate("chassisTypeID", "name")
+        .populate("tireSizeID", "name")
+        .populate("gpsID", "name")
+        .populate("fuelSensorID", "name")
+        .populate("vehicleStatusID", "name")
 
     let jos = await JobOrder.find({})
         .populate("vehicleID")
@@ -92,7 +95,7 @@ export default async (req, res) => {
         jo.set("jobOrderCost", joItem.map(getUnitCost).reduce(sum, 0), {strict: false})
         jo.set("jobOrderParts", joItem, {strict: false})
         try {
-            jo.set("repairDuration", getDateDistance(jo.createdAt, jo.completedDate), {strict : false})
+            jo.set("repairDuration", getDateDistance(jo.createdAt, jo.updatedAt), {strict : false})
         } catch {}
 
         return jo
@@ -115,7 +118,9 @@ export default async (req, res) => {
             v.set("avgRepairCost", totalCost/vJos.length, {strict: false})
             v.set("avgRepairDuration", totalDuration/vJos.length, {strict: false})
         } catch{}
-    }) 
+    })
     
-    res.json(vehicles.filter(v => isWithinFilters(v)))
+    let result = vehicles.filter(v => isWithinFilters(v))
+    
+    res.json(result)
 }
