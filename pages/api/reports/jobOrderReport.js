@@ -8,6 +8,7 @@ export default async (req, res) => {
     await connectToDatabase();
     const filters = req.body;
     console.log(filters)
+
     function getUnitCost(item) {
         return parseFloat(item.detailID.unitPrice) * parseInt(item.receivedQty-item.returnQty)
     }
@@ -71,7 +72,9 @@ export default async (req, res) => {
         ]})
 
     jobOrders.map(jo => {
-        let joItem = joParts.filter(item => item.jobOrderID._id.toString() == jo._id.toString())
+        let joItem = joParts.filter(item => 
+            item.jobOrderID._id.toString() == jo._id.toString()
+        )
         let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == jo._id.toString())
 
         jo.set("mechanics", mechanics, {strict: false})
@@ -82,5 +85,5 @@ export default async (req, res) => {
         } catch {}
     })
 
-    res.json(jobOrders.filter(jo => isWithinFilters(jo)))
+    res.json(jobOrders.filter(jo => isWithinFilters(jo) && isWithinDateRange(jo.createdAt)))
 }
