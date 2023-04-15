@@ -121,10 +121,12 @@ import {
     const [startDate, setStartDate] = useState(new Date().toLocaleDateString('en-CA'))
     const [endDate, setEndDate] = useState(new Date().toLocaleDateString('en-CA'))
     const [invFilter, setInvFilter] = useState("All")
+    const [reportData, setReportData] = useState([])
+
+    // Use "reportData" in jspdf
 
     // Data fetcher 
-    // Use "reportData" in jspdf
-    const [reportData, dispatch] = useReducer(async (state, action) => {
+    const [dataFetcher, dispatch] = useReducer(async (state, action) => {
       switch(action.type) {
         case "inventory": {
           let query = {
@@ -132,16 +134,18 @@ import {
             endDate: endDate,
             category: invFilter,
           }
-          let result = await (fetch(reportAPI.generate_inventory_report, {
+          await (fetch(reportAPI.generate_inventory_report, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(query),
           }))
-          
-          let data = await result.json()
-          return data
+          .then(result => result.json())
+          .then(data => {
+            setReportData(data)
+          })
+
         }
       }
     })

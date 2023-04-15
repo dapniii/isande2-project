@@ -13,6 +13,10 @@ export default async (req, res) => {
     // if (filters.startDate == null) filters["startDate"] = "All"
     // if (filters.endDate == null) filters["endDate"] = "All"
 
+    function getQty (d) {
+        return d.quantity
+    }
+
     function getUnitValue(d) {
         return parseFloat(d.unitPrice) * parseInt(d.quantity)
     }
@@ -84,7 +88,7 @@ export default async (req, res) => {
         )
 
         
-
+        i.set("quantity", detailsArray.map(getQty).reduce(sum, 0), {strict: false})
         i.set("totalValue", detailsArray.map(getUnitValue).reduce(sum, 0), {strict: false})
         i.set("usedCost", partsUsed.map(getUsedCost).reduce(sum, 0), {strict: false})
         i.set("avgUsedCost", partsUsed.map(getUsedCost).reduce(sum, 0)/partsUsed.length, {strict: false})
