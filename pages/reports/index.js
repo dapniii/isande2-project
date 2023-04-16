@@ -227,17 +227,22 @@ import {
       }
 
       else if (type == "Job Orders") {
-        data.map(row => {
-          let newRow = []
+        // data.map(row => {
+        //   let newRow = []
           
-          // newRow.push(row.createdAt)
-          // newRow.push(row.itemName)
-          // newRow.push(row.itemModel)
-          // newRow.push(row.description)
-          // newRow.push(row.quantity)
-          // newRow.push(row.totalValue)
-          pdfArr.push(newRow)
-        })
+        //   newRow.push(new Date(row.createdAt).toLocaleDateString())
+        //   newRow.push(row.jobOrderID)
+        //   newRow.push(row.vehicleID.plateNumber)
+
+        //   let mechStrings = []
+        //   row.mechanics.map(mech => {
+        //     mechString.concat(mech.mechanicID.userID.firstName, " ", mech.mechanicID.userID.firstName)
+        //   }) 
+        //   newRow.push()
+        //   newRow.push(row.description)
+        //   newRow.push(row.jobOrderCost)
+        //   pdfArr.push(newRow)
+        // })
       }
 
 
