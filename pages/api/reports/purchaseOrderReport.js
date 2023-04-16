@@ -32,10 +32,12 @@ export default async (req, res) => {
     let poItems = await PurchaseOrderPartsList.find({})
         .populate("itemID")
         .populate("detailID")
+        .populate("poID")
+
 
     purchaseOrders.map(PO => {
         let totalCost = 0.00
-        let partsList = poItems.filter(item => item.poID.toString() == PO._id.toString())
+        let partsList = poItems.filter(item => item.poID._id.toString() == PO._id.toString())
         partsList.map(part => {
             totalCost += parseFloat(part.unitCost)
         })
@@ -44,6 +46,7 @@ export default async (req, res) => {
         PO.set("totalCost", totalCost, {strict: false})
     })
 
-    res.json(purchaseOrders.filter(po => isWithinDateRange(po.createdAt)))
+    // res.json(purchaseOrders.filter(po => isWithinDateRange(po.createdAt)))
+    res.json(poItems.filter(po => isWithinDateRange(po.poID.createdAt)))
 
 }

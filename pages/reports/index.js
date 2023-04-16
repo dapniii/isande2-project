@@ -158,7 +158,7 @@ import {
           .then(result => result.json())
           .then(data => {
             console.log(data)
-            setReportData(data)
+            // setReportData(data)
             generatePDF("Inventory", convertDataToArray("Inventory", data))
           })
 
@@ -181,7 +181,7 @@ import {
           .then(result => result.json())
           .then(data => {
             console.log(data)
-            setReportData(data)
+            // setReportData(data)
             generatePDF("Job Orders", convertDataToArray("Job Orders", data))          
           })
           return state
@@ -201,8 +201,12 @@ import {
           .then(result => result.json())
           .then(data => {
             console.log(data)
-            setReportData(data)
+            // setReportData(data)
+            generatePDF("Purchase Orders", convertDataToArray("Purchase Orders", data))
+
+            return data
           })
+
           return state
         }
       }
@@ -249,8 +253,20 @@ import {
 
       else if (type == "Purchase Orders") {
 
+        data.map(row => {
+          let newRow = []
+
+          newRow.push(new Date(row.poID.createdAt).toLocaleDateString())
+          newRow.push(row.poID.poNumber)
+          newRow.push(row.itemID.itemName)
+          newRow.push(row.detailID.partNumber)
+          newRow.push(row.receivedQty)
+          newRow.push(parseFloat(row.unitCost.$numberDecimal))
+          newRow.push(row.receivedQty * parseFloat(row.unitCost.$numberDecimal))
+          pdfArr.push(newRow)
+        })
       }
-      
+
       return pdfArr
     }
 
@@ -593,11 +609,11 @@ import {
                           <Flex gap={2}>
                             <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="date" value={startDate} onChange={() => setStartDate(e.target.value)}/>
+                              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
-                              <Input type="date" value={endDate} onChange={() => setEndDate(e.target.value)} />
+                              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                             </FormControl>
                           </Flex>
   
