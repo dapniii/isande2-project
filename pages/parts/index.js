@@ -127,13 +127,13 @@ export default function PartsPage({user, data}) {
           <Tabs>
             <TabList bg={"white"} top={"4.23em"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}> 
                 <Tab>Home</Tab>
-                <Tab >Bulk Manage Parts</Tab>
+                {/* <Tab >Bulk Manage Parts</Tab> */}
             </TabList>
             <TabPanels>
               <TabPanel>
                 <PartsHomeTab data={data} />
               </TabPanel>
-              <TabPanel>Bulk Manage Parts</TabPanel>
+              {/* <TabPanel>Bulk Manage Parts</TabPanel> */}
             </TabPanels>
           </Tabs>
         </GridItem>
