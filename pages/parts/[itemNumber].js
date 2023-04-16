@@ -238,13 +238,13 @@ export default function ItemDetails({user, categoryList}) {
           <Tabs>
             <TabList bg={"white"} top={"12em"} position={"sticky"} zIndex={2} boxShadow={"lg"} mt={-3}> 
                 <Tab>General Details</Tab>
-                <Tab >Transaction History</Tab>
+                {/* <Tab >Transaction History</Tab> */}
             </TabList>
             <TabPanels>
               <TabPanel overflowY={"auto"}>
                 <ViewPartLayout user={user.data} data={itemInfo} categoryList={categoryList} />
               </TabPanel>
-              <TabPanel>Transaction History</TabPanel>
+              {/* <TabPanel>Transaction History</TabPanel> */}
             </TabPanels>
           </Tabs>
         </GridItem>

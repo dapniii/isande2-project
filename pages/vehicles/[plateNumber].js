@@ -265,7 +265,7 @@ export default function VehicleDetails({user, categoryList, data}) {
                     <Tab>Overview</Tab>
                     <Tab >Service History</Tab>
                     <Tab >Fuel History</Tab>
-                    <Tab >Cost History</Tab>
+                    {/* <Tab >Cost History</Tab> */}
                 </TabList>
                 <TabPanels>
                   <TabPanel overflowY={"auto"}>
@@ -285,7 +285,7 @@ export default function VehicleDetails({user, categoryList, data}) {
                        HIDDEN={["refuelType", "oPlateNumber"]}
                     />
                   </TabPanel>
-                  <TabPanel>Cost History</TabPanel>
+                  {/* <TabPanel>Cost History</TabPanel> */}
                 </TabPanels>
               </Tabs>
             </GridItem>

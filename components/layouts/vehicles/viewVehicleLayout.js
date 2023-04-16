@@ -59,12 +59,12 @@ function ViewVehicleLayout ({data}) {
             {/* Right column */}
             <Flex w={"40%"} flexDirection={"column"} gap={3}>
                 {/* Issues */}
-                <Flex bg={"white"} boxShadow={"lg"} borderRadius={5} flexDirection={"column"}>
+                {/* <Flex bg={"white"} boxShadow={"lg"} borderRadius={5} flexDirection={"column"}>
                     <Flex alignItems={"center"} px={3} py={2} borderBottom={"1px ridge #d3d0cf"}>
                         <Text fontSize={"xl"} fontWeight={"bold"}>Issues</Text> 
                     </Flex>
                     
-                </Flex>
+                </Flex> */}
 
                 {/* Reminders */}
                 <Flex bg={"white"} boxShadow={"lg"} borderRadius={5} flexDirection={"column"}>
@@ -73,7 +73,7 @@ function ViewVehicleLayout ({data}) {
                     </Flex>
 
                     {createIdRow("Insurance Expiry Date", data.expiry)}
-                    {createIdRow("Maintenance Schedule", "Date of next maintenance uwu")}
+                    {/* {createIdRow("Maintenance Schedule", new Date().toLocaleDateString())} */}
                 </Flex>
             </Flex>
 
