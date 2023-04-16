@@ -136,6 +136,7 @@ import {
       vehicles: [],
       mechanics: []
     })
+    const [fuelFilter, setFuelFilter] = useState("All")
     const [reportData, setReportData] = useState([])
 
     // Use "reportData" in jspdf
@@ -209,6 +210,54 @@ import {
 
           return state
         }
+        case "fuel in": {
+          let query = {
+            startDate: startDate,
+            endDate: endDate,
+          }
+          await (fetch(reportAPI.generate_fuel_in_report, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(query),
+          }))
+          .then(result => result.json())
+          .then(data => {
+            console.log(data)
+            // setReportData(data)
+            generatePDF("Fuel in", convertDataToArray("Fuel in", data))
+
+            return data
+          })
+          return state
+        }
+          case "fuel out": {
+            let query = {
+              startDate: startDate,
+              endDate: endDate,
+              vehicle: fuelFilter,
+            }
+            await (fetch(reportAPI.generate_fuel_out_report, {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify(query),
+            }))
+            .then(result => result.json())
+            .then(data => {
+              console.log(data)
+              // setReportData(data)
+              generatePDF("Fuel out", convertDataToArray("Fuel out", data))
+
+              return data
+          })
+
+          return state
+
+        }
+
       }
     })
 
@@ -265,13 +314,39 @@ import {
         })
       }
 
+      else if (type == "Fuel in") {
+        data.map(row => {
+          let newRow = []
+
+          newRow.push(new Date(row.fRecordDateTime).toLocaleDateString())
+          newRow.push(row.fLiters)
+          newRow.push(row.fUnitCost)
+          newRow.push(row.recordedBy.firstName + " " + row.recordedBy.lastName)
+          pdfArr.push(newRow)
+        })
+      }
+
+      else if (type == "Fuel out") {
+        data.map(row => {
+          let newRow = []
+
+          newRow.push(new Date(row.oRecordDateTime).toLocaleDateString())
+          newRow.push(row.oDriver)
+          newRow.push(row.oPlateNumber.plateNumber)
+          newRow.push(row.oPreviousRoute)
+          newRow.push(row.ofLiters)
+          newRow.push(row.recordedBy.firstName + " " + row.recordedBy.lastName)
+          pdfArr.push(newRow)
+        })
+      }
+
       return pdfArr
     }
 
     function generatePDF(reportType, arrData) {
       const doc = new jsPDF();
       let columns = []
-      let data = []
+      let data = arrData
 
       doc.setFontSize(10);
       doc.setFont("Helvetica", "normal");
@@ -302,7 +377,7 @@ import {
         doc.text(title4, doc.internal.pageSize.width / 2, 35, { align: "center" });
         // doc.text("CATEGORY: " + category, 10, 50,);
         columns = ["DATE & TIME", "QTY", "UNIT COST", "RECORDED BY"]
-        data = ["99/99/9999", "Z9", "ZZ,ZZZ.Z9", "XXXXXXXXXX"]
+        data = arrData
       }
       if (reportType == "Fuel out") {
         // // Temp category
@@ -313,7 +388,7 @@ import {
         doc.text(title4, doc.internal.pageSize.width / 2, 35, { align: "center" });
         // doc.text("CATEGORY: " + category, 10, 50,);
         columns = ["DATE & TIME", "DRIVER", "PLATE #", "PREVIOUS ROUTE", "QTY", "RECORDED BY"]
-        data = ["99/99/9999", "XXXXXXXXXX","XXXXXXX", "XXXXXXXXXX","Z9", "XXXXXXXXXX"]
+        // data = arrData
       } 
       if (reportType == "Inventory") {
         doc.setFont("Helvetica", "bold");
@@ -321,7 +396,7 @@ import {
         doc.text(title4, doc.internal.pageSize.width / 2, 35, { align: "center" });
         // doc.text("CATEGORY: " + category, 10, 50,);
         columns = ["ITEM #", "ITEM", "MODEL", "DESCRIPTION", "QTY", "TOTAL COST"]
-        data = arrData
+        // data = arrData
       }
       if (reportType == "Purchase Orders") {
         doc.setFont("Helvetica", "bold");
@@ -329,7 +404,7 @@ import {
         doc.text(title4, doc.internal.pageSize.width / 2, 35, { align: "center" });
         // doc.text("SUPPLIER: " + category, 10, 50,);
         columns = ["REQUEST DATE", "PO #", "ITEM", "PART #", "QTY", "UNIT COST", "TOTAL COST"]
-        data = arrData
+        // data = arrData
       }
       if (reportType == "Job Orders") {
         doc.setFont("Helvetica", "bold");
@@ -337,7 +412,7 @@ import {
         doc.text(title4, doc.internal.pageSize.width / 2, 35, { align: "center" });
         // doc.text("SUPPLIER: " + category, 10, 50,);
         columns = ["ISSUE DATE", "JO #", "PLATE #", "ASSIGNED TO", "DESCRIPTION", "COST"]
-        data = arrData
+        // data = arrData
       }
     
         //DATE RANGE
@@ -522,18 +597,18 @@ import {
                       <CardBody>
                         <Stack>
                           <Flex gap={2}>
-                            <FormControl mt={4} isRequired>
+                          <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="date" />
+                              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                             </FormControl>
                           </Flex>
   
                           <Flex gap={2} mt={4}>
-                            <Button>Generate Report</Button>
+                            <Button onClick={() => dispatch({type: "fuel in"})}>Generate Report</Button>
                           </Flex>
                         </Stack>
                       </CardBody>
@@ -556,34 +631,41 @@ import {
                         <Flex gap={2}>
                             <FormControl mt={4} >
                               <FormLabel>Plate Number:</FormLabel>
-                              <Select>
-                                <option value="Vehicles">Vehicles</option>
-                                <option value="Fuel in">Fuel in</option>
+                              <Select value={fuelFilter} onChange={(e) => setFuelFilter(e.target.value)}>
+                                <option key="All" value={"All"}>All Vehicles</option>
+                                {
+                                  data.jobOrderCategories.vehicles.map(v => {
+                                    return (
+                                      <option key={v.plateNumber} value={v.plateNumber}>{v.plateNumber}</option>
+                                    )
+                                  })
+                                }
+                      
                               </Select>
                             </FormControl>
-                            <Text mt={10}>or</Text>
+                            {/* <Text mt={10}>or</Text>
                             <FormControl mt={4}>
                               <FormLabel>Driver:</FormLabel>
                               <Select>
                                 <option value="Vehicles">Vehicles</option>
                                 <option value="Fuel in">Fuel in</option>
                               </Select>
-                            </FormControl>
+                            </FormControl> */}
                           </Flex>
   
                           <Flex gap={2}>
                             <FormControl mt={4} isRequired>
                               <FormLabel>Start Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)}/>
                             </FormControl>
                             <FormControl mt={4} isRequired>
                               <FormLabel>End Date:</FormLabel>
-                              <Input type="datetime-local" />
+                              <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                             </FormControl>
                           </Flex>
   
                           <Flex gap={2}>
-                            <Button>Generate Report</Button>
+                            <Button onClick={() => dispatch({type: "fuel out"})}>Generate Report</Button>
                           </Flex>
                         </Stack>
                       </CardBody>
