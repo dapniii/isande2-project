@@ -61,7 +61,7 @@ import {
   
   export const getServerSideProps = withSessionSsr(async ({ req, res }) => {
     const user = req.session.user;
-    const allowedUserType = ["Admin"];
+    const allowedUserType = ["Admin", "Manager"];
     if (user == null) {
       return {
         redirect: {
@@ -470,7 +470,7 @@ import {
             <Header
               breadcrumb={headerBreadcrumbs()}
               main={headerMain()}
-              withShadow={false}
+              withShadow={true}
             />
           </GridItem>
   
