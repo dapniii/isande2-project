@@ -227,30 +227,32 @@ import {
       }
 
       else if (type == "Job Orders") {
-        // data.map(row => {
-        //   let newRow = []
+        data.map(row => {
+          let newRow = []
           
-        //   newRow.push(new Date(row.createdAt).toLocaleDateString())
-        //   newRow.push(row.jobOrderID)
-        //   newRow.push(row.vehicleID.plateNumber)
+          newRow.push(new Date(row.createdAt).toLocaleDateString())
+          newRow.push(row.jobOrderID)
+          newRow.push(row.vehicleID.plateNumber)
 
-        //   let mechStrings = []
-        //   row.mechanics.map(mech => {
-        //     mechString.concat(mech.mechanicID.userID.firstName, " ", mech.mechanicID.userID.firstName)
-        //   }) 
-        //   newRow.push()
-        //   newRow.push(row.description)
-        //   newRow.push(row.jobOrderCost)
-        //   pdfArr.push(newRow)
-        // })
+          let mechStrings = ""
+          row.mechanics.map(mech => {
+            mechStrings.concat(mech.mechanicID.userID.firstName, " ", mech.mechanicID.userID.firstName, "\n")
+          })
+
+
+          newRow.push("test")
+          newRow.push(row.description)
+          newRow.push(row.jobOrderCost)
+          pdfArr.push(newRow)
+        })
       }
 
+      else if (type == "Purchase Orders") {
 
-      return  pdfArr
+      }
+      
+      return pdfArr
     }
-    // useEffect(() => {
-    //   console.log(reportData)
-    // }, [reportData])
 
     function generatePDF(reportType, arrData) {
       const doc = new jsPDF();
