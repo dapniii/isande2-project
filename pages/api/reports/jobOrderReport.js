@@ -33,6 +33,7 @@ export default async (req, res) => {
     }
 
     function isWithinDateRange(date) {
+
         if (filters.startDate != "All" || filters.startDate != null 
             && filters.endDate != "All" && filters.endDate != null
         )
@@ -85,5 +86,5 @@ export default async (req, res) => {
         } catch {}
     })
 
-    res.json(jobOrders.filter(jo => isWithinFilters(jo) && isWithinDateRange(jo.createdAt)))
+    res.json(jobOrders.filter(jo => isWithinDateRange(jo.createdAt) && isWithinFilters(jo)))
 }

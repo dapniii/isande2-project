@@ -203,7 +203,7 @@ import {
             console.log(data)
             // setReportData(data)
             generatePDF("Purchase Orders", convertDataToArray("Purchase Orders", data))
-            
+
             return data
           })
 
@@ -240,11 +240,9 @@ import {
 
           let mechStrings = ""
           row.mechanics.map(mech => {
-            mechStrings.concat(mech.mechanicID.userID.firstName, " ", mech.mechanicID.userID.firstName, "\n")
+            mechStrings = mechStrings + mech.mechanicID.userID.firstName + " " + mech.mechanicID.userID.lastName + "\n"
           })
-
-
-          newRow.push("test")
+          newRow.push(mechStrings)
           newRow.push(row.description)
           newRow.push(row.jobOrderCost)
           pdfArr.push(newRow)
