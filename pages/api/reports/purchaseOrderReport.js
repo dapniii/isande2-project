@@ -38,6 +38,7 @@ export default async (req, res) => {
     purchaseOrders.map(PO => {
         let totalCost = 0.00
         let partsList = poItems.filter(item => item.poID._id.toString() == PO._id.toString())
+
         partsList.map(part => {
             totalCost += parseFloat(part.unitCost)
         })
