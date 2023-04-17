@@ -61,7 +61,7 @@ export default async (req, res) => {
         let hasMechanic = filters.mechanics == "All" || mechValue
         let hasVehicle = filters.vehicles == "All" || filters.vehicles != null && filters.vehicles.some(fv => jo.toJSON().vehicleID._id.toString() == fv )
 
-        return hasMechanic && hasVehicle
+        return hasMechanic && hasVehicle && !["Pending Parts"].includes(jo.toJSON().statusID.name)
     }
 
     let jobOrders = await JobOrder.find({})
