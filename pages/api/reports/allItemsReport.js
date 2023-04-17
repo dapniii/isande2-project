@@ -90,8 +90,8 @@ export default async (req, res) => {
         
         i.set("quantity", detailsArray.map(getQty).reduce(sum, 0), {strict: false})
         i.set("totalValue", detailsArray.map(getUnitValue).reduce(sum, 0), {strict: false})
-        i.set("usedCost", partsUsed.map(getUsedCost).reduce(sum, 0), {strict: false})
-        i.set("avgUsedCost", partsUsed.map(getUsedCost).reduce(sum, 0)/partsUsed.length, {strict: false})
+        // i.set("usedCost", partsUsed.map(getUsedCost).reduce(sum, 0), {strict: false})
+        // i.set("avgUsedCost", partsUsed.map(getUsedCost).reduce(sum, 0)/partsUsed.length, {strict: false})
         i.set("usedCount", partsUsed.map(getUsedQty).reduce(sum, 0), {strict: false})
         i.set("avgUsedCount", partsUsed.map(getUsedQty).reduce(sum, 0)/partsUsed.length, {strict: false})
         i.set("purchasedValue", partsPurchased.map(getPurchasedValue).reduce(sum, 0), {strict: false})
