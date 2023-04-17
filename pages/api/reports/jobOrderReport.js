@@ -10,7 +10,10 @@ export default async (req, res) => {
     console.log(filters)
 
     function getUnitCost(item) {
-        return parseFloat(item.detailID.unitPrice) * parseInt(item.receivedQty-item.returnQty)
+        if (item.detailID != null) {
+            return parseFloat(item.detailID.unitPrice) * parseInt(item.receivedQty-item.returnQty)
+        }
+        else return 0
     }
 
     function getJobOrderCost(jo) {
@@ -58,6 +61,7 @@ export default async (req, res) => {
         .populate("vehicleID")
         .populate("statusID")
 
+
     let joParts = await JobOrderItem.find({})
         .populate("jobOrderID")
         .populate("detailID")
@@ -77,10 +81,11 @@ export default async (req, res) => {
             item.jobOrderID._id.toString() == jo._id.toString()
         )
         let mechanics = joMechanics.filter(mech => mech.jobOrderID.toString() == jo._id.toString())
-
+        
         jo.set("mechanics", mechanics, {strict: false})
         jo.set("jobOrderCost", joItem.map(getUnitCost).reduce(sum, 0), {strict: false})
         jo.set("jobOrderParts", joItem, {strict: false})
+
         try {
             jo.set("repairDuration", getDateDistance(jo.createdAt, jo.completedDate), {strict : false})
         } catch {}
