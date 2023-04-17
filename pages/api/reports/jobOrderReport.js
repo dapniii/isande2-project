@@ -48,10 +48,17 @@ export default async (req, res) => {
     }
 
     function isWithinFilters(jo) {
-        let hasMechanic = filters.mechanics == "All" || filters.mechanics != null && filters.mechanics.findIndex(fm => 
-                jo.toJSON().mechanics.findIndex(jm => 
-                    jm.mechanicID._id.toString() == fm
-                ) != -1 ) != -1
+        let mechValue = false
+        if (filters.mechanics != "All")
+            jo.toJSON().mechanics.map(jm => {
+                filters.mechanics.map(fm => {
+                    if (jm.mechanicID._id.toString() == fm)
+                        mechValue = true
+                })
+            })
+
+        console.log(mechValue)
+        let hasMechanic = filters.mechanics == "All" || mechValue
         let hasVehicle = filters.vehicles == "All" || filters.vehicles != null && filters.vehicles.some(fv => jo.toJSON().vehicleID._id.toString() == fv )
 
         return hasMechanic && hasVehicle
