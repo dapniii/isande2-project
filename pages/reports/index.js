@@ -306,7 +306,10 @@ import {
           newRow.push(new Date(row.poID.createdAt).toLocaleDateString())
           newRow.push(row.poID.poNumber)
           newRow.push(row.itemID.itemName)
-          newRow.push(row.detailID.partNumber)
+
+          if (row.detailID != null)
+            newRow.push(row.detailID.partNumber)
+          else newRow.push("")
           newRow.push(row.receivedQty)
           newRow.push(parseFloat(row.unitCost.$numberDecimal))
           if (row.unitCost != null)
