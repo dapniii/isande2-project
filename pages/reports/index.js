@@ -311,10 +311,17 @@ import {
             newRow.push(row.detailID.partNumber)
           else newRow.push("")
           newRow.push(row.receivedQty)
-          newRow.push(parseFloat(row.unitCost.$numberDecimal))
-          if (row.unitCost != null)
+          
+          if (row.unitCost != null) {
+            newRow.push(parseFloat(row.unitCost.$numberDecimal))
             newRow.push(row.receivedQty * parseFloat(row.unitCost.$numberDecimal))
-          else newRow.push("")
+          }
+
+          else {
+            newRow.push("")
+            newRow.push("")
+          }
+
           pdfArr.push(newRow)
         })
       }
