@@ -48,6 +48,6 @@ export default async (req, res) => {
     })
 
     // res.json(purchaseOrders.filter(po => isWithinDateRange(po.createdAt)))
-    res.json(poItems.filter(po => isWithinDateRange(po.poID.createdAt)))
+    res.json(poItems.filter(po => po.detailID != null && isWithinDateRange(po.poID.createdAt)))
 
 }
