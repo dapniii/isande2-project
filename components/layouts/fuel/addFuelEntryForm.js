@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { useDisclosure } from "@chakra-ui/react";
 import {
   Button,
   Modal,
@@ -6,6 +7,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalFooter,
+  CircularProgress,
   ModalBody,
   FormControl,
   FormLabel,
@@ -21,7 +23,14 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Text,
-  Image
+  Box,
+  Image,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react";
 import { SaveButton, BackButton, CancelButton } from "@/components/Buttons";
 import { MdCheckCircle } from "react-icons/md";
@@ -36,14 +45,22 @@ import {
   AutoCompleteGroup,
   AutoCompleteGroupTitle,
   AutoCompleteTag,
-  AutoCompleteCreatable
+  AutoCompleteCreatable,
 } from "@choc-ui/chakra-autocomplete";
 
 const AddFuelEntry = ({
-  creatorID, fuelInCount, fuelOutCount, isOpen,
-  onClose, data, total
+  creatorID,
+  fuelInCount,
+  fuelOutCount,
+  isOpen,
+  onClose,
+  data,
+  total,
 }) => {
-  const { reload } = useRouter()
+  const { reload } = useRouter();
+  const { isOpen: Open, onOpen, onClose: Close } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(false);
+  const cancelRef = useRef();
 
   const [refuelType, setRefuelType] = useState("");
   const [showRefuelDetails, setShowRefuelDetails] = useState(false);
@@ -52,7 +69,6 @@ const AddFuelEntry = ({
   const [fRecordDateTime, setFRecordDateTime] = useState("");
   const [fUnitCost, setFUnitCost] = useState("");
   const [fLiters, setFLiters] = useState("");
- 
 
   const [fuelOutID, setFuelOutID] = useState(generateID(fuelOutCount, 15));
   const [oRecordDateTime, setORecordDateTime] = useState("");
@@ -62,16 +78,13 @@ const AddFuelEntry = ({
   const [ofLiters, setOLiters] = useState("");
   const [oPreviousRoute, setOPreviousRoute] = useState("");
 
-
-  const format = (val) => `₱` + val
+  const format = (val) => `₱` + val;
   const parse = (val) => {
-    if (typeof val === 'string') {
-      return val.replace(/^\₱/, '');
+    if (typeof val === "string") {
+      return val.replace(/^\₱/, "");
     }
     return val;
-  }
-  
-
+  };
 
   function clear() {
     setFuelInID("");
@@ -81,13 +94,14 @@ const AddFuelEntry = ({
     setFuelOutID("");
     setORecordDateTime("");
     setODriver("");
-   // setOUserID("");
+    // setOUserID("");
     setOPlateNumber("");
     setOLiters("");
     setOPreviousRoute("");
   }
 
   async function submitForm() {
+    setIsLoading(true);
     if (refuelType == "tank") {
       const fuelInData = {
         fuelInID: fuelInID,
@@ -107,8 +121,9 @@ const AddFuelEntry = ({
         .then((result) => result.json())
         .then((data) => {
           if (data.error != null) console.error(data.error);
-          reload()
-        });
+          reload();
+        })
+        .finally(() => setIsLoading(false));
     } else {
       let fuelOutData = {
         fuelOutID: fuelOutID,
@@ -131,8 +146,9 @@ const AddFuelEntry = ({
         .then((result) => result.json())
         .then((data) => {
           if (data.error != null) console.log(data.error);
-          reload()
-        });
+          reload();
+        })
+        .finally(() => setIsLoading(false));
     }
   }
 
@@ -144,18 +160,18 @@ const AddFuelEntry = ({
     setShowRefuelDetails(true);
   };
 
-
   const handleCancel = () => {
     setShowRefuelDetails(false);
     onClose();
   };
 
-
   return (
     <Modal isOpen={isOpen} onClose={handleCancel}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader fontWeight="bold" textAlign="center">Add Fuel Entry</ModalHeader>
+        <ModalHeader fontWeight="bold" textAlign="center">
+          Add Fuel Entry
+        </ModalHeader>
         <ModalBody>
           {!showRefuelDetails && (
             <FormControl>
@@ -164,8 +180,12 @@ const AddFuelEntry = ({
                 placeholder="Select Refuel Type"
                 onChange={handleRefuelTypeChange}
               >
-                <option value="tank">Refuel Tank</option>
-                <option value="truck" disabled={total === 0}>Refuel Truck</option>
+                <option value="tank" disabled={total === 64000}>
+                  Refuel Tank
+                </option>
+                <option value="truck" disabled={total === 0}>
+                  Refuel Truck
+                </option>
               </Select>
             </FormControl>
           )}
@@ -173,8 +193,10 @@ const AddFuelEntry = ({
             <>
               {refuelType === "tank" && (
                 <>
-                 <ModalHeader fontWeight="bold">Fuel Entry Details (Refuel Tank)</ModalHeader>
-                  <FormControl mt={4}>
+                  <ModalHeader fontWeight="bold">
+                    Fuel Entry Details (Refuel Tank)
+                  </ModalHeader>
+                  <FormControl mt={4} isRequired>
                     <FormLabel>Date and Time</FormLabel>
                     <Input
                       type="datetime-local"
@@ -182,22 +204,35 @@ const AddFuelEntry = ({
                       onChange={(e) => setFRecordDateTime(e.target.value)}
                     />
                   </FormControl>
-                  <FormControl mt={4} >
+                  <FormControl mt={4} isRequired>
                     <FormLabel>Quantity</FormLabel>
-                    <NumberInput precision={2} step={0.01} min={1} value={fLiters} max={64000 - total}onChange={(_, value) => setFLiters(value)}>
-                      <NumberInputField  inputMode="decimal" />
-                      <NumberInputStepper >
-                        <NumberIncrementStepper  />
+                    <NumberInput
+                      precision={2}
+                      step={0.01}
+                      min={1}
+                      value={isNaN(fLiters) ? 0 : fLiters}
+                      max={64000 - total}
+                      onChange={(_, value) => setFLiters(value)}
+                    >
+                      <NumberInputField inputMode="decimal" />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
                   </FormControl>
-                  <FormControl mt={4}>
+
+                  <FormControl mt={4} isRequired>
                     <FormLabel>Unit Cost</FormLabel>
-                    <NumberInput step={0.01} min={1} value={format(fUnitCost)} onChange={(_, value) => setFUnitCost(parse(value))}>
-                      <NumberInputField  />
-                      <NumberInputStepper  >
-                        <NumberIncrementStepper  />
+                    <NumberInput
+                      step={0.01}
+                      min={1}
+                      value={format(fUnitCost)}
+                      onChange={(_, value) => setFUnitCost(parse(value))}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
@@ -206,7 +241,9 @@ const AddFuelEntry = ({
               )}
               {refuelType === "truck" && (
                 <>
-                 <ModalHeader fontWeight="bold">Fuel Entry Details (Refuel Truck)</ModalHeader>
+                  <ModalHeader fontWeight="bold">
+                    Fuel Entry Details (Refuel Truck)
+                  </ModalHeader>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Date and Time</FormLabel>
                     <Input
@@ -217,39 +254,83 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Driver Name</FormLabel>
-                    <Input
+
+                    <AutoComplete
+                      openOnFocus
+                      suggestWhenEmpty
+                      value={oDriver}
+                      onChange={setODriver}
+                    >
+                      <AutoCompleteInput variant="outline" />
+                      <AutoCompleteList w={"100%"}>
+                        {data.users
+                          ?.filter((item) => item.roleID.name === "Driver")
+                          .map((item) => (
+                            <AutoCompleteItem
+                              key={`${item.firstName} ${item.lastName}`}
+                              value={`${item.firstName} ${item.lastName}`}
+                            >
+                              <Flex gap={5}>
+                                <Image
+                                  src={item.imageID.secure_url}
+                                  alt={item.firstName}
+                                  objectFit={"cover"}
+                                  borderRadius={"15"}
+                                  w={"5em"}
+                                />
+                                <Flex flexDirection={"column"}>
+                                  <Text fontWeight={"bold"}>
+                                    {item.firstName} {item.lastName}
+                                  </Text>
+                                  <Text>{item.roleID.name}</Text>
+                                </Flex>
+                              </Flex>
+                            </AutoCompleteItem>
+                          ))}
+                      </AutoCompleteList>
+                    </AutoComplete>
+                    {/* <Input
                       value={oDriver}
                       onChange={(e) => setODriver(e.target.value)}
-                    />
+                    /> */}
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Plate Number</FormLabel>
                     {/*********************TO EDIT *********************/}
-                    <AutoComplete openOnFocus suggestWhenEmpty value={oPlateNumber} onChange={setOPlateNumber}>
-                                <AutoCompleteInput variant="outline" />
-                                <AutoCompleteList w={"100%"}>
-                                {data.vehicles?.map((item) => (
-                                    <AutoCompleteItem
-                                        key={item.plateNumber}
-                                        value={item.plateNumber}
-                                    >
-                                        <Flex gap={5}>
-                                            <Image 
-                                                src={item.imageID.secure_url}
-                                                alt={item.plateNumber}
-                                                objectFit={"cover"}
-                                                borderRadius={"15"}
-                                                w={"5em"}
-                                            /> 
-                                            <Flex flexDirection={"column"}>
-                                                <Text fontWeight={"bold"}>{item.plateNumber}</Text>
-                                                <Text>{item.brandID.name} {item.vehicleTypeID.name}</Text>
-                                            </Flex>
-                                        </Flex>
-                                    </AutoCompleteItem>
-                                ))}
-                                </AutoCompleteList>
-                            </AutoComplete>
+                    <AutoComplete
+                      openOnFocus
+                      suggestWhenEmpty
+                      value={oPlateNumber}
+                      onChange={setOPlateNumber}
+                    >
+                      <AutoCompleteInput variant="outline" />
+                      <AutoCompleteList w={"100%"}>
+                        {data.vehicles?.map((item) => (
+                          <AutoCompleteItem
+                            key={item.plateNumber}
+                            value={item.plateNumber}
+                          >
+                            <Flex gap={5}>
+                              <Image
+                                src={item.imageID.secure_url}
+                                alt={item.plateNumber}
+                                objectFit={"cover"}
+                                borderRadius={"15"}
+                                w={"5em"}
+                              />
+                              <Flex flexDirection={"column"}>
+                                <Text fontWeight={"bold"}>
+                                  {item.plateNumber}
+                                </Text>
+                                <Text>
+                                  {item.brandID.name} {item.vehicleTypeID.name}
+                                </Text>
+                              </Flex>
+                            </Flex>
+                          </AutoCompleteItem>
+                        ))}
+                      </AutoCompleteList>
+                    </AutoComplete>
                     {/* <Input
                       value={oPlateNumber}
                       onChange={(e) => setOPlateNumber(e.target.value)}
@@ -257,10 +338,16 @@ const AddFuelEntry = ({
                   </FormControl>
                   <FormControl mt={4} isRequired>
                     <FormLabel>Quantity</FormLabel>
-                    <NumberInput step={0.01} min={1} value={ofLiters} max={64000 - total} onChange={(_, value) => setOLiters(value)}>
-                      <NumberInputField  />
-                      <NumberInputStepper >
-                        <NumberIncrementStepper  />
+                    <NumberInput
+                      step={0.01}
+                      min={1}
+                      value={isNaN(ofLiters) ? 0 : ofLiters}
+                      max={total < 550 ? total : 550}
+                      onChange={(_, value) => setOLiters(value)}
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
@@ -269,7 +356,7 @@ const AddFuelEntry = ({
                       onChange={(e) => setOLiters(e.target.value)}
                     /> */}
                   </FormControl>
-                  <FormControl mt={4}>
+                  <FormControl mt={4} isRequired>
                     <FormLabel>Previous Route</FormLabel>
                     <Input
                       value={oPreviousRoute}
@@ -286,10 +373,47 @@ const AddFuelEntry = ({
           {refuelType ? (
             showRefuelDetails ? (
               <HStack spacing={4}>
-                <SaveButton
-                  title={"Save Fuel Entry"}
-                  clickFunction={submitForm}
-                />
+                <SaveButton title={"Save Fuel Entry"} clickFunction={onOpen} />
+                <AlertDialog
+                  isOpen={Open}
+                  leastDestructiveRef={cancelRef}
+                  onClose={Close}
+                >
+                  <AlertDialogOverlay>
+                    <AlertDialogContent>
+                      <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                        Confirm fuel entry details!
+                      </AlertDialogHeader>
+
+                      <AlertDialogBody>
+                        Are you sure? You can't undo this action afterwards.
+                      </AlertDialogBody>
+
+                      <AlertDialogFooter>
+                        <Box mr={2}>
+                          <SaveButton
+                            title={"Save Fuel Entry"}
+                            clickFunction={submitForm}
+                          />
+                        </Box>{" "}
+                        {isLoading ? (
+                          <CircularProgress
+                            size="30px"
+                            isIndeterminate
+                            color="green.400"
+                          />
+                        ) : (
+                          <Box>
+                            <CancelButton
+                              title={"Cancel"}
+                              clickFunction={Close}
+                            />
+                          </Box>
+                        )}
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialogOverlay>
+                </AlertDialog>
                 <CancelButton title={"Cancel"} clickFunction={handleCancel} />
               </HStack>
             ) : (

@@ -27,6 +27,8 @@ import { withSessionSsr } from "@/lib/auth/withSession";
 import { fuelAPI } from "@/lib/routes";
 import { useEffect } from "react";
 import Vehicle from "@/models/vehicles/VehicleSchema";
+import User from "@/models/users/UserSchema";
+import { Users } from "@/components/navbarBuilder/menuItem";
 
 /* TODO: FIX DROPDOWN REFUEL TYPE*/
 //To be Revised
@@ -78,6 +80,11 @@ export const getServerSideProps = withSessionSsr(
       .populate('vehicleTypeID', '-_id name')
       .lean()
 
+    const users = await User.find({}, '-_id firstName lastName imageID roleID')
+      .populate('imageID', '-_id secure_url')
+      .populate('roleID', '-_id name')
+      .lean()
+
     const [fuelIn, fuelOut] = await Promise.all([
       fetch(fuelAPI.get_fuelIn)
         .then((res) => res.json())
@@ -95,7 +102,8 @@ export const getServerSideProps = withSessionSsr(
       fuelIn,
       fuelOut,
       categories,
-      vehicles
+      vehicles,
+      users
     };
 
     return {
@@ -135,8 +143,12 @@ export default function FuelPage({ user, data }) {
       sum1 += data.fuelOut[i].ofLiters;
     }
     totalLiters = sum - sum1;
+    if (totalLiters < 0) {
+      totalLiters = 0;
+    }
     return totalLiters;
   };
+  
 
   useEffect(() => {
     setTotal(calculateTotal());
@@ -229,7 +241,7 @@ export default function FuelPage({ user, data }) {
           <Flex flexDirection={"column"} gap={5} height={100}>
             <StatGroup bg={"white"} p={5} boxShadow={"xl"} borderRadius={5}>
               <Stat>
-                <StatLabel>Total Fuel Tank Liters</StatLabel>
+                <StatLabel>Remaining Fuel</StatLabel>
                 <StatNumber>
                   <span style={totalStyle}>{total.toLocaleString()}L</span> out
                   of 64,000L
