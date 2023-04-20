@@ -227,7 +227,7 @@ const AddFuelEntry = ({
                     <NumberInput
                       step={0.01}
                       min={1}
-                      value={format(fUnitCost)}
+                      value={format(isNaN(fUnitCost) ? 0 : fUnitCost)}
                       onChange={(_, value) => setFUnitCost(parse(value))}
                     >
                       <NumberInputField />
@@ -361,6 +361,7 @@ const AddFuelEntry = ({
                     <Input
                       value={oPreviousRoute}
                       onChange={(e) => setOPreviousRoute(e.target.value)}
+                      onBlur={(e) => setOPreviousRoute(e.target.value.trim())}
                     />
                   </FormControl>
                 </>
@@ -389,11 +390,23 @@ const AddFuelEntry = ({
                         Are you sure? You can't undo this action afterwards.
                       </AlertDialogBody>
 
-                      <AlertDialogFooter>
+                      <AlertDialogFooter style={{ textAlign: "center"}}>
                         <Box mr={2}>
                           <SaveButton
                             title={"Save Fuel Entry"}
-                            clickFunction={submitForm}
+                            clickFunction={() => {
+                              if (refuelType ==="tank") {
+                                if(!fRecordDateTime || !fLiters || !fUnitCost)
+                                  alert("Please fill in all required fields.");
+                                else
+                                submitForm()
+                              } else {
+                                if(!oRecordDateTime || !ofLiters || !oDriver || !oPlateNumber || !oPreviousRoute)
+                                  alert("Please fill in all required fields.");
+                                  else 
+                                    submitForm()
+                              }
+                              }}
                           />
                         </Box>{" "}
                         {isLoading ? (
