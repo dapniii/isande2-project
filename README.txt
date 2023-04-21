@@ -1,5 +1,7 @@
 User Accounts:
 
+password    12345
+
 username	role
 10000001 	Admin
 10000002 	Chief Mechanic
