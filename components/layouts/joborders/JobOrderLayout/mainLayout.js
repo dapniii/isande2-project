@@ -301,7 +301,7 @@ function JobOrderMainLayout({user, initialData, categoryList, setFormState, setS
                 >
                         {/* DETAILS HEADERS */}
                         <GridItem colStart={1}><Text>{" "}</Text></GridItem>
-                        <GridItem colStart={2}><Text fontWeight={"medium"}>Item Number</Text></GridItem>
+                        <GridItem colStart={2}><Text fontWeight={"medium"}>Item Code</Text></GridItem>
                         <GridItem colStart={3}><Text fontWeight={"medium"}>Item</Text></GridItem>
                         <GridItem colStart={4}><Text fontWeight={"medium"}>Status</Text></GridItem>
                         <GridItem colStart={5}><Text fontWeight={"medium"}>Part Number</Text></GridItem>

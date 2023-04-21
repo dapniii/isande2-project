@@ -46,7 +46,7 @@ function ViewPartLayout({data, categoryList, user}) {
             <Flex bg={"white"} boxShadow={"lg"} borderRadius={3} flexDirection={"column"}>
                 <Text m={"0.5em"} mb={0} fontSize={"xl"} fontWeight={"bold"}>Identification</Text>
 
-                {createIdRow("Item Number", data.itemNumber)}
+                {createIdRow("Item Code", data.itemNumber)}
                 {createIdRow("Unit of Measurement", data.unit)}
                 {createIdRow("Description", data.desc)}
                 {createIdRow("Reorder Point", data.rp)}

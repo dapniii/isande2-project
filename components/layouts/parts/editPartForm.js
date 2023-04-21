@@ -173,7 +173,7 @@ function EditPartForm({ categoryList, submitFunc}) {
                     {/* Item number and category */}
                     <Flex width={"100%"} justifyContent={"space-around"} p={"0.5em"} gap={2}>
                         <FormControl isRequired>
-                            <FormLabel>Item Number</FormLabel>
+                            <FormLabel>Item Code</FormLabel>
                             <Input
                                 name="itemNumber"
                                 value={itemNumber}
